@@ -6,14 +6,21 @@
  * - /negocios/[slug]/admin/*
  *
  * Responsabilidades:
- * - Verifica que hay sesión (proxy.ts redirige a login si no)
- * - Proporciona sidebar/navegación básica del admin
- * - Define estructura visual del admin
+ * 1. Verifica sesión con getUser() (verificación segura contra el servidor)
+ *    → redirige a /negocios/[slug]/login si no hay usuario
+ * 2. Proporciona la estructura visual del área admin
  *
- * Nota: la verificación más estricta de sesión ocurre en proxy.ts.
- * Este layout es un punto adicional de claridad.
+ * Capas de protección:
+ * - proxy.ts: guard optimista (cookie) — primera línea rápida
+ * - Este layout: guard seguro (red) — segunda línea antes del render
+ *
+ * TODO M4: añadir logout real y datos del usuario autenticado.
+ * TODO M5: reemplazar sidebar placeholder por el panel real.
  */
 
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { getUser } from '@/lib/auth'
 import type { ReactNode } from 'react'
 
 interface AdminLayoutProps {
@@ -24,31 +31,49 @@ interface AdminLayoutProps {
 export default async function AdminLayout({ params, children }: AdminLayoutProps) {
   const { slug } = await params
 
+  // Guard seguro: getUser() verifica el JWT contra el servidor de Supabase Auth.
+  // Si no hay sesión válida, redirige al login del tenant.
+  const user = await getUser()
+  if (!user) {
+    redirect(`/negocios/${slug}/login`)
+  }
+
   return (
     <div className="flex gap-6">
-      {/* Sidebar admin */}
-      <aside className="w-48 border-r border-zinc-200 dark:border-zinc-800 pr-6">
-        <nav className="space-y-2">
-          <h3 className="font-semibold text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+      {/* Sidebar admin — placeholder M3 */}
+      <aside className="w-52 shrink-0 border-r border-zinc-200 dark:border-zinc-800 pr-6">
+        <nav className="space-y-1">
+          <p className="font-semibold text-xs uppercase tracking-wide text-zinc-400 dark:text-zinc-500 mb-4 px-3">
             Administración
-          </h3>
-          <a
+          </p>
+
+          <Link
             href={`/negocios/${slug}/admin`}
-            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 text-sm"
+            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm transition-colors"
           >
             Dashboard
-          </a>
-          <a
+          </Link>
+
+          {/* Separador */}
+          <div className="border-t border-zinc-100 dark:border-zinc-800 my-3" />
+
+          {/* Sesión activa — info básica */}
+          <div className="px-3 py-2 text-xs text-zinc-500 dark:text-zinc-400 truncate">
+            {user.email}
+          </div>
+
+          {/* Logout placeholder — M4 implementará la acción real */}
+          <Link
             href={`/negocios/${slug}/login`}
-            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 text-sm text-red-600 dark:text-red-400"
+            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-red-600 dark:text-red-400 transition-colors"
           >
-            Logout (M4)
-          </a>
+            Cerrar sesión (M4)
+          </Link>
         </nav>
       </aside>
 
-      {/* Contenido admin */}
-      <main className="flex-1">
+      {/* Contenido de las páginas admin */}
+      <main className="flex-1 min-w-0">
         {children}
       </main>
     </div>
