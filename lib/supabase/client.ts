@@ -1,9 +1,19 @@
+import { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+let client: SupabaseClient | undefined
+
 /**
- * Stub mínimo para M1 — devuelve null.
- * Los servicios manejan null como fallback a datos locales.
- * En M2, se reemplazará por la implementación real de Supabase.
+ * Devuelve el cliente Supabase para uso en el browser (Client Components).
+ * Reutiliza la instancia singleton para evitar múltiples clientes por sesión.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getSupabaseClient(): any {
-  return null;
+export function getSupabaseBrowserClient(): SupabaseClient {
+  if (!client) {
+    client = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+      { isSingleton: true }
+    )
+  }
+  return client
 }
