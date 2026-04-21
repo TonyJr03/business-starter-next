@@ -1,11 +1,11 @@
-import type { NavItem, FooterSection } from '@/types';
+import type { NavItem, FooterSection, PageModuleConfig } from '@/types';
 import { globalConfig } from './business-config';
 
 // La navegación se construye 100% desde `modules.pages`.
 // Home se prepend fijo; el resto sigue el orden de declaración de pageModules.
 const { pages } = globalConfig.modules;
 
-const pageNavItems: NavItem[] = Object.values(pages)
+const pageNavItems: NavItem[] = (Object.values(pages) as PageModuleConfig[])
   .filter((mod) => mod.enabled)
   .map((mod) => ({ label: mod.navLabel, href: mod.path }));
 
