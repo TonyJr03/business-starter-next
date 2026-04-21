@@ -1,5 +1,5 @@
 import { globalConfig } from '@/config';
-import { getSupabaseClient } from '@/lib/supabase/client';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import {
   type BusinessSettingsRow,
   type BusinessSettings,
@@ -50,7 +50,7 @@ function settingsFromConfig(): BusinessSettings {
 async function fetchBusinessSettingsFromDB(
   slug?: string,
 ): Promise<BusinessSettings | null> {
-  const db = getSupabaseClient();
+  const db = getSupabaseBrowserClient();
   if (!db) return null;
 
   const targetSlug = slug ?? globalConfig.identity.slug;

@@ -1,6 +1,6 @@
 import type { Category, Product } from '@/types';
 import { categories as localCategories, products as localProducts } from '@/data';
-import { getSupabaseClient } from '@/lib/supabase/client';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import {
   type CategoryRow,
   type ProductRow,
@@ -41,7 +41,7 @@ export interface ProductFilters {
 // lo que activa el fallback a datos locales en cada función pública.
 
 async function fetchCategoriesFromDB(): Promise<Category[] | null> {
-  const db = getSupabaseClient();
+  const db = getSupabaseBrowserClient();
   if (!db) return null;
 
   const { data, error } = await db
@@ -63,7 +63,7 @@ async function fetchCategoriesFromDB(): Promise<Category[] | null> {
 }
 
 async function fetchProductsFromDB(filters?: ProductFilters): Promise<Product[] | null> {
-  const db = getSupabaseClient();
+  const db = getSupabaseBrowserClient();
   if (!db) return null;
 
   let query = db.from('products').select('*').order('sort_order');
@@ -97,7 +97,7 @@ async function fetchProductsFromDB(filters?: ProductFilters): Promise<Product[] 
 }
 
 async function fetchProductBySlugFromDB(slug: string): Promise<Product | null> {
-  const db = getSupabaseClient();
+  const db = getSupabaseBrowserClient();
   if (!db) return null;
 
   const { data, error } = await db

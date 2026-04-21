@@ -1,6 +1,6 @@
 import type { Promotion, PromotionStatus } from '@/types';
 import { promotions as localPromotions } from '@/data';
-import { getSupabaseClient } from '@/lib/supabase/client';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { type PromotionRow, rowToPromotion } from '@/lib/persistence';
 
 /**
@@ -18,7 +18,7 @@ import { type PromotionRow, rowToPromotion } from '@/lib/persistence';
 // lo que activa el fallback a datos locales.
 
 async function fetchPromotionsFromDB(): Promise<Promotion[] | null> {
-  const db = getSupabaseClient();
+  const db = getSupabaseBrowserClient();
   if (!db) return null;
 
   const { data, error } = await db
