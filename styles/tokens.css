@@ -1,0 +1,149 @@
+/**
+ * Design System Tokens — Business Starter v1
+ *
+ * Estructura:
+ *   1. Colores de marca   (sobreescritos por negocio desde MainLayout)
+ *   2. Colores semánticos (constantes del sistema de diseño)
+ *   3. Escala de spacing
+ *   4. Border radius
+ *   5. Sombras
+ *   6. Tipografía
+ *
+ * Estética base: cálida y artesanal — extensible mediante skins futuras.
+ * Para crear una skin diferente: sobreescribir las custom properties en :root
+ * con el selector de mayor especificidad o en un archivo de skin adicional.
+ */
+
+:root {
+  /* ─── 1. Colores de marca ──────────────────────────────────────────────────
+     Valores por defecto para la estética base.
+     El layout los sobreescribe vía define:vars por cada negocio. */
+
+  --color-primary:   #6F4E37; /* Marrón café — acción principal, headings */
+  --color-secondary: #F5E6D3; /* Crema cálida — fondos de sección destacada */
+  --color-accent:    #D4A574; /* Dorado suave — énfasis, badges, CTA secundario */
+
+  /* ─── 2. Colores semánticos ────────────────────────────────────────────────
+     Colores estructurales del sistema. No cambian por negocio. */
+
+  /* Fondos */
+  --color-bg:            #FFFFFF; /* Fondo de página */
+  --color-surface:       #FAFAFA; /* Cards, paneles, secciones alternadas */
+  --color-surface-raised:#FFFFFF; /* Superficies elevadas (modales, tooltips) */
+
+  /* Bordes */
+  --color-border:        #E5E7EB; /* Borde estándar */
+  --color-border-subtle: #F3F4F6; /* Borde sutil / separador */
+
+  /* Texto */
+  --color-text:          #1A1A1A; /* Texto primario */
+  --color-text-muted:    #6B7280; /* Texto secundario / descriptivo */
+  --color-text-subtle:   #9CA3AF; /* Placeholder, etiquetas desactivadas */
+
+  /* Estados de feedback */
+  --color-success:       #16A34A;
+  --color-warning:       #D97706;
+  --color-error:         #DC2626;
+  --color-info:          #2563EB;
+
+  /* Footer — sobreescribibles por negocio desde themeConfig */
+  --color-footer-bg:         #111827; /* Fondo del footer */
+  --color-footer-text:       #FFFFFF; /* Texto en negrita / nombre */
+  --color-footer-text-muted: #9CA3AF; /* Texto secundario, iconos */
+  --color-footer-border:     #1F2937; /* Separadores internos */
+
+  /* ─── 3. Escala de spacing ─────────────────────────────────────────────────
+     Base 4px. Paralela a la escala de Tailwind para consistencia. */
+
+  --space-1:  0.25rem;  /*  4px */
+  --space-2:  0.5rem;   /*  8px */
+  --space-3:  0.75rem;  /* 12px */
+  --space-4:  1rem;     /* 16px */
+  --space-5:  1.25rem;  /* 20px */
+  --space-6:  1.5rem;   /* 24px */
+  --space-8:  2rem;     /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+
+  /* ─── 4. Border radius ─────────────────────────────────────────────────────
+     Estética redondeada — coherente con la estética cálida del starter. */
+
+  --radius-sm:   0.25rem;  /*  4px — inputs, badges pequeños */
+  --radius-md:   0.5rem;   /*  8px — inputs, botones pequeños */
+  --radius-lg:   0.75rem;  /* 12px — cards */
+  --radius-xl:   1rem;     /* 16px — cards grandes */
+  --radius-2xl:  1.5rem;   /* 24px — modales, popovers */
+  --radius-full: 9999px;   /* Pastillas, avatares circulares */
+
+  /* ─── 5. Sombras ───────────────────────────────────────────────────────────
+     Sutiles para reforzar profundidad sin romper la calidez del diseño. */
+
+  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:   0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg:   0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-card: 0 2px 8px 0 rgb(0 0 0 / 0.06);
+  --shadow-none: none;
+
+  /* ─── 6. Tipografía ────────────────────────────────────────────────────────
+     Familias sobreescribibles por el layout (igual que los colores de marca). */
+
+  /* Familias */
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+
+  /* Tamaños — paralelos a la escala de Tailwind */
+  --text-xs:   0.75rem;   /* 12px */
+  --text-sm:   0.875rem;  /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg:   1.125rem;  /* 18px */
+  --text-xl:   1.25rem;   /* 20px */
+  --text-2xl:  1.5rem;    /* 24px */
+  --text-3xl:  1.875rem;  /* 30px */
+  --text-4xl:  2.25rem;   /* 36px */
+  --text-5xl:  3rem;      /* 48px */
+
+  /* Pesos */
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* Interlineado */
+  --leading-tight:   1.25;
+  --leading-snug:    1.375;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.625;
+
+  /* Espaciado entre letras */
+  --tracking-tight:   -0.025em;
+  --tracking-normal:   0em;
+  --tracking-wide:     0.025em;
+  --tracking-wider:    0.05em;
+  --tracking-widest:   0.1em;
+}
+
+/* ─── Skin hooks ──────────────────────────────────────────────────────────────
+ *
+ * MainLayout inyecta `data-theme` en <html> desde `globalConfig.branding.themeKey`.
+ * Para crear una skin alternativa, sobreescribe tokens de marca aquí usando ese
+ * atributo. Solo los tokens declarados en #1 y #6 (Colores de marca + Tipografía)
+ * deberían cambiar por skin; los tokens estructurales (spacing, radius, shadows)
+ * son invariantes del sistema de diseño.
+ *
+ * Ejemplo de skin oscura:
+ *   [data-theme="dark"] {
+ *     --color-primary:   #D4A574;
+ *     --color-secondary: #1A1A1A;
+ *     --color-accent:    #F5E6D3;
+ *     --color-bg:        #111111;
+ *     --color-surface:   #1A1A1A;
+ *     --color-text:      #F5F5F5;
+ *     --color-text-muted:#9CA3AF;
+ *   }
+ *
+ * Para activarla: establece `branding.themeKey: 'dark'` en business-config.ts.
+ * ─────────────────────────────────────────────────────────────────────────── */
