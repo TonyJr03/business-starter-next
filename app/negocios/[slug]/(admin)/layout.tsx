@@ -14,13 +14,13 @@
  * - proxy.ts: guard optimista (cookie) — primera línea rápida
  * - Este layout: guard seguro (red) — segunda línea antes del render
  *
- * TODO M4: añadir logout real y datos del usuario autenticado.
  * TODO M5: reemplazar sidebar placeholder por el panel real.
  */
 
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getUser } from '@/lib/auth'
+import { logoutAction } from '@/actions/auth'
 import type { ReactNode } from 'react'
 
 interface AdminLayoutProps {
@@ -57,18 +57,20 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
           {/* Separador */}
           <div className="border-t border-zinc-100 dark:border-zinc-800 my-3" />
 
-          {/* Sesión activa — info básica */}
+          {/* Sesión activa — email del usuario */}
           <div className="px-3 py-2 text-xs text-zinc-500 dark:text-zinc-400 truncate">
             {user.email}
           </div>
 
-          {/* Logout placeholder — M4 implementará la acción real */}
-          <Link
-            href={`/negocios/${slug}/login`}
-            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-red-600 dark:text-red-400 transition-colors"
-          >
-            Cerrar sesión (M4)
-          </Link>
+          {/* Logout */}
+          <form action={logoutAction.bind(null, slug)}>
+            <button
+              type="submit"
+              className="w-full text-left px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-red-600 dark:text-red-400 transition-colors"
+            >
+              Cerrar sesión
+            </button>
+          </form>
         </nav>
       </aside>
 
