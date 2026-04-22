@@ -75,6 +75,11 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
+    // Evitar que el navegador cachee las páginas admin.
+    // Sin esto, el botón atrás tras logout puede mostrar HTML protegido
+    // desde la caché del navegador sin hacer una nueva request al servidor.
+    response.headers.set('Cache-Control', 'no-store')
+
     return response
   }
 
