@@ -8,8 +8,10 @@
  * M4: Integración real con Supabase Auth via LoginForm (Client Component)
  */
 
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LoginForm } from './login-form'
+import { getUser } from '@/lib/auth'
 
 interface LoginPageProps {
   params: Promise<{ slug: string }>
@@ -17,6 +19,12 @@ interface LoginPageProps {
 
 export default async function LoginPage({ params }: LoginPageProps) {
   const { slug } = await params
+
+  // Si ya hay sesión activa, no tiene sentido mostrar el login.
+  const user = await getUser()
+  if (user) {
+    redirect(`/negocios/${slug}/admin`)
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-linear-to-br from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
