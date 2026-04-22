@@ -98,14 +98,8 @@ export default async function AdminDashboard({ params }: AdminDashboardProps) {
           href="/"
           className="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg transition-colors text-sm font-medium"
         >
-          ← Volver
+          ← Inicio
         </Link>
-      </div>
-
-      <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Status: Estructura admin creada en M3. Funcionalidad real en M4+. UI final en M5+.
-        </p>
       </div>
     </div>
   )
