@@ -95,6 +95,20 @@ export async function updateProduct(
   id: string,
   input: ProductUpdateInput,
 ): Promise<MutationResult<Product>> {
+  // Si cambia la categoría, verificar que pertenece al mismo negocio
+  if (input.categoryId !== undefined) {
+    const { data: category } = await ctx.supabase
+      .from('categories')
+      .select('id')
+      .eq('id', input.categoryId)
+      .eq('business_id', ctx.businessId)
+      .single()
+
+    if (!category) {
+      return { ok: false, error: 'La categoría seleccionada no existe.', field: 'categoryId' }
+    }
+  }
+
   const patch: Record<string, unknown> = {}
   if (input.name          !== undefined) patch.name           = input.name
   if (input.description   !== undefined) patch.description    = input.description

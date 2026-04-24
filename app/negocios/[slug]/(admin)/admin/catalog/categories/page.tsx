@@ -75,7 +75,7 @@ export default async function CategoriesListPage({ params, searchParams }: Props
       )}
       {queryError && (
         <div className="rounded-md bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-800 dark:text-red-200" role="alert">
-          Error al cargar las categorías: {queryError.message}
+          No se pudieron cargar las categorías. Por favor, recarga la página.
         </div>
       )}
 
