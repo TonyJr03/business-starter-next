@@ -69,7 +69,7 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
           </Link>
           <Link
             href={`/negocios/${slug}/admin/catalog/products`}
-            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm transition-colors text-zinc-400 dark:text-zinc-500"
+            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm transition-colors"
           >
             Productos
           </Link>

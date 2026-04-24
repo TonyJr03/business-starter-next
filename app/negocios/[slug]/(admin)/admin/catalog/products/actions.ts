@@ -3,17 +3,17 @@
 import { redirect } from 'next/navigation'
 import {
   getAdminContext,
-  categoryCreateSchema,
-  categoryUpdateSchema,
-  createCategory,
-  updateCategory,
-  deleteCategory,
+  productCreateSchema,
+  productUpdateSchema,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 } from '@/lib/admin'
 import type { AdminActionState } from '@/lib/admin'
 
 // ─── Crear ────────────────────────────────────────────────────────────────────
 
-export async function createCategoryAction(
+export async function createProductAction(
   slug: string,
   _prevState: AdminActionState,
   formData: FormData,
@@ -22,13 +22,18 @@ export async function createCategoryAction(
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
   const raw = {
-    name:        String(formData.get('name')        ?? ''),
-    description: String(formData.get('description') ?? '') || undefined,
-    sortOrder:   String(formData.get('sortOrder')   ?? '0'),
-    isActive:    formData.get('isActive') === 'on',
+    name:          String(formData.get('name')          ?? ''),
+    description:   String(formData.get('description')   ?? '') || undefined,
+    categoryId:    String(formData.get('categoryId')     ?? ''),
+    moneyAmount:   String(formData.get('moneyAmount')    ?? '0'),
+    moneyCurrency: String(formData.get('moneyCurrency')  ?? 'CUP'),
+    isAvailable:   formData.get('isAvailable')  === 'on',
+    isFeatured:    formData.get('isFeatured')   === 'on',
+    badge:         String(formData.get('badge') ?? '') || undefined,
+    sortOrder:     String(formData.get('sortOrder')      ?? '0'),
   }
 
-  const parsed = categoryCreateSchema.safeParse(raw)
+  const parsed = productCreateSchema.safeParse(raw)
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors
     const firstField = Object.keys(errors)[0] as string
@@ -39,15 +44,15 @@ export async function createCategoryAction(
     }
   }
 
-  const result = await createCategory(ctxResult.ctx, parsed.data)
+  const result = await createProduct(ctxResult.ctx, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
-  redirect(`/negocios/${slug}/admin/catalog/categories?created=1`)
+  redirect(`/negocios/${slug}/admin/catalog/products?created=1`)
 }
 
 // ─── Actualizar ───────────────────────────────────────────────────────────────
 
-export async function updateCategoryAction(
+export async function updateProductAction(
   slug: string,
   id: string,
   _prevState: AdminActionState,
@@ -57,13 +62,18 @@ export async function updateCategoryAction(
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
   const raw = {
-    name:        String(formData.get('name')        ?? ''),
-    description: String(formData.get('description') ?? '') || undefined,
-    sortOrder:   String(formData.get('sortOrder')   ?? '0'),
-    isActive:    formData.get('isActive') === 'on',
+    name:          String(formData.get('name')          ?? ''),
+    description:   String(formData.get('description')   ?? '') || undefined,
+    categoryId:    String(formData.get('categoryId')     ?? ''),
+    moneyAmount:   String(formData.get('moneyAmount')    ?? '0'),
+    moneyCurrency: String(formData.get('moneyCurrency')  ?? 'CUP'),
+    isAvailable:   formData.get('isAvailable')  === 'on',
+    isFeatured:    formData.get('isFeatured')   === 'on',
+    badge:         String(formData.get('badge') ?? '') || undefined,
+    sortOrder:     String(formData.get('sortOrder')      ?? '0'),
   }
 
-  const parsed = categoryUpdateSchema.safeParse(raw)
+  const parsed = productUpdateSchema.safeParse(raw)
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors
     const firstField = Object.keys(errors)[0] as string
@@ -74,15 +84,15 @@ export async function updateCategoryAction(
     }
   }
 
-  const result = await updateCategory(ctxResult.ctx, id, parsed.data)
+  const result = await updateProduct(ctxResult.ctx, id, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
-  redirect(`/negocios/${slug}/admin/catalog/categories?updated=1`)
+  redirect(`/negocios/${slug}/admin/catalog/products?updated=1`)
 }
 
 // ─── Eliminar ─────────────────────────────────────────────────────────────────
 
-export async function deleteCategoryAction(
+export async function deleteProductAction(
   slug: string,
   id: string,
   // prevState y formData requeridos por la firma de useActionState, no se usan en delete
@@ -92,8 +102,8 @@ export async function deleteCategoryAction(
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
-  const result = await deleteCategory(ctxResult.ctx, id)
+  const result = await deleteProduct(ctxResult.ctx, id)
   if (!result.ok) return { ok: false, error: result.error }
 
-  redirect(`/negocios/${slug}/admin/catalog/categories?deleted=1`)
+  redirect(`/negocios/${slug}/admin/catalog/products?deleted=1`)
 }
