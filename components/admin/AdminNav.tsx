@@ -2,94 +2,83 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { LayoutDashboard, Tag, Package, Percent, Settings, LogOut, type LucideIcon } from 'lucide-react'
 
 interface AdminNavProps {
   slug: string
+  businessName: string
   userEmail: string | undefined
   logoutAction: () => Promise<void>
 }
 
-interface NavItem {
-  href: string
-  label: string
-  /** true = coincidencia exacta; false = startsWith */
-  exact?: boolean
-}
-
-export function AdminNav({ slug, userEmail, logoutAction }: AdminNavProps) {
+export function AdminNav({ slug, businessName, userEmail, logoutAction }: AdminNavProps) {
   const pathname = usePathname()
 
   const isActive = (href: string, exact = false) =>
     exact ? pathname === href : pathname.startsWith(href)
 
-  const linkClass = (href: string, exact = false) =>
-    [
-      'block px-3 py-2 rounded-md text-sm transition-colors',
-      isActive(href, exact)
-        ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-medium'
-        : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300',
-    ].join(' ')
+  const navLink = (href: string, label: string, Icon: LucideIcon, exact = false) => (
+    <Link
+      key={href}
+      href={href}
+      className={[
+        'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors',
+        isActive(href, exact)
+          ? 'bg-zinc-800 text-white font-medium'
+          : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200',
+      ].join(' ')}
+    >
+      <Icon className="w-4 h-4 shrink-0" aria-hidden />
+      {label}
+    </Link>
+  )
 
-  const dashboardHref = `/negocios/${slug}/admin`
-
-  const catalogItems: NavItem[] = [
-    { href: `/negocios/${slug}/admin/catalog/categories`, label: 'Categorías' },
-    { href: `/negocios/${slug}/admin/catalog/products`,   label: 'Productos'  },
-  ]
+  const sectionLabel = (text: string) => (
+    <p className="px-3 pt-5 pb-1 text-xs font-semibold uppercase tracking-wider text-zinc-600">
+      {text}
+    </p>
+  )
 
   return (
-    <nav className="space-y-1">
-      <p className="font-semibold text-xs uppercase tracking-wide text-zinc-400 dark:text-zinc-500 mb-4 px-3">
-        Administración
-      </p>
+    <div className="flex flex-col h-full">
 
-      <Link href={dashboardHref} className={linkClass(dashboardHref, true)}>
-        Dashboard
-      </Link>
-
-      {/* Catálogo */}
-      <div className="border-t border-zinc-100 dark:border-zinc-800 my-3" />
-      <p className="px-3 text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500 mb-1">
-        Catálogo
-      </p>
-      {catalogItems.map(item => (
-        <Link key={item.href} href={item.href} className={linkClass(item.href)}>
-          {item.label}
-        </Link>
-      ))}
-
-      {/* Promociones */}
-      <div className="border-t border-zinc-100 dark:border-zinc-800 my-3" />
-      <Link
-        href={`/negocios/${slug}/admin/promotions`}
-        className={linkClass(`/negocios/${slug}/admin/promotions`)}
-      >
-        Promociones
-      </Link>
-
-      {/* Ajustes */}
-      <div className="border-t border-zinc-100 dark:border-zinc-800 my-3" />
-      <Link
-        href={`/negocios/${slug}/admin/settings`}
-        className={linkClass(`/negocios/${slug}/admin/settings`)}
-      >
-        Ajustes
-      </Link>
-
-      {/* Sesión */}
-      <div className="border-t border-zinc-100 dark:border-zinc-800 my-3" />
-      <div className="px-3 py-2 text-xs text-zinc-500 dark:text-zinc-400 truncate">
-        {userEmail}
+      {/* Brand */}
+      <div className="px-5 py-5 border-b border-zinc-800">
+        <p className="text-sm font-semibold text-zinc-100 truncate">{businessName}</p>
+        <p className="text-xs text-zinc-500 mt-0.5">Panel Admin</p>
       </div>
 
-      <form action={logoutAction}>
-        <button
-          type="submit"
-          className="w-full text-left px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-red-600 dark:text-red-400 transition-colors"
-        >
-          Cerrar sesión
-        </button>
-      </form>
-    </nav>
+      {/* Nav */}
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        {navLink(`/negocios/${slug}/admin`, 'Dashboard', LayoutDashboard, true)}
+
+        {sectionLabel('Catálogo')}
+        {navLink(`/negocios/${slug}/admin/catalog/categories`, 'Categorías', Tag)}
+        {navLink(`/negocios/${slug}/admin/catalog/products`, 'Productos', Package)}
+
+        {sectionLabel('Marketing')}
+        {navLink(`/negocios/${slug}/admin/promotions`, 'Promociones', Percent)}
+
+        {sectionLabel('Configuración')}
+        {navLink(`/negocios/${slug}/admin/settings`, 'Ajustes', Settings)}
+      </nav>
+
+      {/* User + logout */}
+      <div className="border-t border-zinc-800 px-3 py-4 space-y-1">
+        <div className="px-3 py-1.5">
+          <p className="text-xs text-zinc-500 truncate">{userEmail}</p>
+        </div>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 hover:text-red-400 transition-colors"
+          >
+            <LogOut className="w-4 h-4 shrink-0" aria-hidden />
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+
+    </div>
   )
 }

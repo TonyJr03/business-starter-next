@@ -8,6 +8,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { AdminPageHeader, AdminAlert, AdminEmptyState } from '@/components/admin'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -36,67 +37,51 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
   const deleted = sp.deleted === '1'
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
 
-      {/* Cabecera */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Productos</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            {products.length} {products.length === 1 ? 'producto' : 'productos'}
-          </p>
-        </div>
-        <Link
-          href={`/negocios/${slug}/admin/catalog/products/new`}
-          className="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold rounded-md bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 transition-colors"
-        >
-          + Nuevo producto
-        </Link>
-      </div>
+      <AdminPageHeader
+        title="Productos"
+        description={`${products.length} ${products.length === 1 ? 'producto' : 'productos'}`}
+        action={
+          <Link
+            href={`/negocios/${slug}/admin/catalog/products/new`}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors"
+          >
+            + Nuevo producto
+          </Link>
+        }
+      />
 
       {/* Feedback */}
-      {created && (
-        <div className="rounded-md bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-200" role="status">
-          Producto creado correctamente.
-        </div>
-      )}
-      {updated && (
-        <div className="rounded-md bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-200" role="status">
-          Producto actualizado correctamente.
-        </div>
-      )}
-      {deleted && (
-        <div className="rounded-md bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-200" role="status">
-          Producto eliminado.
-        </div>
-      )}
-      {queryError && (
-        <div className="rounded-md bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-800 dark:text-red-200" role="alert">
-          No se pudieron cargar los productos. Por favor, recarga la página.
-        </div>
-      )}
+      {created && <AdminAlert type="success" message="Producto creado correctamente." />}
+      {updated && <AdminAlert type="success" message="Producto actualizado correctamente." />}
+      {deleted && <AdminAlert type="neutral" message="Producto eliminado." />}
+      {queryError && <AdminAlert type="error" message="No se pudieron cargar los productos. Por favor, recarga la página." />}
 
       {/* Tabla / Estado vacío */}
-      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
         {products.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm">No hay productos aún.</p>
-            <Link
-              href={`/negocios/${slug}/admin/catalog/products/new`}
-              className="mt-3 inline-block text-sm font-medium text-zinc-900 dark:text-zinc-100 underline underline-offset-2"
-            >
-              Crea el primer producto
-            </Link>
-          </div>
+          <AdminEmptyState
+            title="No hay productos aún."
+            description="Crea categorías primero y luego añade tus productos."
+            action={
+              <Link
+                href={`/negocios/${slug}/admin/catalog/products/new`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors"
+              >
+                Crear primer producto
+              </Link>
+            }
+          />
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
+            <thead className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600 dark:text-zinc-400">Nombre</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600 dark:text-zinc-400 hidden sm:table-cell">Categoría</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600 dark:text-zinc-400">Precio</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600 dark:text-zinc-400 hidden md:table-cell">Estado</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600 dark:text-zinc-400 hidden lg:table-cell">Badge</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Nombre</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden sm:table-cell">Categoría</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Precio</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden md:table-cell">Estado</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden lg:table-cell">Badge</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -113,11 +98,11 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
                 sort_order: number
                 categories: { name: string }[] | null
               }) => (
-                <tr key={p.id} className="bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+                <tr key={p.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="px-4 py-3">
                     <span className="font-medium text-zinc-900 dark:text-zinc-100">{p.name}</span>
                     {p.is_featured && (
-                      <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                      <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-md text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 ring-1 ring-inset ring-amber-600/20">
                         Destacado
                       </span>
                     )}
@@ -125,25 +110,25 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
                   <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 hidden sm:table-cell">
                     {p.categories?.[0]?.name ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
+                  <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300 tabular-nums">
                     {Number(p.money_amount).toFixed(2)} {p.money_currency}
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
                       p.is_available
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20'
                         : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
                     }`}>
                       {p.is_available ? 'Disponible' : 'No disponible'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 hidden lg:table-cell">
+                  <td className="px-4 py-3 text-zinc-400 dark:text-zinc-500 hidden lg:table-cell">
                     {p.badge ?? '—'}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/negocios/${slug}/admin/catalog/products/${p.id}`}
-                      className="text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 underline underline-offset-2"
+                      className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                     >
                       Editar
                     </Link>

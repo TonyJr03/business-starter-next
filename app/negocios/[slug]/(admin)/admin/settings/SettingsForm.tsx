@@ -51,7 +51,7 @@ export function SettingsForm({ slug, defaults }: Props) {
       )}
 
       {/* ── Información básica ── */}
-      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-5">
+      <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-5">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
           Información básica
         </h2>
@@ -98,7 +98,7 @@ export function SettingsForm({ slug, defaults }: Props) {
       </section>
 
       {/* ── Contacto ── */}
-      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-5">
+      <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-5">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
           Contacto
         </h2>
@@ -159,7 +159,7 @@ export function SettingsForm({ slug, defaults }: Props) {
       </section>
 
       {/* ── Ubicación ── */}
-      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-5">
+      <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-5">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
           Ubicación
         </h2>
@@ -215,7 +215,7 @@ export function SettingsForm({ slug, defaults }: Props) {
       </section>
 
       {/* ── Redes sociales ── */}
-      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-4">
+      <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
           Redes sociales
         </h2>
@@ -250,7 +250,7 @@ export function SettingsForm({ slug, defaults }: Props) {
       </section>
 
       {/* ── Horarios de atención ── */}
-      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-4">
+      <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
           Horarios de atención
         </h2>

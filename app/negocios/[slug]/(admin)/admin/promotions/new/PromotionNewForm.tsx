@@ -20,7 +20,7 @@ export function PromotionNewForm({ slug }: Props) {
     state && !state.ok && state.field === field ? state.error : undefined
 
   return (
-    <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
+    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
 
       {/* Error general */}
       {state && !state.ok && !state.field && (

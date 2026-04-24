@@ -49,7 +49,7 @@ export function ProductEditForm({ slug, categories, product }: Props) {
     <div className="space-y-8">
 
       {/* ── Formulario de edición ── */}
-      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
 
         {/* Error general */}
         {updateState && !updateState.ok && !updateState.field && (
@@ -260,7 +260,7 @@ export function ProductEditForm({ slug, categories, product }: Props) {
       </div>
 
       {/* ── Zona de peligro: eliminar ── */}
-      <div className="rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-6">
+      <div className="rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-6">
         <h2 className="text-sm font-semibold text-red-800 dark:text-red-300 mb-1">
           Eliminar producto
         </h2>

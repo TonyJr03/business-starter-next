@@ -3,14 +3,6 @@
  *
  * Ruta: /negocios/[slug]/admin
  * Acceso: protegido por sesión (proxy.ts + admin layout)
- *
- * Muestra: hub del admin con:
- * - contexto del negocio
- * - usuario autenticado
- * - atajos a secciones futuras (placeholder)
- *
- * M4: Dashboard autenticado funcional con flujo de sesión
- * M5+: Estadísticas, gráficos, datos reales
  */
 
 import Link from 'next/link'
@@ -20,136 +12,85 @@ interface AdminDashboardProps {
   params: Promise<{ slug: string }>
 }
 
+const quickLinks = [
+  {
+    id: 'categories',
+    title: 'Categorías',
+    description: 'Organiza el catálogo en secciones. Define el orden de aparición y activa o desactiva categorías.',
+    path: 'catalog/categories',
+  },
+  {
+    id: 'products',
+    title: 'Productos',
+    description: 'Gestiona el listado de productos con precios, disponibilidad y destacados.',
+    path: 'catalog/products',
+  },
+  {
+    id: 'promotions',
+    title: 'Promociones',
+    description: 'Crea y administra promociones activas, próximas y pausadas con reglas de descuento.',
+    path: 'promotions',
+  },
+  {
+    id: 'settings',
+    title: 'Ajustes',
+    description: 'Configura el nombre del negocio, contacto, ubicación, redes sociales y horarios.',
+    path: 'settings',
+  },
+]
+
 export default async function AdminDashboard({ params }: AdminDashboardProps) {
   const { slug } = await params
   const user = await getUser()
 
   return (
-    <div className="space-y-8">
-      {/* Header con contexto */}
+    <div className="max-w-2xl space-y-8">
+
+      {/* Header */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-bold">Dashboard</h1>
-            <p className="text-zinc-600 dark:text-zinc-400 mt-1">
-              Negocio: <code className="bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded">{slug}</code>
-            </p>
-          </div>
-          <span className="inline-block px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-semibold rounded-full">
-            ✓ Autenticado
-          </span>
-        </div>
-      </div>
-
-      {/* Info del usuario autenticado */}
-      {user && (
-        <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">Sesión activa</p>
-              <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">{user.email}</p>
-            </div>
-            <span className="text-3xl">👤</span>
-          </div>
-        </div>
-      )}
-
-      {/* Grid de módulos */}
-      <div>
-        <h2 className="text-lg font-semibold mb-4 text-zinc-900 dark:text-white">
-          Módulos disponibles
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Catálogo */}
-          <div className="p-6 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors bg-white dark:bg-zinc-900 cursor-not-allowed opacity-60">
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <span>📦</span> Catálogo
-              </h3>
-              <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
-                M5
-              </span>
-            </div>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Gestiona productos, categorías, precios e inventario.
-            </p>
-          </div>
-
-          {/* Promociones */}
-          <div className="p-6 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors bg-white dark:bg-zinc-900 cursor-not-allowed opacity-60">
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <span>🎉</span> Promociones
-              </h3>
-              <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
-                M5
-              </span>
-            </div>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Crea y gestiona promociones, descuentos y ofertas especiales.
-            </p>
-          </div>
-
-          {/* Ajustes */}
-          <div className="p-6 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors bg-white dark:bg-zinc-900 cursor-not-allowed opacity-60">
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <span>⚙️</span> Ajustes
-              </h3>
-              <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
-                M5
-              </span>
-            </div>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Configuración del negocio, horarios, datos de contacto y preferencias.
-            </p>
-          </div>
-
-          {/* Placeholder extra */}
-          <div className="p-6 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors bg-white dark:bg-zinc-900 cursor-not-allowed opacity-60">
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <span>📊</span> Reportes
-              </h3>
-              <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
-                M6
-              </span>
-            </div>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Estadísticas, ventas, comportamiento de clientes y análisis.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Info de estado */}
-      <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-        <p className="text-sm text-amber-900 dark:text-amber-100">
-          <span className="font-semibold">M4 — Dashboard autenticado funcional</span>
-          <br />
-          <span className="text-xs text-amber-700 dark:text-amber-300 mt-1 block">
-            Flujo de autenticación real, sesión persistente y logout funcional.
-            Módulos de gestión completa disponibles en M5.
-          </span>
+        <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+          Panel de administración
+        </h1>
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          {user?.email}
         </p>
       </div>
 
-      {/* Navegación */}
-      <div className="flex gap-4 pt-4">
+      {/* Quick links */}
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-4">
+          Secciones
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {quickLinks.map(link => (
+            <Link
+              key={link.id}
+              href={`/negocios/${slug}/admin/${link.path}`}
+              className="group block rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
+            >
+              <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-white">
+                {link.title}
+              </p>
+              <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                {link.description}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Ver sitio */}
+      <div>
         <Link
           href={`/negocios/${slug}`}
-          className="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg transition-colors text-sm font-medium"
+          target="_blank"
+          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
         >
-          Ver Home Público
-        </Link>
-        <Link
-          href="/"
-          className="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg transition-colors text-sm font-medium"
-        >
-          ← Inicio
+          Ver sitio público
+          <span aria-hidden>↗</span>
         </Link>
       </div>
+
     </div>
   )
 }
