@@ -78,7 +78,7 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
           <div className="border-t border-zinc-100 dark:border-zinc-800 my-3" />
           <Link
             href={`/negocios/${slug}/admin/promotions`}
-            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm transition-colors text-zinc-400 dark:text-zinc-500"
+            className="block px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm transition-colors"
           >
             Promociones
           </Link>
