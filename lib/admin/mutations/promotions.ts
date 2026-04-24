@@ -5,7 +5,11 @@ import type { Promotion } from '@/types'
 
 // ─── Esquemas de validación ───────────────────────────────────────────────────
 
-export const promotionCreateSchema = z.object({
+/**
+ * Schema base sin refinements — necesario para poder llamar .partial() en Zod v4.
+ * .partial() no puede usarse sobre un schema que ya tiene .refine().
+ */
+const promotionBaseSchema = z.object({
   title:         z.string().min(1, 'El título es obligatorio').max(200),
   description:   z.string().max(1000).optional(),
   status:        z.enum(['upcoming', 'active', 'expired', 'paused']).default('active'),
@@ -24,7 +28,12 @@ export const promotionCreateSchema = z.object({
   ruleType:        z.enum(['percentage', 'fixed', 'bogo', 'combo', 'custom']).optional(),
   ruleValue:       z.coerce.number().min(0).optional(),
   ruleDescription: z.string().max(300).optional(),
-}).refine(
+})
+
+/**
+ * Schema de creación: añade la validación de fechas sobre el base.
+ */
+export const promotionCreateSchema = promotionBaseSchema.refine(
   (data) => {
     if (data.startsAt && data.endsAt) {
       return new Date(data.startsAt) < new Date(data.endsAt)
@@ -38,9 +47,10 @@ export const promotionCreateSchema = z.object({
 )
 
 /**
- * Todos los campos opcionales para actualizaciones parciales.
+ * Schema de actualización: partial sobre el base (sin refinement).
+ * La validación de fechas se hace manualmente en la mutación si ambas están presentes.
  */
-export const promotionUpdateSchema = promotionCreateSchema.partial()
+export const promotionUpdateSchema = promotionBaseSchema.partial()
 
 export type PromotionCreateInput = z.infer<typeof promotionCreateSchema>
 export type PromotionUpdateInput = z.infer<typeof promotionUpdateSchema>
