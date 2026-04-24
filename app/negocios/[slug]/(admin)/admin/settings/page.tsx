@@ -36,14 +36,14 @@ export default async function SettingsPage({ params, searchParams }: Props) {
     <div className="space-y-6 max-w-xl">
 
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Ajustes del negocio</h1>
+        <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Ajustes del negocio</h1>
         <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
           Información básica visible en el catálogo público.
         </p>
       </div>
 
       {sp.saved && (
-        <div className="rounded-md bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200">
+        <div className="border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 rounded-r-lg px-4 py-3 text-sm" role="status">
           Ajustes guardados correctamente.
         </div>
       )}

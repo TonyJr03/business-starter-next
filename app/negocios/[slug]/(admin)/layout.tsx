@@ -19,6 +19,8 @@ import { redirect } from 'next/navigation'
 import { getUser } from '@/lib/auth'
 import { logoutAction } from '@/actions/auth'
 import { AdminNav } from '@/components/admin/AdminNav'
+import { resolveBusinessBySlug } from '@/lib/tenant'
+import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 interface AdminLayoutProps {
@@ -36,19 +38,23 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
     redirect(`/negocios/${slug}/login`)
   }
 
+  const business = await resolveBusinessBySlug(slug)
+  if (!business) notFound()
+
   return (
-    <div className="flex gap-6">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex">
       {/* Sidebar admin */}
-      <aside className="w-52 shrink-0 border-r border-zinc-200 dark:border-zinc-800 pr-6">
+      <aside className="w-64 shrink-0 bg-zinc-900 flex flex-col sticky top-0 h-screen overflow-hidden">
         <AdminNav
           slug={slug}
+          businessName={business.name}
           userEmail={user.email}
           logoutAction={logoutAction.bind(null, slug)}
         />
       </aside>
 
       {/* Contenido de las páginas admin */}
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 p-8 overflow-auto">
         {children}
       </main>
     </div>

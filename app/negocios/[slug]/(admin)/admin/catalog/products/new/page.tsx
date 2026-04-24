@@ -36,11 +36,11 @@ export default async function NewProductPage({ params }: Props) {
       <div>
         <Link
           href={`/negocios/${slug}/admin/catalog/products`}
-          className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+          className="inline-flex items-center gap-1 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors mb-4"
         >
-          ← Volver a productos
+          ← Productos
         </Link>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mt-3">
+        <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
           Nuevo producto
         </h1>
       </div>

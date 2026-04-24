@@ -7,6 +7,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { AdminPageHeader, AdminAlert, AdminEmptyState } from '@/components/admin'
 
 interface Props {
   params:      Promise<{ slug: string }>
@@ -21,9 +22,9 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  active:   'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
-  upcoming: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  paused:   'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
+  active:   'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20',
+  upcoming: 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 ring-1 ring-inset ring-blue-600/20',
+  paused:   'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 ring-1 ring-inset ring-amber-600/20',
   expired:  'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
 }
 
@@ -57,82 +58,73 @@ export default async function PromotionsPage({ params, searchParams }: Props) {
   }[]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
 
-      {/* Cabecera */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Promociones</h1>
-        <Link
-          href={`/negocios/${slug}/admin/promotions/new`}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-700 dark:hover:bg-zinc-100 transition-colors"
-        >
-          + Nueva promoción
-        </Link>
-      </div>
-
-      {/* Feedback flash */}
-      {sp.created && (
-        <div className="rounded-md bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200">
-          Promoción creada correctamente.
-        </div>
-      )}
-      {sp.updated && (
-        <div className="rounded-md bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200">
-          Promoción actualizada correctamente.
-        </div>
-      )}
-      {sp.deleted && (
-        <div className="rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-4 py-3 text-sm text-zinc-700 dark:text-zinc-300">
-          Promoción eliminada.
-        </div>
-      )}
-
-      {/* Estado vacío */}
-      {promotions.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 p-10 text-center">
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-4">
-            No hay promociones todavía.
-          </p>
+      <AdminPageHeader
+        title="Promociones"
+        description={`${promotions.length} ${promotions.length === 1 ? 'promoción' : 'promociones'}`}
+        action={
           <Link
             href={`/negocios/${slug}/admin/promotions/new`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-700 dark:hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors"
           >
-            Crear primera promoción
+            + Nueva promoción
           </Link>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        }
+      />
+
+      {/* Feedback flash */}
+      {sp.created && <AdminAlert type="success" message="Promoción creada correctamente." />}
+      {sp.updated && <AdminAlert type="success" message="Promoción actualizada correctamente." />}
+      {sp.deleted && <AdminAlert type="neutral" message="Promoción eliminada." />}
+
+      {/* Tabla / Estado vacío */}
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
+        {promotions.length === 0 ? (
+          <AdminEmptyState
+            title="No hay promociones todavía."
+            description="Las promociones se muestran en el sitio público de tu negocio."
+            action={
+              <Link
+                href={`/negocios/${slug}/admin/promotions/new`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors"
+              >
+                Crear primera promoción
+              </Link>
+            }
+          />
+        ) : (
           <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
-            <thead className="bg-zinc-50 dark:bg-zinc-900">
+            <thead className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-zinc-500 dark:text-zinc-400">Título</th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-500 dark:text-zinc-400 hidden sm:table-cell">Estado</th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-500 dark:text-zinc-400 hidden md:table-cell">Descuento</th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-500 dark:text-zinc-400 hidden lg:table-cell">Vigencia</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Título</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden sm:table-cell">Estado</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden md:table-cell">Descuento</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden lg:table-cell">Vigencia</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
               {promotions.map((p) => (
-                <tr key={p.id} className="bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+                <tr key={p.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
                     {p.title}
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLOR[p.status] ?? STATUS_COLOR.expired}`}>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${STATUS_COLOR[p.status] ?? STATUS_COLOR.expired}`}>
                       {STATUS_LABEL[p.status] ?? p.status}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 hidden md:table-cell">
                     {p.discount_label ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 hidden lg:table-cell text-xs">
+                  <td className="px-4 py-3 text-zinc-400 dark:text-zinc-500 hidden lg:table-cell text-xs tabular-nums">
                     {formatDate(p.starts_at)} → {formatDate(p.ends_at)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/negocios/${slug}/admin/promotions/${p.id}`}
-                      className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                      className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                     >
                       Editar
                     </Link>
@@ -141,8 +133,8 @@ export default async function PromotionsPage({ params, searchParams }: Props) {
               ))}
             </tbody>
           </table>
-        </div>
-      )}
+        )}
+      </div>
 
     </div>
   )

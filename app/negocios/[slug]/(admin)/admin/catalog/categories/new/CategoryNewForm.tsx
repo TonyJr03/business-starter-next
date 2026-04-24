@@ -17,7 +17,7 @@ export function CategoryNewForm({ slug }: Props) {
   )
 
   return (
-    <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
+    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
 
       {/* Error general */}
       {state && !state.ok && !state.field && (
@@ -104,7 +104,7 @@ export function CategoryNewForm({ slug }: Props) {
           <SubmitButton label="Crear categoría" pendingLabel="Creando..." />
           <Link
             href={`/negocios/${slug}/admin/catalog/categories`}
-            className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
           >
             Cancelar
           </Link>

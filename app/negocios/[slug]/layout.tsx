@@ -1,26 +1,21 @@
 ﻿/**
- * Layout público del tenant — M5
+ * Layout raíz del tenant — resuelve el negocio y aplica branding.
  *
  * Rutas cubiertas:
- * - /negocios/[slug]           → home pública
- * - /negocios/[slug]/login     → login del negocio
- * - /negocios/[slug]/(admin)/* → área admin (protegida por proxy.ts)
+ * - /negocios/[slug]/(public)/*  → rutas públicas (Header+Footer via su propio layout)
+ * - /negocios/[slug]/(admin)/*   → área admin (sidebar via su propio layout)
  *
- * Responsabilidades:
- * 1. Resuelve el negocio por slug → 404 si no existe
- * 2. Aplica el branding base del negocio vía CSS custom properties
- * 3. Renderiza Header y Footer reales del tenant
- * 4. Proporciona la estructura base (header / main / footer) a todas las páginas hijas
+ * Este layout SOLO se encarga de:
+ * 1. Resolver el negocio por slug → 404 si no existe
+ * 2. Aplicar el branding base del negocio vía CSS custom properties
+ * El Header y Footer viven en (public)/layout.tsx
  */
 
 import { notFound } from 'next/navigation'
 import { resolveBusinessBySlug } from '@/lib/tenant'
 import { globalConfig } from '@/config'
 import { buildBrandVars, getThemeKey } from '@/lib/branding'
-import { Header } from '@/components/public/Header'
-import { Footer } from '@/components/public/Footer'
 import type { ReactNode } from 'react'
-import type { BusinessSettings } from '@/lib/persistence'
 
 interface TenantLayoutProps {
   params: Promise<{ slug: string }>
@@ -30,15 +25,11 @@ interface TenantLayoutProps {
 export default async function TenantLayout({ params, children }: TenantLayoutProps) {
   const { slug } = await params
 
-  // Resolve tenant — notFound() lanza un error que Next.js captura
-  // y muestra app/not-found.tsx. Nunca llega al return si es null.
-  const business: BusinessSettings | null = await resolveBusinessBySlug(slug)
+  const business = await resolveBusinessBySlug(slug)
   if (!business) {
     notFound()
   }
 
-  // A partir de aquí, business es BusinessSettings (nunca null)
-  // tenantOverride → pendiente M6+ (cuando DB tenga columnas de branding)
   const brandVars = buildBrandVars(globalConfig.branding)
   const themeKey = getThemeKey(globalConfig.branding)
 
@@ -48,13 +39,7 @@ export default async function TenantLayout({ params, children }: TenantLayoutPro
       style={brandVars}
       data-theme={themeKey}
     >
-      <Header business={business} slug={slug} />
-
-      <main className="flex-1">
-        {children}
-      </main>
-
-      <Footer business={business} slug={slug} />
+      {children}
     </div>
   )
 }
