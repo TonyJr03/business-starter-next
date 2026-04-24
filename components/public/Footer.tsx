@@ -33,13 +33,7 @@ function buildFooterNav(slug: string): FooterSection[] {
 
   return [
     { title: 'Navegación', links: navLinks },
-    {
-      title: 'Legal',
-      links: [
-        { label: 'Privacidad', href: `${base}/privacidad` },
-        { label: 'Términos', href: `${base}/terminos` },
-      ],
-    },
+    // Nota: Legal (Privacidad, Términos) se añadirá en M7+ cuando las páginas existan
   ]
 }
 
