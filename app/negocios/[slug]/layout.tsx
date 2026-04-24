@@ -16,6 +16,7 @@
 import { notFound } from 'next/navigation'
 import { resolveBusinessBySlug } from '@/lib/tenant'
 import { globalConfig } from '@/config'
+import { buildBrandVars, getThemeKey } from '@/lib/branding'
 import { Header } from '@/components/public/Header'
 import { Footer } from '@/components/public/Footer'
 import type { ReactNode } from 'react'
@@ -24,22 +25,6 @@ import type { BusinessSettings } from '@/lib/persistence'
 interface TenantLayoutProps {
   params: Promise<{ slug: string }>
   children: ReactNode
-}
-
-/** Construye el objeto de CSS custom properties de marca para el tenant. */
-function buildBrandVars(branding: typeof globalConfig.branding): React.CSSProperties {
-  const { colors = {}, typography = {} } = branding
-  return {
-    '--color-primary':           colors.primary         ?? '#6F4E37',
-    '--color-secondary':         colors.secondary       ?? '#F5E6D3',
-    '--color-accent':            colors.accent          ?? '#D4A574',
-    '--color-footer-bg':         colors.footerBg        ?? '#111827',
-    '--color-footer-text':       colors.footerText      ?? '#FFFFFF',
-    '--color-footer-text-muted': colors.footerTextMuted ?? '#9CA3AF',
-    '--color-footer-border':     colors.footerBorder    ?? '#1F2937',
-    '--font-heading':            typography.heading     ?? "'Inter', system-ui, sans-serif",
-    '--font-body':               typography.body        ?? "'Inter', system-ui, sans-serif",
-  } as React.CSSProperties
 }
 
 export default async function TenantLayout({ params, children }: TenantLayoutProps) {
@@ -53,13 +38,15 @@ export default async function TenantLayout({ params, children }: TenantLayoutPro
   }
 
   // A partir de aquí, business es BusinessSettings (nunca null)
+  // tenantOverride → pendiente M6+ (cuando DB tenga columnas de branding)
   const brandVars = buildBrandVars(globalConfig.branding)
+  const themeKey = getThemeKey(globalConfig.branding)
 
   return (
     <div
       className="min-h-screen flex flex-col"
       style={brandVars}
-      data-theme={globalConfig.branding.themeKey ?? 'default'}
+      data-theme={themeKey}
     >
       <Header business={business} slug={slug} />
 
