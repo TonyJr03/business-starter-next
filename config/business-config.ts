@@ -171,7 +171,7 @@ const pageModules: PageModulesConfig = {
     navLabel: 'Contacto',
   },
   faq: {
-    enabled:  false,
+    enabled:  true,
     path:     '/faq',
     navLabel: 'FAQ',
     title:    'Preguntas Frecuentes',
@@ -184,14 +184,14 @@ const pageModules: PageModulesConfig = {
     },
   },
   gallery: {
-    enabled:  false,
+    enabled:  true,
     path:     '/gallery',
     navLabel: 'Galería',
     title:    'Galería',
     subtitle: 'Conoce nuestro espacio y nuestras creaciones.',
   },
   blog: {
-    enabled:  false,
+    enabled:  true,
     path:     '/blog',
     navLabel: 'Blog',
     title:    'Blog',
