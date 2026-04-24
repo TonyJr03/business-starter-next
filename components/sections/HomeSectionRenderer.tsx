@@ -29,12 +29,14 @@ import { CtaWhatsappSection } from './CtaWhatsappSection'
 import { globalConfig } from '@/config'
 import { homeFeatures } from '@/data'
 import type { SectionModuleEntry } from '@/types/section-modules'
+import type { DayHours } from '@/types'
 
 interface HomeSectionRendererProps {
   section: SectionModuleEntry
+  hours?: DayHours[] | null
 }
 
-export function HomeSectionRenderer({ section }: HomeSectionRendererProps) {
+export function HomeSectionRenderer({ section, hours }: HomeSectionRendererProps) {
   if (!section.enabled) return null
 
   switch (section.id) {
@@ -44,9 +46,11 @@ export function HomeSectionRenderer({ section }: HomeSectionRendererProps) {
     case 'highlights':
       return <HighlightsSection {...section.props} items={homeFeatures} />
 
-    case 'hours':
-      if (!globalConfig.hours.length) return null
-      return <OpeningHoursSection {...section.props} hours={globalConfig.hours} />
+    case 'hours': {
+      const effectiveHours = (hours && hours.length > 0) ? hours : globalConfig.hours
+      if (!effectiveHours.length) return null
+      return <OpeningHoursSection {...section.props} hours={effectiveHours} />
+    }
 
     case 'whatsapp_cta':
       if (!globalConfig.contact.whatsapp) return null

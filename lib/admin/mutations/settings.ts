@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { rowToBusinessSettings } from '@/lib/persistence'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { BusinessSettings } from '@/lib/persistence'
+import type { DayHours } from '@/types'
 
 // ─── Esquema de validación ────────────────────────────────────────────────────
 
@@ -30,6 +31,13 @@ export const settingsUpdateSchema = z.object({
   socialTelegram:   z.string().max(200).optional(),
   socialTwitter:    z.string().max(200).optional(),
   socialYoutube:    z.string().max(200).optional(),
+  // Horarios de atención — array de 7 días (Lunes a Domingo)
+  hours: z.array(z.object({
+    day:      z.string(),
+    open:     z.string(),
+    close:    z.string(),
+    isClosed: z.boolean(),
+  })).optional(),
 })
 
 export type SettingsUpdateInput = z.infer<typeof settingsUpdateSchema>
@@ -69,6 +77,7 @@ export async function updateSettings(
       city:              input.city       ?? null,
       country:           input.country    ?? null,
       social:            Object.keys(social).length > 0 ? social : null,
+      ...(input.hours !== undefined && { hours: input.hours as unknown as DayHours[] }),
     })
     .eq('id', ctx.businessId) // RLS: solo el negocio autenticado
     .select()

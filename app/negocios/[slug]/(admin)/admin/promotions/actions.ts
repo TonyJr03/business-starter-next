@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import {
   getAdminContext,
   promotionCreateSchema,
@@ -64,6 +65,7 @@ export async function createPromotionAction(
   const result = await createPromotion(ctxResult.ctx, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/promotions?created=1`)
 }
 
@@ -101,6 +103,7 @@ export async function updatePromotionAction(
   const result = await updatePromotion(ctxResult.ctx, id, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/promotions?updated=1`)
 }
 
@@ -119,5 +122,6 @@ export async function deletePromotionAction(
   const result = await deletePromotion(ctxResult.ctx, id)
   if (!result.ok) return { ok: false, error: result.error }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/promotions?deleted=1`)
 }

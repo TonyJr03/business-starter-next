@@ -6,6 +6,7 @@
 
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import type { DayHours } from '@/types'
 import { SettingsForm } from './SettingsForm'
 
 interface Props {
@@ -22,13 +23,14 @@ export default async function SettingsPage({ params, searchParams }: Props) {
 
   const { data: row } = await ctx.supabase
     .from('businesses')
-    .select('name, short_description, whatsapp, phone, email, address, city, country, social')
+    .select('name, short_description, whatsapp, phone, email, address, city, country, social, hours')
     .eq('id', ctx.businessId)
     .single()
 
   if (!row) notFound()
 
   const social = (row.social ?? {}) as Record<string, string>
+  const hours = (row.hours ?? null) as DayHours[] | null
 
   return (
     <div className="space-y-6 max-w-xl">
@@ -62,6 +64,7 @@ export default async function SettingsPage({ params, searchParams }: Props) {
           socialTelegram:   social.telegram   ?? '',
           socialTwitter:    social.twitter    ?? '',
           socialYoutube:    social.youtube    ?? '',
+          hours,
         }}
       />
 

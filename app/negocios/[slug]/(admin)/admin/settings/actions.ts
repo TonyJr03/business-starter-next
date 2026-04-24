@@ -1,12 +1,15 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import {
   getAdminContext,
   settingsUpdateSchema,
   updateSettings,
 } from '@/lib/admin'
 import type { AdminActionState } from '@/lib/admin'
+
+const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
 
 export async function updateSettingsAction(
   slug: string,
@@ -15,6 +18,14 @@ export async function updateSettingsAction(
 ): Promise<AdminActionState> {
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
+
+  // Extraer horarios (7 días fijos)
+  const hours = DAYS.map((day, i) => ({
+    day,
+    open:     String(formData.get(`hours_open_${i}`)   ?? '09:00'),
+    close:    String(formData.get(`hours_close_${i}`)  ?? '18:00'),
+    isClosed: formData.get(`hours_closed_${i}`) === 'on',
+  }))
 
   const raw = {
     name:             String(formData.get('name')             ?? ''),
@@ -30,6 +41,7 @@ export async function updateSettingsAction(
     socialTelegram:   String(formData.get('socialTelegram')   ?? '') || undefined,
     socialTwitter:    String(formData.get('socialTwitter')    ?? '') || undefined,
     socialYoutube:    String(formData.get('socialYoutube')    ?? '') || undefined,
+    hours,
   }
 
   const parsed = settingsUpdateSchema.safeParse(raw)
@@ -46,5 +58,6 @@ export async function updateSettingsAction(
   const result = await updateSettings(ctxResult.ctx, parsed.data)
   if (!result.ok) return { ok: false, error: result.error }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/settings?saved=1`)
 }

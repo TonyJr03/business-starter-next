@@ -11,6 +11,7 @@
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
 import { HomeSectionRenderer } from '@/components/sections/HomeSectionRenderer'
+import { resolveBusinessBySlug } from '@/lib/tenant'
 
 interface TenantHomeProps {
   params: Promise<{ slug: string }>
@@ -33,8 +34,8 @@ export async function generateMetadata({ params }: TenantHomeProps): Promise<Met
 }
 
 export default async function TenantHome({ params }: TenantHomeProps) {
-  // params consumed to satisfy Next.js dynamic route convention
-  await params
+  const { slug } = await params
+  const business = await resolveBusinessBySlug(slug)
 
   const activeSections = globalConfig.modules.sections
     .filter(s => s.enabled)
@@ -43,7 +44,7 @@ export default async function TenantHome({ params }: TenantHomeProps) {
   return (
     <>
       {activeSections.map(section => (
-        <HomeSectionRenderer key={section.id} section={section} />
+        <HomeSectionRenderer key={section.id} section={section} hours={business?.hours ?? null} />
       ))}
     </>
   )

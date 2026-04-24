@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import {
   getAdminContext,
   categoryCreateSchema,
@@ -42,6 +43,7 @@ export async function createCategoryAction(
   const result = await createCategory(ctxResult.ctx, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/catalog/categories?created=1`)
 }
 
@@ -77,6 +79,7 @@ export async function updateCategoryAction(
   const result = await updateCategory(ctxResult.ctx, id, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/catalog/categories?updated=1`)
 }
 
@@ -95,5 +98,6 @@ export async function deleteCategoryAction(
   const result = await deleteCategory(ctxResult.ctx, id)
   if (!result.ok) return { ok: false, error: result.error }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/catalog/categories?deleted=1`)
 }

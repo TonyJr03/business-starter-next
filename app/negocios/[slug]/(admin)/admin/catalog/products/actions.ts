@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import {
   getAdminContext,
   productCreateSchema,
@@ -47,6 +48,7 @@ export async function createProductAction(
   const result = await createProduct(ctxResult.ctx, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/catalog/products?created=1`)
 }
 
@@ -87,6 +89,7 @@ export async function updateProductAction(
   const result = await updateProduct(ctxResult.ctx, id, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/catalog/products?updated=1`)
 }
 
@@ -105,5 +108,6 @@ export async function deleteProductAction(
   const result = await deleteProduct(ctxResult.ctx, id)
   if (!result.ok) return { ok: false, error: result.error }
 
+  revalidatePath(`/negocios/${slug}`, 'layout')
   redirect(`/negocios/${slug}/admin/catalog/products?deleted=1`)
 }

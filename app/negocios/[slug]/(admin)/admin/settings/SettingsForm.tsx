@@ -4,6 +4,10 @@ import { useActionState } from 'react'
 import { SubmitButton } from '@/components/admin/SubmitButton'
 import { updateSettingsAction } from './actions'
 import type { AdminActionState } from '@/lib/admin'
+import type { DayHours } from '@/types'
+import { globalConfig } from '@/config'
+
+const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
 
 interface Defaults {
   name: string
@@ -19,6 +23,7 @@ interface Defaults {
   socialTelegram: string
   socialTwitter: string
   socialYoutube: string
+  hours: DayHours[] | null
 }
 
 interface Props {
@@ -242,6 +247,69 @@ export function SettingsForm({ slug, defaults }: Props) {
             />
           </div>
         ))}
+      </section>
+
+      {/* ── Horarios de atención ── */}
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 space-y-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
+          Horarios de atención
+        </h2>
+
+        <div className="space-y-3">
+          {/* Cabecera */}
+          <div className="hidden sm:grid sm:grid-cols-[8rem_1fr_1fr_5rem] gap-2 text-xs font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">
+            <span>Día</span>
+            <span>Apertura</span>
+            <span>Cierre</span>
+            <span className="text-center">Cerrado</span>
+          </div>
+
+          {DAYS.map((day, i) => {
+            const fallback = globalConfig.hours[i]
+            const saved    = defaults.hours?.[i]
+            const open     = saved?.open     ?? fallback?.open     ?? '09:00'
+            const close    = saved?.close    ?? fallback?.close    ?? '18:00'
+            const isClosed = saved?.isClosed ?? fallback?.isClosed ?? false
+
+            return (
+              <div key={day} className="grid grid-cols-2 sm:grid-cols-[8rem_1fr_1fr_5rem] gap-2 items-center">
+                <span className="col-span-2 sm:col-span-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  {day}
+                </span>
+
+                <div className="space-y-1">
+                  <label className="sm:hidden text-xs text-zinc-400">Apertura</label>
+                  <input
+                    type="time"
+                    name={`hours_open_${i}`}
+                    defaultValue={open}
+                    className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-2 py-1.5 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="sm:hidden text-xs text-zinc-400">Cierre</label>
+                  <input
+                    type="time"
+                    name={`hours_close_${i}`}
+                    defaultValue={close}
+                    className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-2 py-1.5 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors"
+                  />
+                </div>
+
+                <div className="flex justify-center items-center gap-1.5">
+                  <label className="sm:hidden text-xs text-zinc-400">Cerrado</label>
+                  <input
+                    type="checkbox"
+                    name={`hours_closed_${i}`}
+                    defaultChecked={isClosed}
+                    className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 focus:ring-zinc-900 dark:focus:ring-zinc-100"
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </section>
 
       {/* Guardar */}
