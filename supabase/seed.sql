@@ -7,12 +7,13 @@
 --
 -- ─── UUID legend ─────────────────────────────────────────────────────────────
 -- Los UUIDs son fijos para facilitar trazabilidad y reproducibilidad.
+-- Formato v4 válido (RFC 4122): tercer grupo '4xxx', cuarto grupo '8xxx'.
 -- Se declaran como variables en el bloque DO $$ — escritos una sola vez.
 --
---   Businesses:  10000000-0000-0000-0000-000000000001
---   Categories:  20000000-0000-0000-0000-00000000000X  (X = 1..3)
---   Products:    30000000-0000-0000-0000-00000000000X  (X = 1..10)
---   Promotions:  40000000-0000-0000-0000-00000000000X  (X = 1..4)
+--   Businesses:  10000000-0000-4000-8000-000000000001
+--   Categories:  20000000-0000-4000-8000-00000000000X  (X = 1..3)
+--   Products:    30000000-0000-4000-8000-00000000000X  (X = 1..10)
+--   Promotions:  40000000-0000-4000-8000-00000000000X  (X = 1..4)
 --
 -- ─── Nota sobre IDs en src/data/ (fallback TypeScript) ───────────────────────
 -- Los archivos src/data/*.ts usan IDs cortos legibles ('cat-1', 'prod-1', …)
@@ -43,34 +44,36 @@ TRUNCATE promotions, products, categories, businesses RESTART IDENTITY CASCADE;
 DO $$
 DECLARE
   -- ── Business ───────────────────────────────────────────────────────────────
-  biz     CONSTANT UUID := '10000000-0000-0000-0000-000000000001';
+  -- UUIDs usan versión 4 (tercer grupo '4xxx') y variante Leach-Salz (cuarto
+  -- grupo '8xxx') para ser RFC 4122 válidos y pasar la validación de Zod.
+  biz     CONSTANT UUID := '10000000-0000-4000-8000-000000000001';
 
   -- ── Categorías ────────────────────────────────────────────────────────────
-  cat_1   CONSTANT UUID := '20000000-0000-0000-0000-000000000001';  -- Cafés
-  cat_2   CONSTANT UUID := '20000000-0000-0000-0000-000000000002';  -- Bebidas frías
-  cat_3   CONSTANT UUID := '20000000-0000-0000-0000-000000000003';  -- Bocados
+  cat_1   CONSTANT UUID := '20000000-0000-4000-8000-000000000001';  -- Cafés
+  cat_2   CONSTANT UUID := '20000000-0000-4000-8000-000000000002';  -- Bebidas frías
+  cat_3   CONSTANT UUID := '20000000-0000-4000-8000-000000000003';  -- Bocados
 
   -- ── Productos ─────────────────────────────────────────────────────────────
   -- Cafés (cat_1)
-  p1      CONSTANT UUID := '30000000-0000-0000-0000-000000000001';  -- Café Cubano
-  p2      CONSTANT UUID := '30000000-0000-0000-0000-000000000002';  -- Cortadito
-  p3      CONSTANT UUID := '30000000-0000-0000-0000-000000000003';  -- Café con Leche
-  p4      CONSTANT UUID := '30000000-0000-0000-0000-000000000004';  -- Espresso Doble
+  p1      CONSTANT UUID := '30000000-0000-4000-8000-000000000001';  -- Café Cubano
+  p2      CONSTANT UUID := '30000000-0000-4000-8000-000000000002';  -- Cortadito
+  p3      CONSTANT UUID := '30000000-0000-4000-8000-000000000003';  -- Café con Leche
+  p4      CONSTANT UUID := '30000000-0000-4000-8000-000000000004';  -- Espresso Doble
   -- Bebidas frías (cat_2)
-  p5      CONSTANT UUID := '30000000-0000-0000-0000-000000000005';  -- Jugo de Guayaba
-  p6      CONSTANT UUID := '30000000-0000-0000-0000-000000000006';  -- Batido de Mango
-  p7      CONSTANT UUID := '30000000-0000-0000-0000-000000000007';  -- Agua de Coco
+  p5      CONSTANT UUID := '30000000-0000-4000-8000-000000000005';  -- Jugo de Guayaba
+  p6      CONSTANT UUID := '30000000-0000-4000-8000-000000000006';  -- Batido de Mango
+  p7      CONSTANT UUID := '30000000-0000-4000-8000-000000000007';  -- Agua de Coco
   -- Bocados (cat_3)
-  p8      CONSTANT UUID := '30000000-0000-0000-0000-000000000008';  -- Pastelito de Guayaba
-  p9      CONSTANT UUID := '30000000-0000-0000-0000-000000000009';  -- Tostada con Mantequilla *
-  p10     CONSTANT UUID := '30000000-0000-0000-0000-000000000010';  -- Croqueta de Jamón
+  p8      CONSTANT UUID := '30000000-0000-4000-8000-000000000008';  -- Pastelito de Guayaba
+  p9      CONSTANT UUID := '30000000-0000-4000-8000-000000000009';  -- Tostada con Mantequilla *
+  p10     CONSTANT UUID := '30000000-0000-4000-8000-000000000010';  -- Croqueta de Jamón
   -- * p9 is_available=false (temporalmente agotada); referenciada en promo1.
 
   -- ── Promociones ───────────────────────────────────────────────────────────
-  promo1  CONSTANT UUID := '40000000-0000-0000-0000-000000000001';  -- Desayuno Completo
-  promo2  CONSTANT UUID := '40000000-0000-0000-0000-000000000002';  -- Happy Hour del Café
-  promo3  CONSTANT UUID := '40000000-0000-0000-0000-000000000003';  -- Combo Amigos
-  promo4  CONSTANT UUID := '40000000-0000-0000-0000-000000000004';  -- Tarde de Batidos
+  promo1  CONSTANT UUID := '40000000-0000-4000-8000-000000000001';  -- Desayuno Completo
+  promo2  CONSTANT UUID := '40000000-0000-4000-8000-000000000002';  -- Happy Hour del Café
+  promo3  CONSTANT UUID := '40000000-0000-4000-8000-000000000003';  -- Combo Amigos
+  promo4  CONSTANT UUID := '40000000-0000-4000-8000-000000000004';  -- Tarde de Batidos
 
 BEGIN
 
