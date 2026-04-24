@@ -1,5 +1,5 @@
-/**
- * Layout del tenant
+﻿/**
+ * Layout público del tenant — M5
  *
  * Rutas cubiertas:
  * - /negocios/[slug]           → home pública
@@ -8,20 +8,38 @@
  *
  * Responsabilidades:
  * 1. Resuelve el negocio por slug → 404 si no existe
- * 2. Propaga el contexto del tenant a todas las páginas hijas
- *
- * TODO M5: reemplazar el header placeholder por MainLayout real.
+ * 2. Aplica el branding base del negocio vía CSS custom properties
+ * 3. Renderiza Header y Footer reales del tenant
+ * 4. Proporciona la estructura base (header / main / footer) a todas las páginas hijas
  */
 
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { resolveBusinessBySlug } from '@/lib/tenant'
+import { globalConfig } from '@/config'
+import { Header } from '@/components/public/Header'
+import { Footer } from '@/components/public/Footer'
 import type { ReactNode } from 'react'
 import type { BusinessSettings } from '@/lib/persistence'
 
 interface TenantLayoutProps {
   params: Promise<{ slug: string }>
   children: ReactNode
+}
+
+/** Construye el objeto de CSS custom properties de marca para el tenant. */
+function buildBrandVars(branding: typeof globalConfig.branding): React.CSSProperties {
+  const { colors = {}, typography = {} } = branding
+  return {
+    '--color-primary':           colors.primary         ?? '#6F4E37',
+    '--color-secondary':         colors.secondary       ?? '#F5E6D3',
+    '--color-accent':            colors.accent          ?? '#D4A574',
+    '--color-footer-bg':         colors.footerBg        ?? '#111827',
+    '--color-footer-text':       colors.footerText      ?? '#FFFFFF',
+    '--color-footer-text-muted': colors.footerTextMuted ?? '#9CA3AF',
+    '--color-footer-border':     colors.footerBorder    ?? '#1F2937',
+    '--font-heading':            typography.heading     ?? "'Inter', system-ui, sans-serif",
+    '--font-body':               typography.body        ?? "'Inter', system-ui, sans-serif",
+  } as React.CSSProperties
 }
 
 export default async function TenantLayout({ params, children }: TenantLayoutProps) {
@@ -35,57 +53,21 @@ export default async function TenantLayout({ params, children }: TenantLayoutPro
   }
 
   // A partir de aquí, business es BusinessSettings (nunca null)
-  const locationLabel = [business.city, business.country].filter(Boolean).join(', ')
+  const brandVars = buildBrandVars(globalConfig.branding)
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/*
-       * ── Header placeholder (M3) ────────────────────────────────────────────
-       * TODO M5: reemplazar por el componente Header real del negocio.
-       */}
-      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+    <div
+      className="min-h-screen flex flex-col"
+      style={brandVars}
+      data-theme={globalConfig.branding.themeKey ?? 'default'}
+    >
+      <Header business={business} slug={slug} />
 
-          {/* Identidad del negocio */}
-          <div>
-            <Link
-              href={`/negocios/${slug}`}
-              className="text-xl font-semibold hover:opacity-80 transition-opacity"
-            >
-              {business.name}
-            </Link>
-            {(business.shortDescription || locationLabel) && (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-                {business.shortDescription ?? locationLabel}
-              </p>
-            )}
-          </div>
-
-          {/* Accesos rápidos de desarrollo */}
-          <nav className="flex items-center gap-4 text-sm">
-            <Link
-              href={`/negocios/${slug}/admin`}
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
-            >
-              Admin
-            </Link>
-            <Link
-              href={`/negocios/${slug}/login`}
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
-            >
-              Login
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      {/*
-       * ── Contenido ──────────────────────────────────────────────────────────
-       * TODO M5: ajustar padding/estructura cuando llegue el layout real.
-       */}
-      <div className="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
+      <main className="flex-1">
         {children}
-      </div>
+      </main>
+
+      <Footer business={business} slug={slug} />
     </div>
   )
 }
