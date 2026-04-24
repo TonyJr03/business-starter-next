@@ -14,6 +14,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { globalConfig } from '@/config'
 import { MobileMenu } from './MobileMenu'
+import { NavLink } from './NavLink'
 import type { BusinessSettings } from '@/lib/persistence'
 import type { NavItem } from '@/types'
 import type { PageModuleConfig } from '@/types'
@@ -73,16 +74,12 @@ export function Header({ business, slug }: HeaderProps) {
           {/* Navegación desktop */}
           <nav className="hidden md:flex items-center gap-6">
             {nav.map((item) => (
-              <Link
+              <NavLink
                 key={item.href}
                 href={item.href}
-                target={item.isExternal ? '_blank' : undefined}
-                rel={item.isExternal ? 'noopener noreferrer' : undefined}
-                className="text-sm font-medium transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:underline"
-                style={{ color: 'var(--color-text-muted)' }}
-              >
-                {item.label}
-              </Link>
+                label={item.label}
+                isExternal={item.isExternal}
+              />
             ))}
 
             {/* CTA WhatsApp */}
