@@ -130,12 +130,22 @@ export function Footer({ business, slug }: FooterProps) {
 
         {/* Barra inferior */}
         <div
-          className="mt-10 border-t pt-6 text-center"
+          className="mt-10 border-t pt-6"
           style={{ borderColor: 'var(--color-footer-border)' }}
         >
-          <p className="text-xs" style={{ color: 'var(--color-footer-text-muted)' }}>
-            &copy; {currentYear} {business.name}. Todos los derechos reservados.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p className="text-xs" style={{ color: 'var(--color-footer-text-muted)' }}>
+              &copy; {currentYear} {business.name}. Todos los derechos reservados.
+            </p>
+            <Link
+              href="/"
+              className="text-xs transition-opacity hover:opacity-70"
+              style={{ color: 'var(--color-footer-text-muted)' }}
+              aria-label="Volver al directorio de negocios"
+            >
+              ← Directorio
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
