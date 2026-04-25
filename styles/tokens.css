@@ -91,9 +91,9 @@
      Familias sobreescribibles por el layout (igual que los colores de marca). */
 
   /* Familias */
-  --font-heading: 'Inter', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, sans-serif;
-  --font-mono:    ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  --font-heading: var(--font-geist-sans, 'Inter', system-ui, sans-serif);
+  --font-body:    var(--font-geist-sans, 'Inter', system-ui, sans-serif);
+  --font-mono:    var(--font-geist-mono, ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace);
 
   /* Tamaños — paralelos a la escala de Tailwind */
   --text-xs:   0.75rem;   /* 12px */
