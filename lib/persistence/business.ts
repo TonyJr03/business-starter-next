@@ -1,4 +1,4 @@
-import type { BusinessSocial, DayHours } from '@/types';
+import type { BusinessBranding, BusinessSocial, DayHours } from '@/types';
 import type { BusinessSettings, BusinessDirectoryItem } from '@/types';
 
 // ─── Settings row ─────────────────────────────────────────────────────────────
@@ -16,6 +16,7 @@ export interface BusinessSettingsRow {
   country: string | null;
   social: BusinessSocial | null;
   hours: DayHours[] | null;
+  branding: BusinessBranding | null;
 }
 
 export type BusinessSettingsInsertRow = Omit<BusinessSettingsRow, 'id'>;
@@ -34,6 +35,7 @@ export function rowToBusinessSettings(row: BusinessSettingsRow): BusinessSetting
     country:          row.country ?? undefined,
     social:           row.social ?? undefined,
     hours:            row.hours ?? undefined,
+    branding:         row.branding ?? undefined,
   };
 }
 

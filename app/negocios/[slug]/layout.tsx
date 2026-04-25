@@ -7,7 +7,8 @@
  *
  * Este layout SOLO se encarga de:
  * 1. Resolver el negocio por slug → 404 si no existe
- * 2. Aplicar el branding base del negocio vía CSS custom properties
+ * 2. Aplicar el branding del negocio vía CSS custom properties
+ *    Prioridad: business.branding (DB) → globalConfig.branding → BRAND_DEFAULTS
  * El Header y Footer viven en (public)/layout.tsx
  */
 
@@ -30,8 +31,9 @@ export default async function TenantLayout({ params, children }: TenantLayoutPro
     notFound()
   }
 
-  const brandVars = buildBrandVars(globalConfig.branding)
-  const themeKey = getThemeKey(globalConfig.branding)
+  // Branding: DB override por tenant > config estático del starter > defaults del sistema
+  const brandVars = buildBrandVars(globalConfig.branding, business.branding)
+  const themeKey = getThemeKey(globalConfig.branding, business.branding)
 
   return (
     <div

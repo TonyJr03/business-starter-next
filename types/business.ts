@@ -1,4 +1,4 @@
-import type { BusinessSocial, DayHours } from './business-config';
+import type { BusinessBranding, BusinessSocial, DayHours } from './business-config';
 
 // ─── Settings del negocio (desde DB) ─────────────────────────────────────────
 
@@ -20,6 +20,8 @@ export interface BusinessSettings {
   country?: string;
   social?: BusinessSocial;
   hours?: DayHours[];
+  /** Branding visual del tenant. Si es undefined, el layout usa globalConfig.branding como fallback. */
+  branding?: BusinessBranding;
 }
 
 // ─── Directorio público de negocios ──────────────────────────────────────────

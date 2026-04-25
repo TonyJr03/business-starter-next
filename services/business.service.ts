@@ -58,7 +58,7 @@ async function fetchBusinessSettingsFromDB(
   let query = db
     .from('businesses')
     .select(
-      'id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours',
+      'id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours, branding',
     );
 
   if (targetSlug) {

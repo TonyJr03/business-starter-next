@@ -1,11 +1,10 @@
 import { cache } from 'react'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import type { BusinessSettings, BusinessDirectoryItem } from '@/types';
 import {
   rowToBusinessSettings,
   rowToBusinessDirectoryItem,
-  type BusinessSettings,
   type BusinessSettingsRow,
-  type BusinessDirectoryItem,
   type BusinessDirectoryRow,
 } from '@/lib/persistence'
 
@@ -24,7 +23,7 @@ export const resolveBusinessBySlug = cache(
 
     const { data, error } = await supabase
       .from('businesses')
-      .select('id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours')
+      .select('id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours, branding')
       .eq('slug', slug)
       .single<BusinessSettingsRow>()
 
