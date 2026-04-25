@@ -7,6 +7,7 @@
  * Los ítems se pasan como prop — el renderer los inyecta desde data/highlights.ts.
  */
 import { Section } from '@/components/ui/Section'
+import { SectionHeading } from '@/components/ui/SectionHeading'
 import type { HighlightsSectionProps } from '@/types/section-modules'
 import type { ContentFeature } from '@/types'
 
@@ -31,25 +32,8 @@ export function HighlightsSection({
   return (
     <Section bg={bg} size={size}>
 
-      {(title || subtitle) && (
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          {title && (
-            <h2
-              className="text-3xl font-bold mb-3"
-              style={{ color: 'var(--color-primary)' }}
-            >
-              {title}
-            </h2>
-          )}
-          {subtitle && (
-            <p
-              className="text-base leading-relaxed"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
-              {subtitle}
-            </p>
-          )}
-        </div>
+      {title && (
+        <SectionHeading title={title} subtitle={subtitle} className="mb-12 max-w-2xl mx-auto" />
       )}
 
       <ul className={`grid gap-6 ${gridClass[columns ?? 3]}`}>

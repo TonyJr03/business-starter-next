@@ -6,6 +6,7 @@
  *
  * Equivalente de BlogPostCard.astro.
  */
+import Link from 'next/link'
 import type { BlogPost } from '@/types'
 
 interface BlogPostCardProps {
@@ -25,7 +26,7 @@ export function BlogPostCard({ post, href }: BlogPostCardProps) {
   const formattedDate = dateFormatter.format(new Date(`${post.publishedAt}T00:00:00`))
 
   return (
-    <a
+    <Link
       href={href}
       className="group flex flex-col h-full rounded-2xl border overflow-hidden transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
       style={{
@@ -89,6 +90,6 @@ export function BlogPostCard({ post, href }: BlogPostCardProps) {
         </span>
 
       </div>
-    </a>
+    </Link>
   )
 }

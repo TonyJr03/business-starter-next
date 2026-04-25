@@ -7,6 +7,7 @@
  * Los horarios se pasan como prop — el renderer los inyecta desde globalConfig.hours.
  */
 import { Section } from '@/components/ui/Section'
+import { SectionHeading } from '@/components/ui/SectionHeading'
 import type { HoursSectionProps } from '@/types/section-modules'
 import type { DayHours } from '@/types'
 
@@ -24,14 +25,7 @@ export function OpeningHoursSection({
     <Section bg={bg} size={size}>
       <div className="max-w-lg mx-auto">
 
-        <div className="text-center mb-8">
-          <h2
-            className="text-3xl font-bold"
-            style={{ color: 'var(--color-primary)' }}
-          >
-            {title}
-          </h2>
-        </div>
+        <SectionHeading title={title} className="mb-8" />
 
         <ul
           className="rounded-xl overflow-hidden border divide-y"

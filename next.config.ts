@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      {
+        // Picsum Photos — imágenes placeholder de desarrollo/demo
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
     ],
   },
 };

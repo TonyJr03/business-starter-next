@@ -8,6 +8,7 @@
  * Equivalente de FaqSection.astro.
  */
 import { Section } from '@/components/ui/Section'
+import { SectionHeading } from '@/components/ui/SectionHeading'
 import type { FaqItem } from '@/types'
 
 interface FaqSectionProps {
@@ -38,26 +39,7 @@ export function FaqSection({
     <Section bg={bg} size={size}>
       <div className="max-w-3xl mx-auto">
 
-        {(title || subtitle) && (
-          <div className="text-center mb-10">
-            {title && (
-              <h2
-                className="text-2xl font-bold"
-                style={{ color: 'var(--color-text)' }}
-              >
-                {title}
-              </h2>
-            )}
-            {subtitle && (
-              <p
-                className="mt-2 text-base"
-                style={{ color: 'var(--color-text-muted)' }}
-              >
-                {subtitle}
-              </p>
-            )}
-          </div>
-        )}
+        {title && <SectionHeading title={title} subtitle={subtitle} />}
 
         <div className="space-y-10">
           {Object.entries(grouped).map(([category, groupItems]) => (
