@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState } from 'react'
-import { SubmitButton } from '@/components/admin/SubmitButton'
+import { AdminAlert, SubmitButton, fieldInputCls } from '@/components/admin'
 import { updateSettingsAction } from './actions'
 import type { AdminActionState } from '@/lib/admin'
 import type { DayHours } from '@/types'
@@ -45,9 +45,7 @@ export function SettingsForm({ slug, defaults }: Props) {
 
       {/* Error general */}
       {state && !state.ok && !state.field && (
-        <div className="rounded-md bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-800 dark:text-red-200" role="alert">
-          {state.error}
-        </div>
+        <AdminAlert type="error" message={state.error} />
       )}
 
       {/* ── Información básica ── */}
@@ -69,9 +67,7 @@ export function SettingsForm({ slug, defaults }: Props) {
             maxLength={200}
             defaultValue={defaults.name}
             autoFocus
-            className={`w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors ${
-              fieldError('name') ? 'border-red-400 dark:border-red-600' : 'border-zinc-300 dark:border-zinc-700'
-            }`}
+            className={fieldInputCls(!!fieldError('name'))}
           />
           {fieldError('name') && (
             <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('name')}</p>
@@ -89,7 +85,7 @@ export function SettingsForm({ slug, defaults }: Props) {
             rows={2}
             maxLength={300}
             defaultValue={defaults.shortDescription}
-            className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors resize-none"
+            className={fieldInputCls(!!fieldError('shortDescription'))}
           />
           {fieldError('shortDescription') && (
             <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('shortDescription')}</p>
@@ -148,9 +144,7 @@ export function SettingsForm({ slug, defaults }: Props) {
             maxLength={200}
             defaultValue={defaults.email}
             placeholder="contacto@negocio.com"
-            className={`w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors ${
-              fieldError('email') ? 'border-red-400 dark:border-red-600' : 'border-zinc-300 dark:border-zinc-700'
-            }`}
+            className={fieldInputCls(!!fieldError('email'))}
           />
           {fieldError('email') && (
             <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('email')}</p>

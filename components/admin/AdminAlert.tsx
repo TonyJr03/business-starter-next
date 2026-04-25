@@ -2,7 +2,7 @@ type AlertType = 'success' | 'error' | 'neutral'
 
 interface AdminAlertProps {
   type: AlertType
-  message: string
+  message: string | undefined
 }
 
 const styles: Record<AlertType, string> = {
@@ -15,9 +15,10 @@ const styles: Record<AlertType, string> = {
 }
 
 export function AdminAlert({ type, message }: AdminAlertProps) {
+  if (!message) return null
   return (
     <div
-      className={`rounded-r-lg px-4 py-3 text-sm ${styles[type]}`}
+      className={`mb-4 rounded-r-lg px-4 py-3 text-sm ${styles[type]}`}
       role={type === 'error' ? 'alert' : 'status'}
     >
       {message}

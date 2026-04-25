@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react'
 import Link from 'next/link'
-import { SubmitButton } from '@/components/admin/SubmitButton'
+import { AdminAlert, SubmitButton, fieldInputCls } from '@/components/admin'
 import { createCategoryAction } from '../actions'
 import type { AdminActionState } from '@/lib/admin'
 
@@ -16,14 +16,15 @@ export function CategoryNewForm({ slug }: Props) {
     null,
   )
 
+  const fieldError = (field: string) =>
+    state && !state.ok && state.field === field ? state.error : undefined
+
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
 
       {/* Error general */}
       {state && !state.ok && !state.field && (
-        <div className="mb-4 rounded-md bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-800 dark:text-red-200" role="alert">
-          {state.error}
-        </div>
+        <AdminAlert type="error" message={state.error} />
       )}
 
       <form action={formAction} className="space-y-5" noValidate>
@@ -40,14 +41,10 @@ export function CategoryNewForm({ slug }: Props) {
             required
             maxLength={100}
             autoFocus
-            className={`w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors ${
-              state && !state.ok && state.field === 'name'
-                ? 'border-red-400 dark:border-red-600'
-                : 'border-zinc-300 dark:border-zinc-700'
-            }`}
+            className={fieldInputCls(!!fieldError('name'))}
           />
-          {state && !state.ok && state.field === 'name' && (
-            <p className="text-xs text-red-600 dark:text-red-400" role="alert">{state.error}</p>
+          {fieldError('name') && (
+            <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('name')}</p>
           )}
           <p className="text-xs text-zinc-500 dark:text-zinc-400">El slug se genera automáticamente desde el nombre.</p>
         </div>
@@ -62,7 +59,7 @@ export function CategoryNewForm({ slug }: Props) {
             name="description"
             rows={3}
             maxLength={500}
-            className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors resize-none"
+            className={fieldInputCls()}
           />
         </div>
 

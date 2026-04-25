@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react'
 import Link from 'next/link'
-import { SubmitButton } from '@/components/admin/SubmitButton'
+import { AdminAlert, SubmitButton, fieldInputCls } from '@/components/admin'
 import { updatePromotionAction, deletePromotionAction } from '../actions'
 import type { AdminActionState } from '@/lib/admin'
 
@@ -47,9 +47,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
 
         {/* Error general */}
         {updateState && !updateState.ok && !updateState.field && (
-          <div className="mb-4 rounded-md bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-800 dark:text-red-200" role="alert">
-            {updateState.error}
-          </div>
+          <AdminAlert type="error" message={updateState.error} />
         )}
 
         <form action={updateFormAction} className="space-y-5" noValidate>
@@ -67,9 +65,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
               maxLength={200}
               defaultValue={promotion.title}
               autoFocus
-              className={`w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors ${
-                fieldError('title') ? 'border-red-400 dark:border-red-600' : 'border-zinc-300 dark:border-zinc-700'
-              }`}
+              className={fieldInputCls(!!fieldError('title'))}
             />
             {fieldError('title') && (
               <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('title')}</p>
@@ -136,9 +132,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
                 id="startsAt"
                 name="startsAt"
                 defaultValue={promotion.startsAt}
-                className={`w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors ${
-                  fieldError('startsAt') ? 'border-red-400 dark:border-red-600' : 'border-zinc-300 dark:border-zinc-700'
-                }`}
+                className={fieldInputCls(!!fieldError('startsAt'))}
               />
               {fieldError('startsAt') && (
                 <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('startsAt')}</p>
@@ -153,9 +147,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
                 id="endsAt"
                 name="endsAt"
                 defaultValue={promotion.endsAt}
-                className={`w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors ${
-                  fieldError('endsAt') ? 'border-red-400 dark:border-red-600' : 'border-zinc-300 dark:border-zinc-700'
-                }`}
+                className={fieldInputCls(!!fieldError('endsAt'))}
               />
               {fieldError('endsAt') && (
                 <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('endsAt')}</p>
@@ -259,9 +251,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
         </p>
 
         {deleteState && !deleteState.ok && (
-          <div className="mb-4 rounded-md bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 text-sm text-red-800 dark:text-red-200" role="alert">
-            {deleteState.error}
-          </div>
+          <AdminAlert type="error" message={deleteState.error} />
         )}
 
         <form action={deleteFormAction}>
