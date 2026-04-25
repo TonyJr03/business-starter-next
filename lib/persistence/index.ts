@@ -171,3 +171,35 @@ export function rowToBusinessSettings(row: BusinessSettingsRow): BusinessSetting
     hours:            row.hours ?? undefined,
   };
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+// DIRECTORIO PÚBLICO DE NEGOCIOS
+// Subconjunto ligero de BusinessSettings para el listado en la plataforma.
+// Solo los campos necesarios para renderizar una tarjeta de directorio.
+// ═════════════════════════════════════════════════════════════════════════════
+
+export interface BusinessDirectoryRow {
+  id: string;
+  slug: string;
+  name: string;
+  short_description: string | null;
+  city: string | null;
+}
+
+export interface BusinessDirectoryItem {
+  id: string;
+  slug: string;
+  name: string;
+  shortDescription?: string;
+  city?: string;
+}
+
+export function rowToBusinessDirectoryItem(row: BusinessDirectoryRow): BusinessDirectoryItem {
+  return {
+    id:               row.id,
+    slug:             row.slug,
+    name:             row.name,
+    shortDescription: row.short_description ?? undefined,
+    city:             row.city ?? undefined,
+  };
+}
