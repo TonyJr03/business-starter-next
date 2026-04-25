@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { rowToBusinessSettings } from '@/lib/persistence'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
-import type { BusinessSettings } from '@/lib/persistence'
+import type { BusinessSettings } from '@/types'
 import type { DayHours } from '@/types'
 
 // ─── Esquema de validación ────────────────────────────────────────────────────

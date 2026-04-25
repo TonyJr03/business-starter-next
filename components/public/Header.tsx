@@ -15,7 +15,7 @@ import Image from 'next/image'
 import { globalConfig } from '@/config'
 import { MobileMenu } from './MobileMenu'
 import { NavLink } from './NavLink'
-import type { BusinessSettings } from '@/lib/persistence'
+import type { BusinessSettings } from '@/types'
 import type { NavItem } from '@/types'
 import type { PageModuleConfig } from '@/types'
 

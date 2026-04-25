@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { BusinessDirectoryItem } from '@/lib/persistence'
+import type { BusinessDirectoryItem } from '@/types'
 
 interface BusinessCardProps {
   business: BusinessDirectoryItem

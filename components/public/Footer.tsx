@@ -12,7 +12,7 @@
 
 import Link from 'next/link'
 import { globalConfig } from '@/config'
-import type { BusinessSettings } from '@/lib/persistence'
+import type { BusinessSettings } from '@/types'
 import type { NavItem, FooterSection } from '@/types'
 import type { PageModuleConfig } from '@/types'
 

@@ -1,8 +1,8 @@
 import { globalConfig } from '@/config';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import type { BusinessSettings } from '@/types'
 import {
   type BusinessSettingsRow,
-  type BusinessSettings,
   rowToBusinessSettings,
 } from '@/lib/persistence';
 
