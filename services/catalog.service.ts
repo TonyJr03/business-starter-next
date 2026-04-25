@@ -1,6 +1,6 @@
 import type { Category, Product } from '@/types';
 import { categories as localCategories, products as localProducts } from '@/data';
-import { getSupabaseBrowserClient } from '@/lib/supabase/client';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import {
   type CategoryRow,
   type ProductRow,
@@ -41,8 +41,8 @@ export interface ProductFilters {
 // lo que activa el fallback a datos locales en cada función pública.
 
 async function fetchCategoriesFromDB(): Promise<Category[] | null> {
-  const db = getSupabaseBrowserClient();
-  if (!db) return null;
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+  const db = await createSupabaseServerClient();
 
   const { data, error } = await db
     .from('categories')
@@ -63,8 +63,8 @@ async function fetchCategoriesFromDB(): Promise<Category[] | null> {
 }
 
 async function fetchProductsFromDB(filters?: ProductFilters): Promise<Product[] | null> {
-  const db = getSupabaseBrowserClient();
-  if (!db) return null;
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+  const db = await createSupabaseServerClient();
 
   let query = db.from('products').select('*').order('sort_order');
 
@@ -97,8 +97,8 @@ async function fetchProductsFromDB(filters?: ProductFilters): Promise<Product[] 
 }
 
 async function fetchProductBySlugFromDB(slug: string): Promise<Product | null> {
-  const db = getSupabaseBrowserClient();
-  if (!db) return null;
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+  const db = await createSupabaseServerClient();
 
   const { data, error } = await db
     .from('products')
