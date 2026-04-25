@@ -2,7 +2,6 @@
  * CtaWhatsappSection — Server Component
  *
  * Sección de llamada a la acción con enlace directo a WhatsApp.
- * Equivalente de CtaWhatsappSection.astro.
  */
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'

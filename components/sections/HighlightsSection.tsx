@@ -2,7 +2,7 @@
  * HighlightsSection — Server Component
  *
  * Grid de características / propuesta de valor del negocio.
- * Equivalente de FeatureSection.astro, con nombre alineado al id de config ('highlights').
+ * Nombre alineado al id de config ('highlights').
  *
  * Los ítems se pasan como prop — el renderer los inyecta desde data/highlights.ts.
  */

@@ -3,8 +3,6 @@
  *
  * Card de vista previa de artículo para el listado del blog.
  * El href recibe el path completo para respetar el tenant path-based.
- *
- * Equivalente de BlogPostCard.astro.
  */
 import Link from 'next/link'
 import type { BlogPost } from '@/types'

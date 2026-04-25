@@ -2,7 +2,6 @@
  * Button — Server Component
  *
  * Botón / enlace reutilizable con variantes de estilo.
- * Equivalente de Button.astro.
  */
 import Link from 'next/link'
 import type { ReactNode } from 'react'

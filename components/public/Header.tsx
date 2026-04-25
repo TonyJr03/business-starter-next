@@ -2,7 +2,6 @@
  * Header — Server Component
  *
  * Cabecera del sitio público del negocio.
- * Equivalente de Header.astro, adaptado al contexto multi-tenant de Next.js.
  *
  * - Logo / nombre del negocio como enlace a la home del tenant
  * - Navegación desktop construida desde los módulos de página activos

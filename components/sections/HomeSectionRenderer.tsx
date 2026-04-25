@@ -5,15 +5,13 @@
  * Recibe una entrada de configuración tipada (SectionModuleEntry) y renderiza
  * el componente correspondiente.
  *
- * Equivalente de HomeSectionRenderer.astro.
- *
- * Secciones implementadas en M5:
+ * Secciones implementadas:
  *   - hero         → HeroSection
  *   - highlights   → HighlightsSection (+ homeFeatures de data/)
  *   - hours        → OpeningHoursSection (+ globalConfig.hours)
  *   - whatsapp_cta → CtaWhatsappSection
  *
- * Secciones pendientes (M6+):
+ * Secciones pendientes:
  *   - promotions, testimonials, location → se omiten silenciosamente
  *
  * Para añadir una sección nueva:

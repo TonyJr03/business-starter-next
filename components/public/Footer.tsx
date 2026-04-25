@@ -2,7 +2,6 @@
  * Footer — Server Component
  *
  * Pie de página del sitio público del negocio.
- * Equivalente de Footer.astro, adaptado al contexto multi-tenant de Next.js.
  *
  * - Nombre e identificación del negocio (datos del tenant desde BD)
  * - Redes sociales del tenant

@@ -4,8 +4,6 @@
  * Lista de preguntas frecuentes con acordeón nativo (<details>/<summary>).
  * Sin JavaScript — interactividad gestionada por el navegador.
  * Soporta agrupación por categoría cuando los ítems tienen `category`.
- *
- * Equivalente de FaqSection.astro.
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'

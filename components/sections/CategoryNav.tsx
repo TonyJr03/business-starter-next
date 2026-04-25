@@ -4,8 +4,6 @@
  * Barra sticky de navegación por anclas entre categorías del catálogo.
  * Renderiza enlaces #slug hacia cada sección. Scroll horizontal en móvil.
  * Se omite si hay una sola categoría.
- *
- * Equivalente de CategoryNav.astro.
  */
 import type { Category } from '@/types'
 

@@ -10,8 +10,6 @@
  *  - 'upcoming' → aún no comenzó (color info)
  *  - 'paused'   → en pausa temporal (color warning)
  *  - 'expired'  → venció o está inactiva (gris)
- *
- * Equivalente de PromotionCard.astro.
  */
 import type { Promotion } from '@/types'
 

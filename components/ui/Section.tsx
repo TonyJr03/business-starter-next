@@ -2,7 +2,6 @@
  * Section — Server Component
  *
  * Wrapper de sección con ancho máximo, padding vertical y fondo configurable.
- * Equivalente de Section.astro.
  *
  * @prop bg    - Color de fondo de la sección
  * @prop size  - Padding vertical

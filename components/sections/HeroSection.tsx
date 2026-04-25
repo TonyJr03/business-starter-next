@@ -2,7 +2,6 @@
  * HeroSection — Server Component
  *
  * Sección hero configurable, desacoplada del dominio.
- * Equivalente de HeroSection.astro.
  */
 import { Button } from '@/components/ui/Button'
 import type { HeroSectionProps } from '@/types/section-modules'

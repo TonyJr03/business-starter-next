@@ -3,8 +3,6 @@
  *
  * Grid responsivo de imágenes con caption opcional.
  * Renderiza imágenes en layout de columnas múltiples con hover suave.
- *
- * Equivalente de GalleryGrid.astro.
  */
 import Image from 'next/image'
 import { Section } from '@/components/ui/Section'

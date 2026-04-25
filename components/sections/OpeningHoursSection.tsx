@@ -2,7 +2,6 @@
  * OpeningHoursSection — Server Component
  *
  * Tabla de horarios de atención del negocio.
- * Equivalente de OpeningHoursSection.astro.
  *
  * Los horarios se pasan como prop — el renderer los inyecta desde globalConfig.hours.
  */

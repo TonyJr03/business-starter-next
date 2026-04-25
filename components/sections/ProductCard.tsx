@@ -7,8 +7,6 @@
  * La acción de pedido se pasa como `orderHref` (enlace WhatsApp actual).
  * Cuando el módulo de carrito esté activo, el consumidor no pasará `orderHref`
  * y el slot de acción quedará vacío.
- *
- * Equivalente de ProductCard.astro.
  */
 import type { Product } from '@/types'
 
