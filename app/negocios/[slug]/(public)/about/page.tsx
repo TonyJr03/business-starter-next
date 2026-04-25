@@ -12,7 +12,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
-import { resolveBusinessBySlug } from '@/lib/tenant'
+import { resolveBusinessBySlug } from '@/services/business.service'
 import { aboutContent } from '@/data'
 import { Section } from '@/components/ui/Section'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'

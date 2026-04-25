@@ -1,6 +1,6 @@
 import { getUser } from '@/lib/auth'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { resolveBusinessBySlug } from '@/lib/tenant'
+import { resolveBusinessBySlug } from '@/services/business.service'
 
 // ─── Tipos del cliente Supabase ───────────────────────────────────────────────
 

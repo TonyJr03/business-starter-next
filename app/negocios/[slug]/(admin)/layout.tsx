@@ -19,7 +19,7 @@ import { redirect } from 'next/navigation'
 import { getUser } from '@/lib/auth'
 import { logoutAction } from '@/actions/auth'
 import { AdminNav } from '@/components/admin/AdminNav'
-import { resolveBusinessBySlug } from '@/lib/tenant'
+import { resolveBusinessBySlug } from '@/services/business.service'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 

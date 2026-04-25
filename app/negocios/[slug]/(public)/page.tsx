@@ -11,7 +11,7 @@
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
 import { HomeSectionRenderer } from '@/components/sections/HomeSectionRenderer'
-import { resolveBusinessBySlug } from '@/lib/tenant'
+import { resolveBusinessBySlug } from '@/services/business.service'
 
 interface TenantHomeProps {
   params: Promise<{ slug: string }>

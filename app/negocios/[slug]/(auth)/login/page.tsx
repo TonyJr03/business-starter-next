@@ -11,7 +11,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LoginForm } from './login-form'
 import { getUser } from '@/lib/auth'
-import { resolveBusinessBySlug } from '@/lib/tenant'
+import { resolveBusinessBySlug } from '@/services/business.service'
 
 interface LoginPageProps {
   params: Promise<{ slug: string }>

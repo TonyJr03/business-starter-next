@@ -7,7 +7,7 @@
  * una segunda consulta a la base de datos.
  */
 import { notFound } from 'next/navigation'
-import { resolveBusinessBySlug } from '@/lib/tenant'
+import { resolveBusinessBySlug } from '@/services/business.service'
 import { Header } from '@/components/public/Header'
 import { Footer } from '@/components/public/Footer'
 import type { ReactNode } from 'react'
