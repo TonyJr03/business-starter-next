@@ -1,55 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Business Starter — Next.js
 
-## Getting Started
+Plantilla multi-tenant para sitios web de negocios locales. Construida con Next.js (App Router), Supabase y Tailwind CSS v4.
 
-### Environment Setup
+## Stack
 
-Copy `.env.example` to `.env.local` and fill in your Supabase configuration:
+- **Next.js** — App Router, Server Components, Server Actions
+- **Supabase** — base de datos PostgreSQL + autenticación
+- **Tailwind CSS v4** — estilos con design tokens en `styles/tokens.css`
+- **TypeScript** — modo estricto
+
+## Estructura
+
+```
+app/
+  negocios/[slug]/
+    (public)/     # Sitio público del negocio
+    (admin)/      # Panel de administración (protegido)
+components/       # UI, secciones, admin
+config/           # Configuración por defecto del negocio
+data/             # Datos locales de ejemplo
+lib/              # Supabase, persistencia, tenant, admin
+services/         # Capa de acceso a datos
+types/            # Tipos TypeScript compartidos
+supabase/         # Migraciones y seed
+```
+
+## Puesta en marcha
+
+### 1. Variables de entorno
+
+Copia el fichero de ejemplo y rellena tus credenciales de Supabase:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Required variables:
-- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — Supabase anon/public key
+Variables requeridas:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
-For local development with Supabase, use the Supabase CLI:
+### 2. Base de datos
+
+Con Supabase CLI en local:
+
 ```bash
 supabase start
+supabase db push
 ```
 
-### Development
+O aplica las migraciones de `supabase/migrations/` en tu proyecto cloud.
 
-First, run the development server:
+### 3. Desarrollo
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Multi-tenant
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Cada negocio tiene su propia ruta `/negocios/[slug]/`. El slug se resuelve desde la cabecera `x-tenant-slug` inyectada por `proxy.ts` (middleware).
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El panel de administración está en `/negocios/[slug]/admin/` y requiere autenticación mediante Supabase Auth.
