@@ -20,11 +20,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { identity } = globalConfig
 
   return {
-    title: `Galería · ${identity.name}`,
+    title: 'Galería',
     description: `Conoce el espacio, los productos y el equipo de ${identity.name} a través de nuestra galería de imágenes.`,
     openGraph: {
-      title: `Galería · ${identity.name}`,
-      description: `Conoce el espacio, los productos y el equipo de ${identity.name} a través de nuestra galería de imágenes.`,
       url: `/negocios/${slug}/gallery`,
     },
   }

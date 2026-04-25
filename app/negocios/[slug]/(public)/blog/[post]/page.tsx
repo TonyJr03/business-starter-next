@@ -18,21 +18,18 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { post: postSlug } = await params
+  const { slug, post: postSlug } = await params
   const blogPost = await getPostBySlug(postSlug)
 
   if (!blogPost) {
     return { title: 'Artículo no encontrado' }
   }
 
-  const { identity } = globalConfig
-
   return {
-    title: `${blogPost.title} · ${identity.name}`,
+    title: blogPost.title,
     description: blogPost.summary,
     openGraph: {
-      title: blogPost.title,
-      description: blogPost.summary,
+      url: `/negocios/${slug}/blog/${postSlug}`,
     },
   }
 }

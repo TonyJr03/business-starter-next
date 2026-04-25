@@ -13,6 +13,7 @@
  */
 
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { resolveBusinessBySlug } from '@/lib/tenant'
 import { globalConfig } from '@/config'
 import { buildBrandVars, getThemeKey } from '@/lib/branding'
@@ -21,6 +22,39 @@ import type { ReactNode } from 'react'
 interface TenantLayoutProps {
   params: Promise<{ slug: string }>
   children: ReactNode
+}
+
+/**
+ * Metadata del tenant: establece el template de título y los datos base
+ * de OpenGraph para todas las rutas hijas.
+ *
+ * Jerarquía de títulos:
+ *   Root layout   → "%s | Business Starter"  (plataforma)
+ *   Tenant layout → "%s · ${business.name}"  (sobreescribe para el subtree)
+ *   Página        → "Catálogo"               (solo el nombre corto)
+ *   Resultado     → "Catálogo · Café La Esquina"
+ *
+ * La home del tenant usa `title.absolute` para poner la marca primero.
+ */
+export async function generateMetadata({ params }: TenantLayoutProps): Promise<Metadata> {
+  const { slug } = await params
+  const business = await resolveBusinessBySlug(slug)
+
+  if (!business) return {}
+
+  const { identity, seoDefaults } = globalConfig
+
+  return {
+    title: {
+      template: `%s · ${business.name}`,
+      default: business.name,
+    },
+    description: business.shortDescription ?? identity.shortDescription ?? identity.description,
+    openGraph: {
+      siteName: business.name,
+      images: seoDefaults.ogImage ? [{ url: seoDefaults.ogImage }] : undefined,
+    },
+  }
 }
 
 export default async function TenantLayout({ params, children }: TenantLayoutProps) {

@@ -27,11 +27,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { identity, seoDefaults } = globalConfig
 
   return {
-    title: `Catálogo · ${identity.name}`,
-    description: `Explora el catálogo completo de ${identity.name}. ${seoDefaults.defaultDescription ?? ''}`,
+    title: 'Catálogo',
+    description: `Explora el catálogo completo de ${identity.name}. ${seoDefaults.defaultDescription ?? ''}`.trim(),
     openGraph: {
-      title: `Catálogo · ${identity.name}`,
-      description: `Explora el catálogo completo de ${identity.name}.`,
       url: `/negocios/${slug}/catalog`,
     },
   }

@@ -19,14 +19,17 @@ interface TenantHomeProps {
 
 export async function generateMetadata({ params }: TenantHomeProps): Promise<Metadata> {
   const { slug } = await params
+  const business = await resolveBusinessBySlug(slug)
   const { identity, seoDefaults } = globalConfig
 
+  const name = business?.name ?? identity.name
+
   return {
-    title: `${identity.name} · ${identity.tagline}`,
+    // title.absolute omite el template del tenant layout — en la home
+    // la marca va primero seguida del tagline, no al revés.
+    title: { absolute: `${name} · ${identity.tagline}` },
     description: seoDefaults.defaultDescription,
     openGraph: {
-      title: `${identity.name} · ${identity.tagline}`,
-      description: seoDefaults.defaultDescription ?? undefined,
       images: seoDefaults.ogImage ? [{ url: seoDefaults.ogImage }] : undefined,
       url: `/negocios/${slug}`,
     },

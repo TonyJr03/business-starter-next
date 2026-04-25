@@ -26,11 +26,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { identity } = globalConfig
 
   return {
-    title: `Contacto · ${identity.name}`,
+    title: 'Contacto',
     description: `Contáctanos por WhatsApp o visítanos en ${identity.name}.`,
     openGraph: {
-      title: `Contacto · ${identity.name}`,
-      description: `Contáctanos por WhatsApp o visítanos en ${identity.name}.`,
       url: `/negocios/${slug}/contact`,
     },
   }
