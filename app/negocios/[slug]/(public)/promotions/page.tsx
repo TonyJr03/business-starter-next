@@ -56,13 +56,12 @@ function formatDateRange(startsAt?: string, endsAt?: string): string | undefined
 export default async function PromotionsPage({ params }: Props) {
   await params
 
-  const { modules, contact, identity, pages } = globalConfig
+  const { modules, contact, identity } = globalConfig
 
   // Guarda de módulo — 404 si está deshabilitado
   if (!modules.pages.promotions.enabled) notFound()
 
   const promoModule = modules.pages.promotions
-  const promoCopy = pages.promotions
 
   // Traemos todas — activas e inactivas — para mostrar el estado visual completo
   const allPromos = await getPromotions()
@@ -88,12 +87,12 @@ export default async function PromotionsPage({ params }: Props) {
             className="text-4xl font-bold tracking-tight mb-3"
             style={{ color: 'var(--color-primary)' }}
           >
-            {promoCopy.heading}
+            {promoModule.title}
           </h1>
           <p className="text-lg" style={{ color: 'var(--color-text-muted)' }}>
             {activeCount > 0
               ? `${activeCount} promoción${activeCount > 1 ? 'es' : ''} activa${activeCount > 1 ? 's' : ''} ahora mismo.`
-              : promoCopy.emptyMessage}
+              : promoModule.emptyMessage}
           </p>
         </div>
       </Section>

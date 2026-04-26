@@ -29,6 +29,10 @@ export interface PageModuleConfig {
   title?: string;
   /** Texto descriptivo bajo el H1 (opcional). */
   subtitle?: string;
+  /** Título de la sección de elementos destacados (usado por catalog). */
+  featuredTitle?: string;
+  /** Mensaje mostrado cuando no hay contenido (usado por promotions, blog, gallery). */
+  emptyMessage?: string;
   /** Bloque CTA de WhatsApp al final de la página (opcional). */
   cta?: PageCtaCopy;
 }

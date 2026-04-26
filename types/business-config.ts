@@ -208,7 +208,7 @@ export interface BusinessSeoDefaults {
  * | `location`   | ciudad, país, URL de mapa, coordenadas                    |
  * | `hours`      | horarios por día de la semana                             |
  * | `social`     | URLs de redes sociales                                    |
- * | `modules`    | módulos de página + secciones home + feature flags        |
+ * | `modules`    | módulos de página + secciones home + feature modules      |
  * | `seoDefaults`| plantilla de título, descripción y og:image por defecto   |
  *
  * @example
@@ -224,8 +224,6 @@ export interface BusinessGlobalConfig {
   social: BusinessSocial;
   modules: BusinessModulesConfig;
   seoDefaults: BusinessSeoDefaults;
-  /** Textos visibles al cliente final para cada página. */
-  pages: BusinessPagesCopy;
 }
 
 // ─── Validación en tiempo de ejecución ────────────────────────────────────────

@@ -130,9 +130,12 @@ const sectionModules: SectionModuleEntry[] = [
 
 const pageModules: PageModulesConfig = {
   catalog: {
-    enabled:  true,
-    path:     '/catalog',
-    navLabel: 'Catálogo',
+    enabled:      true,
+    path:         '/catalog',
+    navLabel:     'Catálogo',
+    title:        'Nuestro Catálogo',
+    subtitle:     'Todo lo que tenemos para ofrecerte hoy.',
+    featuredTitle: 'Destacados',
     cta: {
       title:       '¿Ves algo que te gusta?',
       subtitle:    'Escríbenos por WhatsApp y te atendemos de inmediato.',
@@ -141,9 +144,11 @@ const pageModules: PageModulesConfig = {
     },
   },
   promotions: {
-    enabled:  true,
-    path:     '/promotions',
-    navLabel: 'Promociones',
+    enabled:      true,
+    path:         '/promotions',
+    navLabel:     'Promociones',
+    title:        'Ofertas y Promociones',
+    emptyMessage: 'Pronto tendremos novedades. ¡Vuelve a visitarnos!',
     cta: {
       title:       '¿Tienes alguna consulta?',
       subtitle:    'Escríbenos por WhatsApp y te informamos sobre cualquier oferta.',
@@ -275,21 +280,6 @@ export const globalConfig: BusinessGlobalConfig = {
     titleTemplate:      `%s | ${identity.name}`,
     defaultDescription: identity.shortDescription ?? identity.description,
     ogImage:            identity.coverImageUrl,
-  },
-
-  // ── Textos de página ──────────────────────────────────────────────────────
-  // Copy específica por página que no encaja en PageModuleConfig genérico.
-  // Los campos genéricos (title, subtitle, cta) están en modules.pages.
-  pages: {
-    catalog: {
-      heading:       'Nuestro Catálogo',
-      subheading:    'Todo lo que tenemos para ofrecerte hoy.',
-      featuredTitle: 'Destacados',
-    },
-    promotions: {
-      heading:      'Ofertas y Promociones',
-      emptyMessage: 'Pronto tendremos novedades. ¡Vuelve a visitarnos!',
-    },
   },
 };
 

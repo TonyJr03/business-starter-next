@@ -38,13 +38,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CatalogPage({ params }: Props) {
   await params
 
-  const { modules, contact, identity, pages } = globalConfig
+  const { modules, contact, identity } = globalConfig
 
   // Guarda de módulo — 404 si está deshabilitado
   if (!modules.pages.catalog.enabled) notFound()
 
   const catalogModule = modules.pages.catalog
-  const catalogCopy = pages.catalog
 
   // Carga paralela de categorías y destacados
   const [categories, featuredProducts] = await Promise.all([
@@ -75,10 +74,10 @@ export default async function CatalogPage({ params }: Props) {
             className="text-4xl font-bold tracking-tight mb-3"
             style={{ color: 'var(--color-primary)' }}
           >
-            {catalogCopy.heading}
+            {catalogModule.title}
           </h1>
           <p className="text-lg" style={{ color: 'var(--color-text-muted)' }}>
-            {catalogCopy.subheading}
+            {catalogModule.subtitle}
           </p>
         </div>
       </Section>
@@ -93,7 +92,7 @@ export default async function CatalogPage({ params }: Props) {
             className="text-2xl font-bold mb-6"
             style={{ color: 'var(--color-text)' }}
           >
-            {catalogCopy.featuredTitle}
+            {catalogModule.featuredTitle}
           </h2>
           <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {featuredProducts.map((product) => (
