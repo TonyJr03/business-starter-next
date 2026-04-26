@@ -1,5 +1,4 @@
 import type { WhatsappCtaSectionProps } from './feature-modules';
-export type { WhatsappCtaSectionProps };
 
 // ─── Base ────────────────────────────────────────────────────────────────────
 
