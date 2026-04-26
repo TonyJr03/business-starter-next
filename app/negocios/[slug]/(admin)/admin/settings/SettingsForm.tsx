@@ -1,7 +1,9 @@
 'use client'
 
 import { useActionState } from 'react'
-import { AdminAlert, SubmitButton, fieldInputCls } from '@/components/admin'
+import { AdminAlert } from '@/components/admin/AdminAlert'
+import { SubmitButton } from '@/components/admin/SubmitButton'
+import { fieldInputCls } from '@/components/admin/formUtils'
 import { updateSettingsAction } from './actions'
 import type { AdminActionState } from '@/lib/admin'
 import type { DayHours } from '@/types'

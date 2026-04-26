@@ -7,7 +7,9 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
-import { AdminPageHeader, AdminAlert, AdminEmptyState } from '@/components/admin'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { AdminAlert } from '@/components/admin/AdminAlert'
+import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
 
 interface Props {
   params:      Promise<{ slug: string }>
