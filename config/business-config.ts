@@ -13,7 +13,7 @@
  *   · location    → ciudad, país, calle, mapa
  *   · hours       → horarios por día de la semana
  *   · social      → redes sociales
- *   · modules     → feature flags + home sections + módulos secundarios
+ *   · modules     → pages + sections + feature modules
  *   · seoDefaults → plantilla de título y descripción meta
  * ════════════════════════════════════════════════════════════════════════════
  */

@@ -153,31 +153,6 @@ export interface PageCtaCopy {
   message: string;
 }
 
-export interface CatalogPageCopy {
-  /** H1 visible de la página de catálogo. */
-  heading: string;
-  /** Subtítulo bajo el H1. */
-  subheading?: string;
-  /** Título de la sección de productos destacados. */
-  featuredTitle: string;
-}
-
-export interface PromotionsPageCopy {
-  /** H1 visible de la página de promociones. */
-  heading: string;
-  /** Mensaje mostrado cuando no hay promociones activas. */
-  emptyMessage: string;
-}
-
-/**
- * Textos visibles al cliente final para páginas con copy específica.
- * Los campos genéricos (title, subtitle, cta) están en PageModuleConfig.
- */
-export interface BusinessPagesCopy {
-  catalog: CatalogPageCopy;
-  promotions: PromotionsPageCopy;
-}
-
 // ─── SEO Defaults ─────────────────────────────────────────────────────────────
 
 export interface BusinessSeoDefaults {
