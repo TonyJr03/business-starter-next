@@ -7,7 +7,7 @@
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { HoursSectionProps } from '@/types/section-modules'
+import type { HoursSectionProps } from '@/types'
 import type { DayHours } from '@/types'
 
 interface OpeningHoursSectionRenderProps extends HoursSectionProps {

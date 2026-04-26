@@ -19,9 +19,7 @@
  * ════════════════════════════════════════════════════════════════════════════
  */
 
-import { assertValidBusinessConfig, type BusinessGlobalConfig, type BusinessIdentity } from '@/types/business-config';
-import type { SectionModuleEntry } from '@/types/section-modules';
-import type { PageModulesConfig } from '@/types/page-modules';
+import { assertValidBusinessConfig, type BusinessGlobalConfig, type BusinessIdentity, type SectionModuleEntry, type PageModulesConfig } from '@/types';
 
 // ─── Identity ────────────────────────────────────────────────────────────────
 // Definida primero para poder referenciarla dentro de `homeSections`.

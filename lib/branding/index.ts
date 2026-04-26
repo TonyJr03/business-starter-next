@@ -13,7 +13,7 @@
  * cuando el DB tenga columnas de branding, se pasan como `tenantOverride`.
  */
 
-import type { BusinessBranding } from '@/types/business-config'
+import type { BusinessBranding } from '@/types'
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 // Coinciden con los valores de tokens.css. Si ambos `tenantOverride` y

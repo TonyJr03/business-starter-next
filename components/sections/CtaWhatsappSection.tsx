@@ -6,7 +6,7 @@
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
-import type { WhatsappCtaSectionProps } from '@/types/section-modules'
+import type { WhatsappCtaSectionProps } from '@/types'
 
 export function CtaWhatsappSection({
   title,

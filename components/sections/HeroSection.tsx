@@ -4,7 +4,7 @@
  * Sección hero configurable, desacoplada del dominio.
  */
 import { Button } from '@/components/ui/Button'
-import type { HeroSectionProps } from '@/types/section-modules'
+import type { HeroSectionProps } from '@/types'
 
 const bgStyles: Record<string, string> = {
   secondary: 'var(--color-secondary)',

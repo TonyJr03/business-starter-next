@@ -26,7 +26,7 @@ import { CtaWhatsappSection } from './CtaWhatsappSection'
 
 import { globalConfig } from '@/config'
 import { homeFeatures } from '@/data'
-import type { SectionModuleEntry } from '@/types/section-modules'
+import type { SectionModuleEntry } from '@/types'
 import type { DayHours } from '@/types'
 
 interface HomeSectionRendererProps {

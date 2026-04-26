@@ -8,7 +8,7 @@
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { HighlightsSectionProps } from '@/types/section-modules'
+import type { HighlightsSectionProps } from '@/types'
 import type { ContentFeature } from '@/types'
 
 interface HighlightsSectionRenderProps extends HighlightsSectionProps {
