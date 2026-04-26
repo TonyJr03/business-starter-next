@@ -16,7 +16,7 @@ import { resolveBusinessBySlug } from '@/services/business.service'
 import { aboutContent } from '@/data'
 import { Section } from '@/components/ui/Section'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'
-import { CtaWhatsappSection } from '@/components/sections/CtaWhatsappSection'
+import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
 interface Props {
   params: Promise<{ slug: string }>

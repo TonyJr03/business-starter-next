@@ -45,6 +45,11 @@ export interface TestimonialsSectionProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
+/**
+ * @note Este tipo vive temporalmente en section-modules.ts porque el id 'whatsapp_cta'
+ * forma parte de SectionModuleEntry (se puede configurar como sección del home).
+ * En S2 se moverá a un contrato de feature modules, dejando aquí solo una referencia.
+ */
 export interface WhatsappCtaSectionProps {
   title: string;
   subtitle?: string;

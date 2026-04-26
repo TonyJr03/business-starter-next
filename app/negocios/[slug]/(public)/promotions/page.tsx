@@ -15,7 +15,7 @@ import { getPromotions, getPromotionStatus } from '@/services/promotions.service
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { PromotionCard } from '@/components/sections/PromotionCard'
-import { CtaWhatsappSection } from '@/components/sections/CtaWhatsappSection'
+import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 import type { PromoStatus } from '@/components/sections/PromotionCard'
 
 interface Props {

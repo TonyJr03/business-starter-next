@@ -10,7 +10,7 @@ import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
 import { faqItems } from '@/data'
 import { FaqSection } from '@/components/sections/FaqSection'
-import { CtaWhatsappSection } from '@/components/sections/CtaWhatsappSection'
+import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
 interface Props {
   params: Promise<{ slug: string }>

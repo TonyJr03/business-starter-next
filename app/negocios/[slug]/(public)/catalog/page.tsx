@@ -16,7 +16,7 @@ import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { CategoryNav } from '@/components/sections/CategoryNav'
 import { ProductCard } from '@/components/sections/ProductCard'
-import { CtaWhatsappSection } from '@/components/sections/CtaWhatsappSection'
+import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
 interface Props {
   params: Promise<{ slug: string }>

@@ -1,7 +1,13 @@
 /**
  * CtaWhatsappSection — Server Component
  *
- * Sección de llamada a la acción con enlace directo a WhatsApp.
+ * Bloque de llamada a la acción con enlace directo a WhatsApp.
+ *
+ * Feature transversal: se usa tanto como sección del home (vía SectionRenderer)
+ * como bloque reutilizable dentro de páginas (catalog, about, faq, promotions).
+ *
+ * Ubicado en components/features/ porque su naturaleza es funcional y transversal,
+ * no exclusiva de la home.
  */
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'

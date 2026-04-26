@@ -22,7 +22,7 @@
 import { HeroSection } from './HeroSection'
 import { HighlightsSection } from './HighlightsSection'
 import { OpeningHoursSection } from './OpeningHoursSection'
-import { CtaWhatsappSection } from './CtaWhatsappSection'
+import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
 import { globalConfig } from '@/config'
 import { homeFeatures } from '@/data'
