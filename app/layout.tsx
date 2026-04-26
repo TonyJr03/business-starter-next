@@ -13,6 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ),
   title: {
     default: "Business Starter",
     template: "%s | Business Starter",
@@ -29,6 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
