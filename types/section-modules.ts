@@ -1,3 +1,6 @@
+import type { WhatsappCtaSectionProps } from './feature-modules';
+export type { WhatsappCtaSectionProps };
+
 // ─── Base ────────────────────────────────────────────────────────────────────
 
 interface SectionBase {
@@ -42,21 +45,6 @@ export interface TestimonialsSectionProps {
   title?: string;
   subtitle?: string;
   bg?: 'default' | 'surface' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-/**
- * @note Este tipo vive temporalmente en section-modules.ts porque el id 'whatsapp_cta'
- * forma parte de SectionModuleEntry (se puede configurar como sección del home).
- * En S2 se moverá a un contrato de feature modules, dejando aquí solo una referencia.
- */
-export interface WhatsappCtaSectionProps {
-  title: string;
-  subtitle?: string;
-  buttonLabel?: string;
-  /** Mensaje pre-cargado en WhatsApp. Se interpola al definir la config. */
-  message?: string;
-  bg?: 'default' | 'surface' | 'secondary' | 'primary';
   size?: 'sm' | 'md' | 'lg';
 }
 

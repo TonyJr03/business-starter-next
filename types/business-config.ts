@@ -1,5 +1,6 @@
 import type { SectionModuleEntry } from './section-modules';
 import type { PageModulesConfig } from './page-modules';
+import type { FeatureModulesConfig } from './feature-modules';
 
 // ─── Identity ─────────────────────────────────────────────────────────────────
 
@@ -129,12 +130,6 @@ export interface BusinessSocial {
 
 // ─── Modules ──────────────────────────────────────────────────────────────────
 
-/** Feature flags funcionales que no son módulos de página (no tienen ruta propia). */
-export interface BusinessFeatureFlags {
-  cart: boolean;
-  whatsappOrdering: boolean;
-}
-
 export interface BusinessModulesConfig {
   /** Módulos de página activables — cada uno con su ruta, label y config. */
   pages: PageModulesConfig;
@@ -143,8 +138,8 @@ export interface BusinessModulesConfig {
    * orden, visibilidad y props visuales de cada sección.
    */
   sections: SectionModuleEntry[];
-  /** Feature flags funcionales (no tienen página propia). */
-  features: BusinessFeatureFlags;
+  /** Feature modules funcionales — cada feature tiene su propio `{ enabled }`. */
+  features: FeatureModulesConfig;
 }
 
 // ─── Page copy ────────────────────────────────────────────────────────────────

@@ -263,10 +263,10 @@ export const globalConfig: BusinessGlobalConfig = {
     // Secciones de la home: orden, visibilidad y props visuales
     sections: sectionModules,
 
-    // Feature flags funcionales (no tienen página propia)
+    // Feature modules funcionales (no tienen página propia)
     features: {
-      cart:             false,
-      whatsappOrdering: false,
+      cart:             { enabled: false },
+      whatsappOrdering: { enabled: false },
     },
   },
 
