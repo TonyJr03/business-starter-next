@@ -40,6 +40,12 @@ export default async function TenantHome({ params }: TenantHomeProps) {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
+  const { contact, hours } = globalConfig
+
+  // Datos del negocio con fallback a globalConfig para renderizado de secciones
+  const businessHours = business?.hours ?? hours
+  const businessWhatsapp = business?.whatsapp ?? contact.whatsapp
+
   const activeSections = globalConfig.modules.sections
     .filter(s => s.enabled)
     .sort((a, b) => a.order - b.order)
@@ -47,7 +53,12 @@ export default async function TenantHome({ params }: TenantHomeProps) {
   return (
     <>
       {activeSections.map(section => (
-        <SectionRenderer key={section.id} section={section} hours={business?.hours ?? null} />
+        <SectionRenderer
+          key={section.id}
+          section={section}
+          hours={businessHours}
+          whatsapp={businessWhatsapp}
+        />
       ))}
     </>
   )

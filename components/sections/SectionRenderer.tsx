@@ -5,14 +5,18 @@
  * Recibe una entrada de configuración tipada (SectionModuleEntry) y renderiza
  * el componente correspondiente.
  *
- * Uso primario: home del tenant. Diseñado para ser reutilizable en cualquier
- * página que renderice una lista de SectionModuleEntry.
+ * Diseñado como herramienta general del sistema modular: puede usarse
+ * tanto en la home del tenant como en cualquier otra página que renderice
+ * una lista de SectionModuleEntry.
+ *
+ * El renderer es una función pura respecto a la configuración del negocio:
+ * recibe todos los datos que necesita como props; no importa `globalConfig`.
  *
  * Secciones implementadas:
  *   - hero         → HeroSection
  *   - highlights   → HighlightsSection (+ highlightItems de data/)
- *   - hours        → OpeningHoursSection (+ globalConfig.hours)
- *   - whatsapp_cta → CtaWhatsappSection (feature transversal)
+ *   - hours        → OpeningHoursSection (usa `hours` prop directamente)
+ *   - whatsapp_cta → CtaWhatsappSection (renderiza solo si `whatsapp` es válido)
  *
  * Secciones pendientes:
  *   - promotions, testimonials, location → se omiten silenciosamente
@@ -27,17 +31,19 @@ import { HighlightsSection } from './HighlightsSection'
 import { OpeningHoursSection } from './OpeningHoursSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
-import { globalConfig } from '@/config'
 import { highlightItems } from '@/data'
 import type { SectionModuleEntry } from '@/types'
 import type { DayHours } from '@/types'
 
 interface SectionRendererProps {
   section: SectionModuleEntry
-  hours?: DayHours[] | null
+  /** Horarios del negocio. El caller resuelve el fallback base + override. */
+  hours: DayHours[]
+  /** Número de WhatsApp del negocio. Si está ausente, `whatsapp_cta` se omite. */
+  whatsapp?: string
 }
 
-export function SectionRenderer({ section, hours }: SectionRendererProps) {
+export function SectionRenderer({ section, hours, whatsapp }: SectionRendererProps) {
   if (!section.enabled) return null
 
   switch (section.id) {
@@ -48,13 +54,12 @@ export function SectionRenderer({ section, hours }: SectionRendererProps) {
       return <HighlightsSection {...section.props} items={highlightItems} />
 
     case 'hours': {
-      const effectiveHours = (hours && hours.length > 0) ? hours : globalConfig.hours
-      if (!effectiveHours.length) return null
-      return <OpeningHoursSection {...section.props} hours={effectiveHours} />
+      if (!hours.length) return null
+      return <OpeningHoursSection {...section.props} hours={hours} />
     }
 
     case 'whatsapp_cta':
-      if (!globalConfig.contact.whatsapp) return null
+      if (!whatsapp) return null
       return <CtaWhatsappSection {...section.props} />
 
     // Secciones no implementadas aún — se omiten silenciosamente
