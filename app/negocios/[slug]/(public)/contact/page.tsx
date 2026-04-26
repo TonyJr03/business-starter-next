@@ -41,6 +41,8 @@ export default async function ContactPage({ params }: Props) {
   // Guarda de módulo — 404 si está deshabilitado
   if (!modules.pages.contact.enabled) notFound()
 
+  const contactModule = modules.pages.contact
+
   // Datos del tenant (deduplicados via React cache — ya resuelto en layout)
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
@@ -59,10 +61,10 @@ export default async function ContactPage({ params }: Props) {
             className="text-4xl font-bold tracking-tight mb-3"
             style={{ color: 'var(--color-primary)' }}
           >
-            Contáctanos
+            {contactModule.title ?? 'Contáctanos'}
           </h1>
           <p className="text-lg" style={{ color: 'var(--color-text-muted)' }}>
-            Estamos disponibles para atenderte. La forma más rápida es por WhatsApp.
+            {contactModule.subtitle ?? 'Estamos disponibles para atenderte. La forma más rápida es por WhatsApp.'}
           </p>
         </div>
       </Section>

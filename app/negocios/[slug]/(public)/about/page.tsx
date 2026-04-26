@@ -57,10 +57,10 @@ export default async function AboutPage({ params }: Props) {
             className="text-4xl font-bold tracking-tight mb-3"
             style={{ color: 'var(--color-primary)' }}
           >
-            Sobre Nosotros
+            {aboutModule.title ?? 'Sobre Nosotros'}
           </h1>
           <p className="text-lg" style={{ color: 'var(--color-text-muted)' }}>
-            Conoce la historia y los valores detrás de {business.name}.
+            {aboutModule.subtitle ?? `Conoce la historia y los valores detrás de ${business.name}.`}
           </p>
         </div>
       </Section>

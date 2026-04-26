@@ -155,6 +155,8 @@ const pageModules: PageModulesConfig = {
     enabled:  true,
     path:     '/about',
     navLabel: 'Nosotros',
+    title:    'Sobre Nosotros',
+    subtitle: `Conoce la historia y los valores detrás de ${identity.name}.`,
     cta: {
       title:       '¿Tienes alguna pregunta?',
       subtitle:    'Escríbenos directamente y te respondemos de inmediato.',
@@ -166,6 +168,8 @@ const pageModules: PageModulesConfig = {
     enabled:  true,
     path:     '/contact',
     navLabel: 'Contacto',
+    title:    'Contáctanos',
+    subtitle: 'Estamos disponibles para atenderte. La forma más rápida es por WhatsApp.',
   },
   faq: {
     enabled:  true,
