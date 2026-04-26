@@ -13,7 +13,6 @@
  *   · location    → ciudad, país, calle, mapa
  *   · hours       → horarios por día de la semana
  *   · social      → redes sociales
- *   · navigation  → ítems de navegación principales (estáticos)
  *   · modules     → feature flags + home sections + módulos secundarios
  *   · seoDefaults → plantilla de título y descripción meta
  * ════════════════════════════════════════════════════════════════════════════
@@ -250,15 +249,6 @@ export const globalConfig: BusinessGlobalConfig = {
   social: {
     instagram: 'https://instagram.com/cafelaesquina',
     facebook:  'https://facebook.com/cafelaesquina',
-  },
-
-  // ── Navegación principal (ítems estáticos) ────────────────────────────────
-  // `config/navigation.ts` deriva la navegación completa de `modules.pages`:
-  // solo aparecen los módulos con `enabled: true`, en orden de declaración.
-  navigation: {
-    main: [
-      { label: 'Inicio', href: '/' },
-    ],
   },
 
   // ── Módulos ───────────────────────────────────────────────────────────────

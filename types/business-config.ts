@@ -1,6 +1,5 @@
 import type { SectionModuleEntry } from './section-modules';
 import type { PageModulesConfig } from './page-modules';
-import type { NavItem } from './navigation';
 
 // ─── Identity ─────────────────────────────────────────────────────────────────
 
@@ -128,13 +127,6 @@ export interface BusinessSocial {
   [platform: string]: string | undefined;
 }
 
-// ─── Navigation ───────────────────────────────────────────────────────────────
-
-export interface BusinessNavigation {
-  /** Ítems del menú de cabecera y navegación principal. */
-  main: NavItem[];
-}
-
 // ─── Modules ──────────────────────────────────────────────────────────────────
 
 /** Feature flags funcionales que no son módulos de página (no tienen ruta propia). */
@@ -221,7 +213,6 @@ export interface BusinessSeoDefaults {
  * | `location`   | ciudad, país, URL de mapa, coordenadas                    |
  * | `hours`      | horarios por día de la semana                             |
  * | `social`     | URLs de redes sociales                                    |
- * | `navigation` | ítems de navegación principal                             |
  * | `modules`    | módulos de página + secciones home + feature flags        |
  * | `seoDefaults`| plantilla de título, descripción y og:image por defecto   |
  *
@@ -236,7 +227,6 @@ export interface BusinessGlobalConfig {
   location: BusinessLocation;
   hours: DayHours[];
   social: BusinessSocial;
-  navigation: BusinessNavigation;
   modules: BusinessModulesConfig;
   seoDefaults: BusinessSeoDefaults;
   /** Textos visibles al cliente final para cada página. */
@@ -317,14 +307,6 @@ export function validateBusinessConfig(
         }
       }
     });
-  }
-
-  // ── navigation ────────────────────────────────────────────────────────────
-  if (
-    !Array.isArray(config.navigation.main) ||
-    config.navigation.main.length === 0
-  ) {
-    errors.push('navigation.main debe tener al menos un ítem.');
   }
 
   // ── seoDefaults ───────────────────────────────────────────────────────────
