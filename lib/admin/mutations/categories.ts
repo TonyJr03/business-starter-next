@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { toSlug } from '@/lib/utils/slug'
-import { rowToCategory } from '@/lib/persistence'
+import { rowToCategory } from '@/lib/persistence/category'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { Category } from '@/types'
 

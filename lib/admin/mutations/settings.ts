@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { rowToBusinessSettings } from '@/lib/persistence'
+import { rowToBusinessSettings } from '@/lib/persistence/business'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { BusinessSettings } from '@/types'
 import type { DayHours } from '@/types'

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { rowToPromotion } from '@/lib/persistence'
+import { rowToPromotion } from '@/lib/persistence/promotion'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { Promotion } from '@/types'
 

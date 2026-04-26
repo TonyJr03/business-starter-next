@@ -7,7 +7,7 @@ import {
   rowToBusinessSettings,
   type BusinessDirectoryRow,
   rowToBusinessDirectoryItem,
-} from '@/lib/persistence';
+} from '@/lib/persistence/business';
 
 /**
  * Servicio de configuración básica del negocio — lectura desde BD.

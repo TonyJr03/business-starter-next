@@ -3,10 +3,12 @@ import { categories as localCategories, products as localProducts } from '@/data
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import {
   type CategoryRow,
-  type ProductRow,
   rowToCategory,
+} from '@/lib/persistence/category';
+import {
+  type ProductRow,
   rowToProduct,
-} from '@/lib/persistence';
+} from '@/lib/persistence/product';
 
 /**
  * Servicio de catálogo — lectura de categorías y productos.

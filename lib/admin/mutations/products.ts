@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { toSlug } from '@/lib/utils/slug'
-import { rowToProduct } from '@/lib/persistence'
+import { rowToProduct } from '@/lib/persistence/product'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { Product } from '@/types'
 

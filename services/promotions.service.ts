@@ -1,7 +1,7 @@
 import type { Promotion, PromotionStatus } from '@/types';
 import { promotions as localPromotions } from '@/data';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { type PromotionRow, rowToPromotion } from '@/lib/persistence';
+import { type PromotionRow, rowToPromotion } from '@/lib/persistence/promotion';
 
 /**
  * Servicio de promociones — lectura y resolución de estado.
