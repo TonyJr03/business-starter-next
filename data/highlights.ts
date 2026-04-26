@@ -4,7 +4,7 @@ import { globalConfig } from '@/config';
 const { location } = globalConfig;
 
 /**
- * homeFeatures — ítems editoriales para la sección "highlights" de la Home.
+ * highlightItems — ítems editoriales para la sección "highlights" de la Home.
  *
  * Representa la propuesta de valor del negocio.
  * Los datos estructurales (ciudad, calle) se leen de globalConfig para
@@ -12,7 +12,7 @@ const { location } = globalConfig;
  *
  * Personaliza estos ítems para cada cliente.
  */
-export const homeFeatures: ContentFeature[] = [
+export const highlightItems: ContentFeature[] = [
   {
     icon: '✨',
     title: 'Calidad artesanal',

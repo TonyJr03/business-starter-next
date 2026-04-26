@@ -1,15 +1,18 @@
 /**
- * HomeSectionRenderer — Server Component
+ * SectionRenderer — Server Component
  *
- * Dispatcher de secciones para la Home.
+ * Dispatcher genérico de section modules.
  * Recibe una entrada de configuración tipada (SectionModuleEntry) y renderiza
  * el componente correspondiente.
  *
+ * Uso primario: home del tenant. Diseñado para ser reutilizable en cualquier
+ * página que renderice una lista de SectionModuleEntry.
+ *
  * Secciones implementadas:
  *   - hero         → HeroSection
- *   - highlights   → HighlightsSection (+ homeFeatures de data/)
+ *   - highlights   → HighlightsSection (+ highlightItems de data/)
  *   - hours        → OpeningHoursSection (+ globalConfig.hours)
- *   - whatsapp_cta → CtaWhatsappSection
+ *   - whatsapp_cta → CtaWhatsappSection (feature transversal)
  *
  * Secciones pendientes:
  *   - promotions, testimonials, location → se omiten silenciosamente
@@ -25,16 +28,16 @@ import { OpeningHoursSection } from './OpeningHoursSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
 import { globalConfig } from '@/config'
-import { homeFeatures } from '@/data'
+import { highlightItems } from '@/data'
 import type { SectionModuleEntry } from '@/types'
 import type { DayHours } from '@/types'
 
-interface HomeSectionRendererProps {
+interface SectionRendererProps {
   section: SectionModuleEntry
   hours?: DayHours[] | null
 }
 
-export function HomeSectionRenderer({ section, hours }: HomeSectionRendererProps) {
+export function SectionRenderer({ section, hours }: SectionRendererProps) {
   if (!section.enabled) return null
 
   switch (section.id) {
@@ -42,7 +45,7 @@ export function HomeSectionRenderer({ section, hours }: HomeSectionRendererProps
       return <HeroSection {...section.props} />
 
     case 'highlights':
-      return <HighlightsSection {...section.props} items={homeFeatures} />
+      return <HighlightsSection {...section.props} items={highlightItems} />
 
     case 'hours': {
       const effectiveHours = (hours && hours.length > 0) ? hours : globalConfig.hours

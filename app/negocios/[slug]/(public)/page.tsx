@@ -10,7 +10,7 @@
 
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
-import { HomeSectionRenderer } from '@/components/sections/HomeSectionRenderer'
+import { SectionRenderer } from '@/components/sections/SectionRenderer'
 import { resolveBusinessBySlug } from '@/services/business.service'
 
 interface TenantHomeProps {
@@ -47,7 +47,7 @@ export default async function TenantHome({ params }: TenantHomeProps) {
   return (
     <>
       {activeSections.map(section => (
-        <HomeSectionRenderer key={section.id} section={section} hours={business?.hours ?? null} />
+        <SectionRenderer key={section.id} section={section} hours={business?.hours ?? null} />
       ))}
     </>
   )

@@ -1,4 +1,4 @@
-export { homeFeatures } from './highlights';
+export { highlightItems } from './highlights';
 export { aboutContent } from './about-content';
 export { blogPosts } from './blog-posts';
 export { faqItems } from './faq';
