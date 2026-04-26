@@ -1,27 +1,11 @@
 'use client'
 
 import { useActionState } from 'react'
-import { useFormStatus } from 'react-dom'
 import { loginAction } from '@/actions/auth'
+import { SubmitButton } from '@/components/ui/SubmitButton'
 
 interface LoginFormProps {
   slug: string
-}
-
-function SubmitBtn() {
-  const { pending } = useFormStatus()
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-100 text-zinc-900 rounded-lg text-sm font-medium hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {pending && (
-        <span className="w-3.5 h-3.5 rounded-full border-2 border-zinc-900 border-t-transparent animate-spin" aria-hidden />
-      )}
-      {pending ? 'Verificando…' : 'Ingresar'}
-    </button>
-  )
 }
 
 export function LoginForm({ slug }: LoginFormProps) {
@@ -70,7 +54,7 @@ export function LoginForm({ slug }: LoginFormProps) {
         />
       </div>
 
-      <SubmitBtn />
+      <SubmitButton label="Ingresar" pendingLabel="Verificando…" className="w-full py-2.5" />
 
     </form>
   )

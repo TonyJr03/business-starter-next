@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import Link from 'next/link'
 import { AdminAlert } from '@/components/admin/AdminAlert'
-import { SubmitButton } from '@/components/admin/SubmitButton'
+import { SubmitButton } from '@/components/ui/SubmitButton'
 import { fieldInputCls } from '@/components/admin/formUtils'
 import { updateProductAction, deleteProductAction } from '../actions'
 import type { AdminActionState } from '@/lib/admin'
