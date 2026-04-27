@@ -9,7 +9,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
-import { galleryItems } from '@/data'
 import { GalleryGrid } from '@/components/sections/GalleryGrid'
 
 interface Props {
@@ -63,7 +62,7 @@ export default async function GalleryPage({ params }: Props) {
       </section>
 
       {/* ── Grid de imágenes ───────────────────────────────────────── */}
-      <GalleryGrid items={galleryItems} columns={3} bg="default" size="md" />
+      <GalleryGrid items={[]} columns={3} bg="default" size="md" />
     </>
   )
 }

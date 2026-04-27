@@ -13,7 +13,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
-import { aboutContent } from '@/data'
 import { Section } from '@/components/ui/Section'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
@@ -62,105 +61,6 @@ export default async function AboutPage({ params }: Props) {
           </p>
         </div>
       </Section>
-
-      {/* ── Historia ───────────────────────────────────────────────── */}
-      <Section bg="default" size="md">
-        <div className="max-w-3xl mx-auto">
-          <h2
-            className="text-2xl font-bold mb-6"
-            style={{ color: 'var(--color-text)' }}
-          >
-            Nuestra historia
-          </h2>
-          <div className="space-y-5">
-            {aboutContent.story.map((paragraph, i) => (
-              <p
-                key={i}
-                className="text-lg leading-relaxed"
-                style={{ color: 'var(--color-text)' }}
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* ── Misión ─────────────────────────────────────────────────── */}
-      {aboutContent.mission && (
-        <Section bg="surface" size="md">
-          <div className="max-w-3xl mx-auto text-center">
-            <p
-              className="text-sm font-semibold uppercase tracking-widest mb-4"
-              style={{ color: 'var(--color-accent)' }}
-            >
-              Nuestra misión
-            </p>
-            <blockquote
-              className="text-2xl font-semibold leading-snug"
-              style={{ color: 'var(--color-primary)' }}
-            >
-              &ldquo;{aboutContent.mission}&rdquo;
-            </blockquote>
-          </div>
-        </Section>
-      )}
-
-      {/* ── Diferenciadores ────────────────────────────────────────── */}
-      {aboutContent.differentiators && aboutContent.differentiators.length > 0 && (
-        <Section bg="default" size="md">
-          <div className="text-center mb-10">
-            <h2
-              className="text-2xl font-bold"
-              style={{ color: 'var(--color-text)' }}
-            >
-              Lo que nos hace distintos
-            </h2>
-            <p
-              className="mt-2 text-base"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
-              Cada detalle de nuestra propuesta está pensado para ofrecerte algo genuino.
-            </p>
-          </div>
-          <ul className="grid gap-5 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
-            {aboutContent.differentiators.map((item, i) => (
-              <li key={i}>
-                <div
-                  className="h-full flex gap-4 p-6 rounded-xl border"
-                  style={{
-                    backgroundColor: 'var(--color-surface)',
-                    borderColor: 'var(--color-border)',
-                  }}
-                >
-                  {item.icon && (
-                    <span
-                      className="text-3xl shrink-0 leading-none mt-0.5"
-                      aria-hidden="true"
-                    >
-                      {item.icon}
-                    </span>
-                  )}
-                  <div>
-                    <h3
-                      className="font-semibold mb-1"
-                      style={{ color: 'var(--color-text)' }}
-                    >
-                      {item.title}
-                    </h3>
-                    <p
-                      className="text-sm leading-relaxed"
-                      style={{ color: 'var(--color-text-muted)' }}
-                    >
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
 
       {/* ── Ubicación ──────────────────────────────────────────────── */}
       <Section bg="surface" size="md">
@@ -267,6 +167,7 @@ export default async function AboutPage({ params }: Props) {
           subtitle={aboutModule.cta.subtitle}
           buttonLabel={aboutModule.cta.buttonLabel}
           message={aboutModule.cta.message}
+          phoneNumber={business.whatsapp}
           bg="secondary"
           size="md"
         />

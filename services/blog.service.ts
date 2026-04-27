@@ -1,21 +1,18 @@
 import type { BlogPost } from '@/types';
-import { blogPosts } from '@/data';
 
 /**
  * Capa de servicios para el blog.
  *
- * Actualmente devuelve datos locales tipados.
- * En el futuro consultará Supabase o un CMS sin cambiar el contrato.
+ * TODO: implementar lectura desde Supabase o CMS.
+ * El módulo de blog está deshabilitado mientras no exista persistencia.
  */
 
-/** Devuelve todos los artículos ordenados por fecha descendente (más nuevos primero). */
+/** Devuelve todos los artículos ordenados por fecha descendente. */
 export async function getPosts(): Promise<BlogPost[]> {
-  return [...blogPosts].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-  );
+  return [];
 }
 
 /** Devuelve un artículo por slug, o undefined si no existe. */
-export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
-  return blogPosts.find((p) => p.slug === slug);
+export async function getPostBySlug(_slug: string): Promise<BlogPost | undefined> {
+  return undefined;
 }

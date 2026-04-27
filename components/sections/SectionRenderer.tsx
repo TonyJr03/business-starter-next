@@ -31,7 +31,6 @@ import { HighlightsSection } from './HighlightsSection'
 import { OpeningHoursSection } from './OpeningHoursSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
-import { highlightItems } from '@/data'
 import type { SectionModuleEntry } from '@/types'
 import type { DayHours } from '@/types'
 
@@ -51,7 +50,7 @@ export function SectionRenderer({ section, hours, whatsapp }: SectionRendererPro
       return <HeroSection {...section.props} />
 
     case 'highlights':
-      return <HighlightsSection {...section.props} items={highlightItems} />
+      return <HighlightsSection {...section.props} items={[]} />
 
     case 'hours': {
       if (!hours.length) return null
