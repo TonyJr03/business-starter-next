@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'
 
@@ -36,16 +37,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ContactPage({ params }: Props) {
   const { slug } = await params
-  const { modules } = globalConfig
-
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.contact.enabled) notFound()
-
-  const contactModule = modules.pages.contact
 
   // Datos del tenant (deduplicados via React cache — ya resuelto en layout)
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
+
+  // Guarda de módulo — respeta overrides por tenant
+  const contactModule = resolvePageModule(business, 'contact')
+  if (!contactModule.enabled) notFound()
 
   const waNumber = (business.whatsapp ?? '').replace(/\D/g, '')
   const whatsappUrl = waNumber

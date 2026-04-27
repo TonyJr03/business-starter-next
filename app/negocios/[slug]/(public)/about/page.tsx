@@ -13,6 +13,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { aboutContent } from '@/data'
 import { Section } from '@/components/ui/Section'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'
@@ -37,16 +38,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AboutPage({ params }: Props) {
   const { slug } = await params
-  const { modules } = globalConfig
-
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.about.enabled) notFound()
 
   // Datos del tenant (deduplicados via React cache — ya resuelto en layout)
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
 
-  const aboutModule = modules.pages.about
+  // Guarda de módulo — respeta overrides por tenant
+  const aboutModule = resolvePageModule(business, 'about')
+  if (!aboutModule.enabled) notFound()
 
   return (
     <>

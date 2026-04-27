@@ -10,6 +10,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
+import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { getPostBySlug } from '@/services/blog.service'
 import { Section } from '@/components/ui/Section'
 
@@ -43,10 +45,11 @@ const dateFormatter = new Intl.DateTimeFormat('es-CU', {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug, post: postSlug } = await params
-  const { modules } = globalConfig
 
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.blog.enabled) notFound()
+  const business = await resolveBusinessBySlug(slug)
+
+  // Guarda de módulo — respeta overrides por tenant
+  if (!resolvePageModule(business, 'blog').enabled) notFound()
 
   // Post no encontrado → 404 idiomático
   const post = await getPostBySlug(postSlug)

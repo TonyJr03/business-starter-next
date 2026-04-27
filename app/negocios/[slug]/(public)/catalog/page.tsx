@@ -11,6 +11,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
+import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { getCategories, getProducts, getFeaturedProducts } from '@/services/catalog.service'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
@@ -36,14 +38,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CatalogPage({ params }: Props) {
-  await params
+  const { slug } = await params
+  const { contact, identity } = globalConfig
 
-  const { modules, contact, identity } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.catalog.enabled) notFound()
-
-  const catalogModule = modules.pages.catalog
+  // Guarda de módulo — respeta overrides por tenant
+  const catalogModule = resolvePageModule(business, 'catalog')
+  if (!catalogModule.enabled) notFound()
 
   // Carga paralela de categorías y destacados
   const [categories, featuredProducts] = await Promise.all([

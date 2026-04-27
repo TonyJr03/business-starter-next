@@ -8,6 +8,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
+import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { galleryItems } from '@/data'
 import { GalleryGrid } from '@/components/sections/GalleryGrid'
 
@@ -29,14 +31,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function GalleryPage({ params }: Props) {
-  await params
+  const { slug } = await params
 
-  const { modules } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.gallery.enabled) notFound()
-
-  const galleryModule = modules.pages.gallery
+  // Guarda de módulo — respeta overrides por tenant
+  const galleryModule = resolvePageModule(business, 'gallery')
+  if (!galleryModule.enabled) notFound()
 
   return (
     <>

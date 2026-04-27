@@ -11,6 +11,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
+import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { getPromotions, getPromotionStatus } from '@/services/promotions.service'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
@@ -54,14 +56,14 @@ function formatDateRange(startsAt?: string, endsAt?: string): string | undefined
 }
 
 export default async function PromotionsPage({ params }: Props) {
-  await params
+  const { slug } = await params
+  const { contact, identity } = globalConfig
 
-  const { modules, contact, identity } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.promotions.enabled) notFound()
-
-  const promoModule = modules.pages.promotions
+  // Guarda de módulo — respeta overrides por tenant
+  const promoModule = resolvePageModule(business, 'promotions')
+  if (!promoModule.enabled) notFound()
 
   // Traemos todas — activas e inactivas — para mostrar el estado visual completo
   const allPromos = await getPromotions()

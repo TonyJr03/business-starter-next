@@ -8,6 +8,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
+import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { getPosts } from '@/services/blog.service'
 import { Section } from '@/components/ui/Section'
 import { BlogPostCard } from '@/components/sections/BlogPostCard'
@@ -31,12 +33,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPage({ params }: Props) {
   const { slug } = await params
-  const { modules } = globalConfig
 
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.blog.enabled) notFound()
+  const business = await resolveBusinessBySlug(slug)
 
-  const blogModule = modules.pages.blog
+  // Guarda de módulo — respeta overrides por tenant
+  const blogModule = resolvePageModule(business, 'blog')
+  if (!blogModule.enabled) notFound()
   const posts = await getPosts()
 
   return (

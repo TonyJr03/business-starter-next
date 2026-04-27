@@ -8,6 +8,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
+import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolvePageModule } from '@/lib/modules/resolver'
 import { faqItems } from '@/data'
 import { FaqSection } from '@/components/sections/FaqSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
@@ -30,14 +32,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function FaqPage({ params }: Props) {
-  await params
+  const { slug } = await params
+  const { contact } = globalConfig
 
-  const { modules, contact } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
-  // Guarda de módulo — 404 si está deshabilitado
-  if (!modules.pages.faq.enabled) notFound()
-
-  const faqModule = modules.pages.faq
+  // Guarda de módulo — respeta overrides por tenant
+  const faqModule = resolvePageModule(business, 'faq')
+  if (!faqModule.enabled) notFound()
 
   return (
     <>
