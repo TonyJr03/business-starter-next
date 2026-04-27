@@ -39,7 +39,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CatalogPage({ params }: Props) {
   const { slug } = await params
-  const { contact, identity } = globalConfig
 
   const business = await resolveBusinessBySlug(slug)
 
@@ -61,10 +60,10 @@ export default async function CatalogPage({ params }: Props) {
     }))
   )
 
-  // URL WhatsApp por producto
+  // URL WhatsApp por producto: solo si el negocio tiene número configurado
   function productOrderUrl(productName: string): string | undefined {
-    if (!contact.whatsapp) return undefined
-    return getWhatsAppUrl(`Hola ${identity.name}, quisiera pedir: ${productName}.`)
+    if (!business?.whatsapp) return undefined
+    return getWhatsAppUrl(`Hola ${business.name}, quisiera pedir: ${productName}.`, business.whatsapp)
   }
 
   return (
@@ -158,12 +157,13 @@ export default async function CatalogPage({ params }: Props) {
       ))}
 
       {/* ── CTA WhatsApp ───────────────────────────────────────────── */}
-      {contact.whatsapp && catalogModule.cta && (
+      {business?.whatsapp && catalogModule.cta && (
         <CtaWhatsappSection
           title={catalogModule.cta.title}
           subtitle={catalogModule.cta.subtitle}
           buttonLabel={catalogModule.cta.buttonLabel}
           message={catalogModule.cta.message}
+          phoneNumber={business.whatsapp}
           bg="secondary"
           size="md"
         />

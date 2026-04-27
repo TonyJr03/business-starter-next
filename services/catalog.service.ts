@@ -1,5 +1,4 @@
 import type { Category, Product } from '@/types';
-import { categories as localCategories, products as localProducts } from '@/data';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import {
   type CategoryRow,
@@ -13,9 +12,9 @@ import {
 /**
  * Servicio de catálogo — lectura de categorías y productos.
  *
- * Estrategia de fuente de datos:
- *   1. Supabase (si las env vars están presentes y la consulta tiene éxito)
- *   2. Datos locales como fallback (sin env, fallo de red, BD vacía)
+ * Fuente de datos: Supabase.
+ * Si Supabase no está disponible o la consulta falla, se devuelve array vacío.
+ * No existe fallback a datos locales — la ausencia de datos es un estado válido.
  *
  * Contrato estable: las firmas públicas no cambian al migrar la fuente.
  *
@@ -120,51 +119,23 @@ async function fetchProductBySlugFromDB(slug: string): Promise<Product | null> {
   return rowToProduct(data as ProductRow);
 }
 
-// ─── Fallback local: categorías ───────────────────────────────────────────────
-
-function getLocalCategories(): Category[] {
-  return localCategories
-    .filter((c) => c.isActive ?? true)
-    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-}
-
-// ─── Fallback local: productos ────────────────────────────────────────────────
-
-function getLocalProducts(filters?: ProductFilters): Product[] {
-  let results = [...localProducts];
-
-  if (filters?.onlyAvailable !== false) {
-    results = results.filter((p) => p.isAvailable ?? true);
-  }
-
-  if (filters?.categoryId) {
-    results = results.filter((p) => p.categoryId === filters.categoryId);
-  }
-
-  if (filters?.onlyFeatured) {
-    results = results.filter((p) => p.isFeatured ?? false);
-  }
-
-  return results.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-}
-
 // ─── API pública ──────────────────────────────────────────────────────────────
 
 /**
  * Devuelve todas las categorías activas, ordenadas por sortOrder.
- * Fuente: Supabase → fallback local.
+ * Fuente: Supabase. Devuelve [] si no hay datos o Supabase no está disponible.
  */
 export async function getCategories(): Promise<Category[]> {
-  return (await fetchCategoriesFromDB()) ?? getLocalCategories();
+  return (await fetchCategoriesFromDB()) ?? [];
 }
 
 /**
  * Devuelve productos aplicando los filtros indicados.
  * Si no se pasan filtros, devuelve todos los disponibles ordenados.
- * Fuente: Supabase → fallback local.
+ * Fuente: Supabase. Devuelve [] si no hay datos o Supabase no está disponible.
  */
 export async function getProducts(filters?: ProductFilters): Promise<Product[]> {
-  return (await fetchProductsFromDB(filters)) ?? getLocalProducts(filters);
+  return (await fetchProductsFromDB(filters)) ?? [];
 }
 
 /**
@@ -184,11 +155,11 @@ export async function getProductsByCategory(categoryId: string): Promise<Product
 
 /**
  * Busca un producto por su slug.
- * Devuelve undefined si no existe.
- * Fuente: Supabase → fallback local.
+ * Devuelve undefined si no existe o Supabase no está disponible.
+ * Fuente: Supabase.
  */
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
-  return (await fetchProductBySlugFromDB(slug)) ?? localProducts.find((p) => p.slug === slug);
+  return (await fetchProductBySlugFromDB(slug)) ?? undefined;
 }
 
 // ─── Helpers de dominio ───────────────────────────────────────────────────────

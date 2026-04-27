@@ -42,11 +42,10 @@ export default async function TenantHome({ params }: TenantHomeProps) {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
-  const { contact, hours } = globalConfig
-
-  // Datos del negocio con fallback a globalConfig para renderizado de secciones
-  const businessHours = business?.hours ?? hours
-  const businessWhatsapp = business?.whatsapp ?? contact.whatsapp
+  // Datos del negocio desde BD. Si no existen, se pasa vacío —
+  // cada sección decide si se muestra o no.
+  const businessHours = business?.hours ?? []
+  const businessWhatsapp = business?.whatsapp
 
   const activeSections = resolveActiveSections(business)
 

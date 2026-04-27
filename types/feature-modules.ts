@@ -38,7 +38,7 @@ export interface WhatsappCtaSectionProps {
   title: string;
   subtitle?: string;
   buttonLabel?: string;
-  /** Número de WhatsApp del negocio en formato E.164. Si se omite, el componente usa globalConfig como fallback. */
+  /** Número de WhatsApp del negocio en formato E.164. Si se omite, el componente no se renderiza. */
   phoneNumber?: string;
   /** Mensaje pre-cargado en WhatsApp. Se interpola al definir la config. */
   message?: string;

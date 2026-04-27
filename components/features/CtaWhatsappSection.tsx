@@ -24,6 +24,7 @@ export function CtaWhatsappSection({
   size = 'md',
 }: WhatsappCtaSectionProps) {
   const url = getWhatsAppUrl(message, phoneNumber)
+  if (!url) return null
 
   return (
     <Section bg={bg} size={size}>

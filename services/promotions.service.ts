@@ -1,21 +1,19 @@
 import type { Promotion, PromotionStatus } from '@/types';
-import { promotions as localPromotions } from '@/data';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { type PromotionRow, rowToPromotion } from '@/lib/persistence/promotion';
 
 /**
  * Servicio de promociones — lectura y resolución de estado.
  *
- * Estrategia de fuente de datos:
- *   1. Supabase (si las env vars están presentes y la consulta tiene éxito)
- *   2. Datos locales como fallback (sin env, fallo de red, BD vacía)
+ * Fuente de datos: Supabase.
+ * Si Supabase no está disponible o la consulta falla, se devuelve array vacío.
+ * No existe fallback a datos locales — la ausencia de datos es un estado válido.
  *
  * Contrato estable: las firmas públicas no cambian al migrar la fuente.
  */
 
 // ─── Lector privado de Supabase ───────────────────────────────────────────────
-// Devuelve null si Supabase no está disponible o la consulta falla,
-// lo que activa el fallback a datos locales.
+// Devuelve null si Supabase no está disponible o la consulta falla.
 
 async function fetchPromotionsFromDB(): Promise<Promotion[] | null> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
@@ -78,10 +76,10 @@ export function getPromotionStatus(
 
 /**
  * Devuelve todas las promociones sin filtrar.
- * Fuente: Supabase → fallback local.
+ * Fuente: Supabase. Devuelve [] si no hay datos o Supabase no está disponible.
  */
 export async function getPromotions(): Promise<Promotion[]> {
-  return (await fetchPromotionsFromDB()) ?? localPromotions;
+  return (await fetchPromotionsFromDB()) ?? [];
 }
 
 /**

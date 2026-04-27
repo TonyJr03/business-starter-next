@@ -57,8 +57,6 @@ function formatDateRange(startsAt?: string, endsAt?: string): string | undefined
 
 export default async function PromotionsPage({ params }: Props) {
   const { slug } = await params
-  const { contact, identity } = globalConfig
-
   const business = await resolveBusinessBySlug(slug)
 
   // Guarda de módulo — respeta overrides por tenant
@@ -72,8 +70,8 @@ export default async function PromotionsPage({ params }: Props) {
   const enriched = allPromos.map((promo) => {
     const status: PromoStatus = getPromotionStatus(promo, today)
     const dateRange = formatDateRange(promo.startsAt, promo.endsAt)
-    const orderHref = contact.whatsapp
-      ? getWhatsAppUrl(`Hola ${identity.name}, quisiera aprovechar la oferta: ${promo.title}.`)
+    const orderHref = business?.whatsapp
+      ? getWhatsAppUrl(`Hola ${business.name}, quisiera aprovechar la oferta: ${promo.title}.`, business.whatsapp)
       : undefined
     return { promo, status, dateRange, orderHref }
   })
@@ -124,12 +122,13 @@ export default async function PromotionsPage({ params }: Props) {
       )}
 
       {/* ── CTA WhatsApp ───────────────────────────────────────────── */}
-      {contact.whatsapp && promoModule.cta && (
+      {business?.whatsapp && promoModule.cta && (
         <CtaWhatsappSection
           title={promoModule.cta.title}
           subtitle={promoModule.cta.subtitle}
           buttonLabel={promoModule.cta.buttonLabel}
           message={promoModule.cta.message}
+          phoneNumber={business.whatsapp}
           bg="secondary"
           size="md"
         />

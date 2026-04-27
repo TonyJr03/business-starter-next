@@ -13,7 +13,7 @@ import type { NavItem } from '@/types'
 
 interface MobileMenuProps {
   nav: NavItem[]
-  whatsappUrl: string
+  whatsappUrl?: string
 }
 
 export function MobileMenu({ nav, whatsappUrl }: MobileMenuProps) {
@@ -64,6 +64,7 @@ export function MobileMenu({ nav, whatsappUrl }: MobileMenuProps) {
               </li>
             ))}
 
+            {whatsappUrl && (
             <li className="pt-2 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
               <a
                 href={whatsappUrl}
@@ -79,6 +80,7 @@ export function MobileMenu({ nav, whatsappUrl }: MobileMenuProps) {
                 WhatsApp
               </a>
             </li>
+            )}
           </ul>
         </nav>
       )}

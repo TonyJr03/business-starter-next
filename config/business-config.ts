@@ -59,7 +59,7 @@ const sectionModules: SectionModuleEntry[] = [
   },
   {
     id: 'highlights',
-    enabled: true,
+    enabled: false,
     order: 2,
     props: {
       title: '¿Por qué elegirnos?',
@@ -157,7 +157,7 @@ const pageModules: PageModulesConfig = {
     },
   },
   about: {
-    enabled:  true,
+    enabled:  false,
     path:     '/about',
     navLabel: 'Nosotros',
     title:    'Sobre Nosotros',
@@ -177,7 +177,7 @@ const pageModules: PageModulesConfig = {
     subtitle: 'Estamos disponibles para atenderte. La forma más rápida es por WhatsApp.',
   },
   faq: {
-    enabled:  true,
+    enabled:  false,
     path:     '/faq',
     navLabel: 'FAQ',
     title:    'Preguntas Frecuentes',
@@ -190,14 +190,14 @@ const pageModules: PageModulesConfig = {
     },
   },
   gallery: {
-    enabled:  true,
+    enabled:  false,
     path:     '/gallery',
     navLabel: 'Galería',
     title:    'Galería',
     subtitle: 'Conoce nuestro espacio y nuestras creaciones.',
   },
   blog: {
-    enabled:  true,
+    enabled:  false,
     path:     '/blog',
     navLabel: 'Blog',
     title:    'Blog',
