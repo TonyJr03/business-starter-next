@@ -10,7 +10,6 @@
  */
 
 import type { Metadata } from 'next'
-import { globalConfig } from '@/config'
 import { resolveActiveSections } from '@/lib/modules/resolver'
 import { SectionRenderer } from '@/components/sections/SectionRenderer'
 import { resolveBusinessBySlug } from '@/services/business.service'
@@ -22,17 +21,13 @@ interface TenantHomeProps {
 export async function generateMetadata({ params }: TenantHomeProps): Promise<Metadata> {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
-  const { identity, seoDefaults } = globalConfig
-
-  const name = business?.name ?? identity.name
 
   return {
     // title.absolute omite el template del tenant layout — en la home
-    // la marca va primero seguida del tagline, no al revés.
-    title: { absolute: `${name} · ${identity.tagline}` },
-    description: seoDefaults.defaultDescription,
+    // la marca va primero.
+    title: { absolute: business?.name ?? '' },
+    description: business?.shortDescription,
     openGraph: {
-      images: seoDefaults.ogImage ? [{ url: seoDefaults.ogImage }] : undefined,
       url: `/negocios/${slug}`,
     },
   }

@@ -7,7 +7,6 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { faqItems } from '@/data'
@@ -20,11 +19,11 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const { identity } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
   return {
     title: 'Preguntas Frecuentes',
-    description: `Resolvemos tus dudas sobre ${identity.name}: pedidos, horarios, menú y más.`,
+    description: `Resolvemos tus dudas sobre ${business?.name ?? ''}: pedidos, horarios, catálogos y más.`,
     openGraph: {
       url: `/negocios/${slug}/faq`,
     },
@@ -33,8 +32,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function FaqPage({ params }: Props) {
   const { slug } = await params
-  const { contact } = globalConfig
-
   const business = await resolveBusinessBySlug(slug)
 
   // Guarda de módulo — respeta overrides por tenant
@@ -69,12 +66,13 @@ export default async function FaqPage({ params }: Props) {
       <FaqSection items={faqItems} bg="default" size="md" />
 
       {/* ── CTA WhatsApp ───────────────────────────────────────────── */}
-      {contact.whatsapp && faqModule.cta && (
+      {business?.whatsapp && faqModule.cta && (
         <CtaWhatsappSection
           title={faqModule.cta.title}
           subtitle={faqModule.cta.subtitle}
           message={faqModule.cta.message}
           buttonLabel={faqModule.cta.buttonLabel}
+          phoneNumber={business.whatsapp}
           bg="surface"
           size="md"
         />

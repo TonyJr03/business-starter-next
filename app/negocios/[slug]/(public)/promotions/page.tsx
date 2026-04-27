@@ -10,7 +10,6 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { getPromotions, getPromotionStatus } from '@/services/promotions.service'
@@ -26,11 +25,11 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const { identity } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
   return {
     title: 'Promociones',
-    description: `Descubre las promociones y ofertas especiales de ${identity.name}.`,
+    description: `Descubre las promociones y ofertas especiales de ${business?.name ?? ''}.`,
     openGraph: {
       url: `/negocios/${slug}/promotions`,
     },

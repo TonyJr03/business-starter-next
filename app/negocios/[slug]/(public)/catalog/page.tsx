@@ -10,7 +10,6 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { getCategories, getProducts, getFeaturedProducts } from '@/services/catalog.service'
@@ -26,11 +25,11 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const { identity, seoDefaults } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
   return {
     title: 'Catálogo',
-    description: `Explora el catálogo completo de ${identity.name}. ${seoDefaults.defaultDescription ?? ''}`.trim(),
+    description: `Explora el catálogo completo de ${business?.name ?? ''}.`,
     openGraph: {
       url: `/negocios/${slug}/catalog`,
     },

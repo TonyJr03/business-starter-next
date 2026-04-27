@@ -9,7 +9,6 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { getPostBySlug } from '@/services/blog.service'

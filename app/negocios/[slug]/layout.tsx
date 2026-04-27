@@ -42,17 +42,14 @@ export async function generateMetadata({ params }: TenantLayoutProps): Promise<M
 
   if (!business) return {}
 
-  const { identity, seoDefaults } = globalConfig
-
   return {
     title: {
       template: `%s · ${business.name}`,
       default: business.name,
     },
-    description: business.shortDescription ?? identity.shortDescription ?? identity.description,
+    description: business.shortDescription,
     openGraph: {
       siteName: business.name,
-      images: seoDefaults.ogImage ? [{ url: seoDefaults.ogImage }] : undefined,
     },
   }
 }

@@ -7,7 +7,6 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { getPosts } from '@/services/blog.service'
@@ -20,11 +19,11 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const { identity } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
   return {
     title: 'Blog',
-    description: `Artículos, recetas y novedades de ${identity.name}.`,
+    description: `Artículos, contenido y novedades de ${business?.name ?? ''}.`,
     openGraph: {
       url: `/negocios/${slug}/blog`,
     },

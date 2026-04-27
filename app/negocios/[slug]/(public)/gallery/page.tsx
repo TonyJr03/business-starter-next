@@ -7,7 +7,6 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { globalConfig } from '@/config'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { galleryItems } from '@/data'
@@ -19,11 +18,11 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const { identity } = globalConfig
+  const business = await resolveBusinessBySlug(slug)
 
   return {
     title: 'Galería',
-    description: `Conoce el espacio, los productos y el equipo de ${identity.name} a través de nuestra galería de imágenes.`,
+    description: `Conoce el espacio, los productos y el equipo de ${business?.name ?? ''} a través de nuestra galería de imágenes.`,
     openGraph: {
       url: `/negocios/${slug}/gallery`,
     },
