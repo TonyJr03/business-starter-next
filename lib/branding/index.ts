@@ -6,7 +6,7 @@
  *
  * Estrategia de fallback (por orden de prioridad):
  *   1. Branding por tenant desde DB        → pendiente (M6+)
- *   2. Branding estático desde globalConfig → activo en M5
+ *   2. Branding estático desde businessGlobalConfig → activo en M5
  *   3. Defaults hardcoded                   → coinciden con tokens.css
  *
  * El punto de extensión para (1) está documentado en `buildBrandVars`:
@@ -37,7 +37,7 @@ const BRAND_DEFAULTS = {
  * Construye el objeto de CSS custom properties de marca para inyectar
  * como `style` en el wrapper del layout público.
  *
- * @param configBranding  Branding estático de globalConfig (fuente actual).
+ * @param configBranding  Branding estático de businessGlobalConfig (fuente actual).
  * @param tenantOverride  Branding por tenant desde DB (pendiente M6+).
  *                        Cuando esté disponible, sus valores tienen prioridad.
  */

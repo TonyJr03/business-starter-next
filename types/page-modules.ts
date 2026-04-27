@@ -1,4 +1,13 @@
-import type { PageCtaCopy } from './business-config';
+// ─── CTA copy ────────────────────────────────────────────────────────────────
+
+/** Bloque de textos para una sección CTA de WhatsApp dentro de una página. */
+export interface PageCtaCopy {
+  title: string;
+  subtitle?: string;
+  buttonLabel: string;
+  /** Mensaje pre-escrito enviado al abrir WhatsApp. */
+  message: string;
+}
 
 // ─── IDs de Módulos de Página ──────────────────────────────────────────────────
 

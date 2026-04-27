@@ -33,7 +33,7 @@
  *   const catalog  = resolvePageModule(business, 'catalog')
  */
 
-import { globalConfig } from '@/config';
+import { businessGlobalConfig } from '@/config/business-config';
 import type { BusinessModulesConfig, SectionModuleEntry } from '@/types';
 import type { PageModuleId, PageModuleConfig } from '@/types';
 import type { BusinessSettings, BusinessModulesOverride } from '@/types';
@@ -110,8 +110,8 @@ export function resolveModules(
   business: BusinessSettings | null,
 ): BusinessModulesConfig {
   const override = business?.modules;
-  if (!override) return globalConfig.modules;
-  return mergeModules(globalConfig.modules, override);
+  if (!override) return businessGlobalConfig.modules;
+  return mergeModules(businessGlobalConfig.modules, override);
 }
 
 /**

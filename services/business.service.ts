@@ -15,7 +15,7 @@ import {
  *
  * Campos persistidos: name, shortDescription, whatsapp, phone, email,
  * address, city, country, social, hours.
- * Branding, módulos y navegación permanecen en globalConfig (código, no datos).
+ * Branding, módulos y navegación permanecen en businessGlobalConfig (código, no datos).
  */
 
 // ─── Lector privado de Supabase ───────────────────────────────────────────────
@@ -62,8 +62,6 @@ async function fetchBusinessSettingsFromDB(
  * Devuelve los settings básicos del negocio desde Supabase.
  *
  * Si se pasa `slug`, busca ese negocio concreto (multi-tenant).
- * Si se omite, usa `globalConfig.identity.slug` como clave de búsqueda.
- *
  * Retorna `null` si Supabase no está disponible o el negocio no existe.
  *
  * @param slug - Slug del negocio a consultar (opcional).

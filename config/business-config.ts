@@ -143,7 +143,7 @@ const pageModules: PageModulesConfig = {
       title:       '¿Tienes alguna pregunta?',
       subtitle:    'Escríbenos directamente y te respondemos de inmediato.',
       buttonLabel: 'Escribir por WhatsApp',
-      message:     'Hola, quisiera más información sobre el café.',
+      message:     'Hola, quisiera más información sobre el negocio.',
     },
   },
   contact: {
@@ -184,7 +184,7 @@ const pageModules: PageModulesConfig = {
 
 // ─── Config global ────────────────────────────────────────────────────────────
 
-export const globalConfig: BusinessGlobalConfig = {
+export const businessGlobalConfig: BusinessGlobalConfig = {
   // ── Branding por defecto ──────────────────────────────────────────────────
   // Fallback visual para tenants sin branding configurado en DB.
   branding: {
@@ -215,4 +215,4 @@ export const globalConfig: BusinessGlobalConfig = {
 };
 
 // ─── Validación de arranque ───────────────────────────────────────────────────
-assertValidBusinessConfig(globalConfig);
+assertValidBusinessConfig(businessGlobalConfig);
