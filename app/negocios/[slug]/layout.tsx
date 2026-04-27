@@ -8,15 +8,14 @@
  * Este layout SOLO se encarga de:
  * 1. Resolver el negocio por slug → 404 si no existe
  * 2. Aplicar el branding del negocio vía CSS custom properties
- *    Prioridad: business.branding (DB) → businessGlobalConfig.branding → BRAND_DEFAULTS
+ *    Prioridad: business.branding (DB) → businessGlobalConfig.branding (base)
  * El Header y Footer viven en (public)/layout.tsx
  */
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug } from '@/services/business.service'
-import { businessGlobalConfig } from '@/config/business-config'
-import { buildBrandVars, getThemeKey } from '@/lib/branding'
+import { resolveBrandVars, resolveThemeKey } from '@/lib/branding/resolver'
 import type { ReactNode } from 'react'
 
 interface TenantLayoutProps {
@@ -62,9 +61,9 @@ export default async function TenantLayout({ params, children }: TenantLayoutPro
     notFound()
   }
 
-  // Branding: DB override por tenant > config estático del starter > defaults del sistema
-  const brandVars = buildBrandVars(businessGlobalConfig.branding, business.branding)
-  const themeKey = getThemeKey(businessGlobalConfig.branding, business.branding)
+  // Branding: DB override por tenant > base de plataforma
+  const brandVars = resolveBrandVars(business)
+  const themeKey = resolveThemeKey(business)
 
   return (
     <div

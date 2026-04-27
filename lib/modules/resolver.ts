@@ -3,8 +3,8 @@
  *
  * Punto de entrada único para obtener la configuración modular efectiva
  * de un tenant. Implementa el merge entre:
- *   - `globalConfig.modules` (base: definido en código, aplica a todos los tenants)
- *   - `business.modules`     (overrides: leídos desde la tabla `businesses` en Supabase)
+ *   - `businessGlobalConfig.modules` (base: definido en código, aplica a todos los tenants)
+ *   - `business.modules`              (overrides: leídos desde la tabla `businesses` en Supabase)
  *
  * ────────────────────────────────────────────────────────────────────────────
  * Reglas de merge (simples y previsibles):
@@ -21,7 +21,7 @@
  * ────────────────────────────────────────────────────────────────────────────
  * Fallback:
  *   Si `business` es null o `business.modules` es undefined, se retorna
- *   `globalConfig.modules` sin ninguna modificación.
+ *   `businessGlobalConfig.modules` sin ninguna modificación.
  *
  * ────────────────────────────────────────────────────────────────────────────
  * Uso:
@@ -102,7 +102,7 @@ function mergeModules(
  * Devuelve la configuración modular efectiva del tenant.
  *
  * Si el negocio no tiene overrides persistidos (`business.modules` es undefined),
- * retorna `globalConfig.modules` directamente sin ninguna copia.
+ * retorna `businessGlobalConfig.modules` directamente sin ninguna copia.
  *
  * @param business - Settings del tenant resuelto. null → fallback global completo.
  */
@@ -134,7 +134,7 @@ export function resolveActiveSections(
 /**
  * Devuelve la configuración de un módulo de página específico.
  *
- * Uso actual (S3): equivalente a `globalConfig.modules.pages[pageId]`.
+ * Uso actual (S3): equivalente a `businessGlobalConfig.modules.pages[pageId]`.
  * En S4: retornará la config mergeada con overrides de DB.
  *
  * Patrón recomendado en pages para S4:
