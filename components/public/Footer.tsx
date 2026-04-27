@@ -11,6 +11,7 @@
 
 import Link from 'next/link'
 import { globalConfig } from '@/config'
+import { resolveModules } from '@/lib/modules/resolver'
 import type { BusinessSettings } from '@/types'
 import type { NavItem, FooterSection } from '@/types'
 import type { PageModuleConfig } from '@/types'
@@ -20,9 +21,9 @@ interface FooterProps {
   slug: string
 }
 
-function buildFooterNav(slug: string): FooterSection[] {
+function buildFooterNav(business: BusinessSettings, slug: string): FooterSection[] {
   const base = `/negocios/${slug}`
-  const { pages } = globalConfig.modules
+  const { pages } = resolveModules(business)
 
   const pageLinks: NavItem[] = (Object.values(pages) as PageModuleConfig[])
     .filter((mod) => mod.enabled)
@@ -37,7 +38,7 @@ function buildFooterNav(slug: string): FooterSection[] {
 }
 
 export function Footer({ business, slug }: FooterProps) {
-  const sections = buildFooterNav(slug)
+  const sections = buildFooterNav(business, slug)
   const currentYear = new Date().getFullYear()
   const { social } = business
 

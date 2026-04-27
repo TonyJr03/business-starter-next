@@ -32,6 +32,7 @@
 
 import { globalConfig } from '@/config';
 import type { BusinessModulesConfig, SectionModuleEntry } from '@/types';
+import type { PageModuleId, PageModuleConfig } from '@/types';
 import type { BusinessSettings } from '@/types';
 
 // ─── Resolvers ────────────────────────────────────────────────────────────────
@@ -66,4 +67,25 @@ export function resolveActiveSections(
   return sections
     .filter((s) => s.enabled)
     .sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Devuelve la configuración de un módulo de página específico.
+ *
+ * Uso actual (S3): equivalente a `globalConfig.modules.pages[pageId]`.
+ * En S4: retornará la config mergeada con overrides de DB.
+ *
+ * Patrón recomendado en pages para S4:
+ *
+ *   const pageModule = resolvePageModule(business, 'catalog')
+ *   if (!pageModule.enabled) notFound()
+ *
+ * @param business - Settings del tenant resuelto (reservado para S4).
+ * @param pageId   - Identificador del módulo de página.
+ */
+export function resolvePageModule(
+  business: BusinessSettings | null,
+  pageId: PageModuleId,
+): PageModuleConfig {
+  return resolveModules(business).pages[pageId];
 }

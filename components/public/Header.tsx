@@ -12,6 +12,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { globalConfig } from '@/config'
+import { resolveModules } from '@/lib/modules/resolver'
 import { MobileMenu } from './MobileMenu'
 import { NavLink } from './NavLink'
 import type { BusinessSettings } from '@/types'
@@ -24,9 +25,9 @@ interface HeaderProps {
 }
 
 /** Construye la navegación del tenant prefijando las rutas con /negocios/[slug]. */
-function buildTenantNav(slug: string): NavItem[] {
+function buildTenantNav(business: BusinessSettings, slug: string): NavItem[] {
   const base = `/negocios/${slug}`
-  const { pages } = globalConfig.modules
+  const { pages } = resolveModules(business)
 
   const pageItems = (Object.values(pages) as PageModuleConfig[])
     .filter((mod) => mod.enabled)
@@ -36,7 +37,7 @@ function buildTenantNav(slug: string): NavItem[] {
 }
 
 export function Header({ business, slug }: HeaderProps) {
-  const nav = buildTenantNav(slug)
+  const nav = buildTenantNav(business, slug)
   const { identity, contact } = globalConfig
 
   const waNumber = (business.whatsapp ?? contact.whatsapp).replace(/\D/g, '')
