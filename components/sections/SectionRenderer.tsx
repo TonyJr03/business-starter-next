@@ -60,7 +60,7 @@ export function SectionRenderer({ section, hours, whatsapp }: SectionRendererPro
 
     case 'whatsapp_cta':
       if (!whatsapp) return null
-      return <CtaWhatsappSection {...section.props} />
+      return <CtaWhatsappSection {...section.props} phoneNumber={whatsapp} />
 
     // Secciones no implementadas aún — se omiten silenciosamente
     case 'promotions':

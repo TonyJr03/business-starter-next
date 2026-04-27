@@ -19,10 +19,11 @@ export function CtaWhatsappSection({
   subtitle,
   buttonLabel = 'Escribir por WhatsApp',
   message,
+  phoneNumber,
   bg = 'secondary',
   size = 'md',
 }: WhatsappCtaSectionProps) {
-  const url = getWhatsAppUrl(message)
+  const url = getWhatsAppUrl(message, phoneNumber)
 
   return (
     <Section bg={bg} size={size}>

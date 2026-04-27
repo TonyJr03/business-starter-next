@@ -5,11 +5,13 @@
  * Acceso: público
  *
  * Renderiza las secciones habilitadas de la home en el orden definido
- * en `globalConfig.modules.sections`.
+ * por el resolver modular. La lista de secciones activas se obtiene via
+ * `resolveActiveSections(business)` — seam point para overrides por tenant en S4.
  */
 
 import type { Metadata } from 'next'
 import { globalConfig } from '@/config'
+import { resolveActiveSections } from '@/lib/modules/resolver'
 import { SectionRenderer } from '@/components/sections/SectionRenderer'
 import { resolveBusinessBySlug } from '@/services/business.service'
 
@@ -46,9 +48,7 @@ export default async function TenantHome({ params }: TenantHomeProps) {
   const businessHours = business?.hours ?? hours
   const businessWhatsapp = business?.whatsapp ?? contact.whatsapp
 
-  const activeSections = globalConfig.modules.sections
-    .filter(s => s.enabled)
-    .sort((a, b) => a.order - b.order)
+  const activeSections = resolveActiveSections(business)
 
   return (
     <>
