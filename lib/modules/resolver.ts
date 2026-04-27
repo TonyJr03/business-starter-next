@@ -1,55 +1,117 @@
 /**
- * Module resolver — estrategia de resolución base + override
+ * Module resolver — resolución base + override por tenant
  *
  * Punto de entrada único para obtener la configuración modular efectiva
- * de un tenant. Centraliza la lógica de merge entre:
+ * de un tenant. Implementa el merge entre:
  *   - `globalConfig.modules` (base: definido en código, aplica a todos los tenants)
- *   - overrides por tenant (futuro S4: vendrán de la tabla `businesses` en Supabase)
+ *   - `business.modules`     (overrides: leídos desde la tabla `businesses` en Supabase)
  *
  * ────────────────────────────────────────────────────────────────────────────
- * Estrategia de resolución (tres fases):
+ * Reglas de merge (simples y previsibles):
  *
- *   S3 (actual): base pura
- *     resolveModules(business) → globalConfig.modules
- *     No hay overrides; `business` se acepta en firma para estabilizar callers.
+ *   pages:    por clave — `{ ...base[id], ...override[id] }`
+ *             Solo las claves presentes en el override modifican su módulo.
  *
- *   S4 (próximo): merge DB → base
- *     business.modules (DB) se fusiona sobre globalConfig.modules como defaults.
- *     Callers no cambian — solo cambia esta función.
+ *   sections: por id — solo `enabled` y `order` se sobreescriben.
+ *             Las props visuales (title, bg, size…) son config global, no datos.
  *
- *   S5+ (futuro): merge jerárquico
- *     platform defaults → tenant overrides → feature flags dinámicos
+ *   features: por clave — `{ ...base[id], ...override[id] }`
+ *             Solo las claves presentes en el override modifican su feature.
+ *
+ * ────────────────────────────────────────────────────────────────────────────
+ * Fallback:
+ *   Si `business` es null o `business.modules` es undefined, se retorna
+ *   `globalConfig.modules` sin ninguna modificación.
  *
  * ────────────────────────────────────────────────────────────────────────────
  * Uso:
  *
- *   import { resolveModules, resolveActiveSections } from '@/lib/modules/resolver'
+ *   import { resolveModules, resolveActiveSections, resolvePageModule } from '@/lib/modules/resolver'
  *
- *   // En un Server Component o page:
- *   const modules = resolveModules(business)
+ *   const modules  = resolveModules(business)
  *   const sections = resolveActiveSections(business)
+ *   const catalog  = resolvePageModule(business, 'catalog')
  */
 
 import { globalConfig } from '@/config';
 import type { BusinessModulesConfig, SectionModuleEntry } from '@/types';
 import type { PageModuleId, PageModuleConfig } from '@/types';
-import type { BusinessSettings } from '@/types';
+import type { BusinessSettings, BusinessModulesOverride } from '@/types';
 
-// ─── Resolvers ────────────────────────────────────────────────────────────────
+// ─── Merge interno ────────────────────────────────────────────────────────────
+
+/**
+ * Combina la config base global con los overrides del tenant.
+ * Cada capa es opcional; si no hay override, retorna la base sin copia.
+ */
+function mergeModules(
+  base: BusinessModulesConfig,
+  override: BusinessModulesOverride,
+): BusinessModulesConfig {
+  // ── pages: merge shallow por clave ──────────────────────────────────────────
+  let pages = base.pages;
+  if (override.pages) {
+    const pageOverrides = override.pages;
+    const mergedPages = { ...base.pages };
+    for (const key of Object.keys(pageOverrides) as PageModuleId[]) {
+      const pageOverride = pageOverrides[key];
+      if (pageOverride !== undefined) {
+        mergedPages[key] = { ...base.pages[key], ...pageOverride };
+      }
+    }
+    pages = mergedPages;
+  }
+
+  // ── sections: merge enabled + order por id ──────────────────────────────────
+  // Las props visuales son config global — no se tocan.
+  let sections = base.sections;
+  if (override.sections) {
+    const sectionOverrides = override.sections;
+    sections = base.sections.map((entry) => {
+      const sectionOverride = sectionOverrides[entry.id];
+      if (!sectionOverride) return entry;
+      return {
+        ...entry,
+        ...(sectionOverride.enabled !== undefined && { enabled: sectionOverride.enabled }),
+        ...(sectionOverride.order   !== undefined && { order:   sectionOverride.order }),
+      };
+    });
+  }
+
+  // ── features: merge shallow por clave ───────────────────────────────────────
+  let features = base.features;
+  if (override.features) {
+    features = { ...base.features };
+    for (const [key, val] of Object.entries(override.features)) {
+      if (val !== undefined) {
+        const featureKey = key as keyof typeof base.features;
+        features = {
+          ...features,
+          [featureKey]: { ...base.features[featureKey], ...val },
+        };
+      }
+    }
+  }
+
+  return { pages, sections, features };
+}
+
+// ─── API pública ──────────────────────────────────────────────────────────────
 
 /**
  * Devuelve la configuración modular efectiva del tenant.
  *
- * Hoy retorna `globalConfig.modules` directamente.
- * En S4: mergea `business.modules` (overrides de DB) sobre la base global.
+ * Si el negocio no tiene overrides persistidos (`business.modules` es undefined),
+ * retorna `globalConfig.modules` directamente sin ninguna copia.
  *
- * @param _business - Settings del tenant resuelto. Reservado para S4.
+ * @param business - Settings del tenant resuelto. null → fallback global completo.
  */
 export function resolveModules(
-  _business: BusinessSettings | null,
+  business: BusinessSettings | null,
 ): BusinessModulesConfig {
-  // S4: merge business.modules ?? globalConfig.modules
-  return globalConfig.modules;
+  const override = business?.modules;
+  if (!override) return globalConfig.modules;
+  return mergeModules(globalConfig.modules, override);
 }
 
 /**
