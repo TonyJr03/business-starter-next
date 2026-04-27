@@ -61,7 +61,7 @@ async function fetchBusinessSettingsFromDB(
   let query = db
     .from('businesses')
     .select(
-      'id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours, branding',
+      'id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours, branding, modules',
     );
 
   if (targetSlug) {
@@ -120,7 +120,7 @@ export const resolveBusinessBySlug = cache(
     const { data, error } = await db
       .from('businesses')
       .select(
-        'id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours, branding',
+        'id, slug, name, short_description, whatsapp, phone, email, address, city, country, social, hours, branding, modules',
       )
       .eq('slug', slug)
       .single<BusinessSettingsRow>()

@@ -1,5 +1,6 @@
 import type { BusinessBranding, BusinessSocial, DayHours } from '@/types';
 import type { BusinessSettings, BusinessDirectoryItem } from '@/types';
+import type { BusinessModulesOverride } from '@/types';
 
 // ─── Settings row ─────────────────────────────────────────────────────────────
 
@@ -17,6 +18,7 @@ export interface BusinessSettingsRow {
   social: BusinessSocial | null;
   hours: DayHours[] | null;
   branding: BusinessBranding | null;
+  modules: BusinessModulesOverride | null;
 }
 
 export type BusinessSettingsInsertRow = Omit<BusinessSettingsRow, 'id'>;
@@ -36,6 +38,7 @@ export function rowToBusinessSettings(row: BusinessSettingsRow): BusinessSetting
     social:           row.social ?? undefined,
     hours:            row.hours ?? undefined,
     branding:         row.branding ?? undefined,
+    modules:          row.modules ?? undefined,
   };
 }
 
