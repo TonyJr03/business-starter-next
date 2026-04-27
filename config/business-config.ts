@@ -1,46 +1,25 @@
 /**
  * ════════════════════════════════════════════════════════════════════════════
- *  CONFIGURACIÓN GLOBAL DEL NEGOCIO — FUENTE DE VERDAD ÚNICA
+ *  CONFIGURACIÓN GLOBAL DEL SISTEMA — DEFAULTS DE PLATAFORMA
  * ════════════════════════════════════════════════════════════════════════════
  *
- *  Para adaptar este starter a un nuevo negocio, edita ÚNICAMENTE este
- *  archivo. El resto del sistema lee todo desde `globalConfig`.
+ *  Define los valores base que aplican a todos los tenants.
+ *  Los datos operativos de cada negocio (nombre, contacto, horarios, etc.)
+ *  viven en la tabla `businesses` de Supabase.
  *
- *  Bloques disponibles:
- *   · identity    → nombre, slug, tagline, descripción, logo
- *   · branding    → colores y tipografías de marca
- *   · contact     → WhatsApp, teléfono, email
- *   · location    → ciudad, país, calle, mapa
- *   · hours       → horarios por día de la semana
- *   · social      → redes sociales
- *   · modules     → pages + sections + feature modules
- *   · seoDefaults → plantilla de título y descripción meta
+ *  Bloques:
+ *   · branding  → colores y tipografías por defecto (fallback si el tenant
+ *                 no tiene branding propio en DB)
+ *   · modules   → pages + sections + feature modules que definen la
+ *                 estructura del starter; el tenant sobreescribe vía
+ *                 BusinessModulesOverride en su fila de Supabase
  * ════════════════════════════════════════════════════════════════════════════
  */
 
-import { assertValidBusinessConfig, type BusinessGlobalConfig, type BusinessIdentity, type SectionModuleEntry, type PageModulesConfig } from '@/types';
-
-// ─── Identity ────────────────────────────────────────────────────────────────
-// Definida primero para poder referenciarla dentro de `homeSections`.
-
-const identity: BusinessIdentity = {
-  name: 'Café La Esquina',
-  slug: 'cafe-la-esquina',
-  tagline: 'El rincón del buen café habanero',
-  description:
-    'Café La Esquina es un rincón acogedor en el corazón de La Habana donde el aroma del café recién hecho te da la bienvenida. Ofrecemos los mejores cafés cubanos, bebidas artesanales y una selección de bocados para disfrutar en un ambiente tranquilo y familiar.',
-  shortDescription:
-    'Tu cafetería de confianza en La Habana. Café cubano, ambiente acogedor y los mejores sabores.',
-  logo: {
-    url: '/brands/cafe-la-esquina/logo/logo.svg',
-    alt: 'Café La Esquina',
-  },
-  coverImageUrl: '/brands/cafe-la-esquina/hero/cover.svg',
-};
+import { assertValidBusinessConfig, type BusinessGlobalConfig, type SectionModuleEntry, type PageModulesConfig } from '@/types';
 
 // ─── Section modules ────────────────────────────────────────────────────────
-// Las props que dependen de `identity` (nombre, tagline, descripción) se
-// referencian aquí para evitar duplicación.
+// Props visuales genéricas. El tenant personaliza los textos desde el admin.
 
 const sectionModules: SectionModuleEntry[] = [
   {
@@ -48,9 +27,9 @@ const sectionModules: SectionModuleEntry[] = [
     enabled: true,
     order: 1,
     props: {
-      tagline: identity.tagline,
-      title: identity.name,
-      subtitle: identity.shortDescription,
+      tagline: '',
+      title: '',
+      subtitle: '',
       primaryCta: { label: 'Ver catálogo', href: '/catalog' },
       secondaryCta: { label: 'Contáctanos', href: '/contact' },
       bg: 'secondary',
@@ -63,7 +42,7 @@ const sectionModules: SectionModuleEntry[] = [
     order: 2,
     props: {
       title: '¿Por qué elegirnos?',
-      subtitle: identity.description,
+      subtitle: '',
       columns: 3,
       bg: 'surface',
       size: 'md',
@@ -107,7 +86,7 @@ const sectionModules: SectionModuleEntry[] = [
       title: '¿Listo para ordenar?',
       subtitle: 'Escríbenos directamente por WhatsApp y te atendemos al momento.',
       buttonLabel: 'Escribir ahora',
-      message: `Hola ${identity.name}, me gustaría hacer una consulta.`,
+      message: 'Hola, me gustaría hacer una consulta.',
       bg: 'secondary',
       size: 'md',
     },
@@ -125,8 +104,6 @@ const sectionModules: SectionModuleEntry[] = [
 ];
 
 // ─── Page modules ────────────────────────────────────────────────────────────
-// Cada ruta del sitio (excepto Home) es un módulo activable.
-// El orden de declaración determina el orden en la navegación.
 
 const pageModules: PageModulesConfig = {
   catalog: {
@@ -140,7 +117,7 @@ const pageModules: PageModulesConfig = {
       title:       '¿Ves algo que te gusta?',
       subtitle:    'Escríbenos por WhatsApp y te atendemos de inmediato.',
       buttonLabel: 'Hacer un pedido',
-      message:     `Hola ${identity.name}, quisiera hacer un pedido.`,
+      message:     'Hola, quisiera hacer un pedido.',
     },
   },
   promotions: {
@@ -153,7 +130,7 @@ const pageModules: PageModulesConfig = {
       title:       '¿Tienes alguna consulta?',
       subtitle:    'Escríbenos por WhatsApp y te informamos sobre cualquier oferta.',
       buttonLabel: 'Consultar por WhatsApp',
-      message:     `Hola ${identity.name}, quisiera información sobre sus ofertas.`,
+      message:     'Hola, quisiera información sobre sus ofertas.',
     },
   },
   about: {
@@ -161,12 +138,12 @@ const pageModules: PageModulesConfig = {
     path:     '/about',
     navLabel: 'Nosotros',
     title:    'Sobre Nosotros',
-    subtitle: `Conoce la historia y los valores detrás de ${identity.name}.`,
+    subtitle: 'Conoce la historia y los valores detrás de nuestro negocio.',
     cta: {
       title:       '¿Tienes alguna pregunta?',
       subtitle:    'Escríbenos directamente y te respondemos de inmediato.',
       buttonLabel: 'Escribir por WhatsApp',
-      message:     `Hola ${identity.name}, quisiera más información sobre el café.`,
+      message:     'Hola, quisiera más información sobre el café.',
     },
   },
   contact: {
@@ -186,7 +163,7 @@ const pageModules: PageModulesConfig = {
       title:       '¿No encontraste lo que buscabas?',
       subtitle:    'Escríbenos directamente y te respondemos enseguida.',
       buttonLabel: 'Preguntar por WhatsApp',
-      message:     `Hola ${identity.name}, tengo una pregunta que no encontré en el FAQ.`,
+      message:     'Hola, tengo una pregunta que no encontré en el FAQ.',
     },
   },
   gallery: {
@@ -208,10 +185,8 @@ const pageModules: PageModulesConfig = {
 // ─── Config global ────────────────────────────────────────────────────────────
 
 export const globalConfig: BusinessGlobalConfig = {
-  // ── Identidad ─────────────────────────────────────────────────────────────
-  identity,
-
-  // ── Marca visual ──────────────────────────────────────────────────────────
+  // ── Branding por defecto ──────────────────────────────────────────────────
+  // Fallback visual para tenants sin branding configurado en DB.
   branding: {
     colors: {
       primary:         '#6F4E37',
@@ -228,63 +203,16 @@ export const globalConfig: BusinessGlobalConfig = {
     },
   },
 
-  // ── Contacto ──────────────────────────────────────────────────────────────
-  contact: {
-    whatsapp: '+5350000000',
-    phone:    '+5372000000',
-    email:    'contacto@cafelaesquina.cu',
-  },
-
-  // ── Ubicación ─────────────────────────────────────────────────────────────
-  location: {
-    street:       'Calle 23 esquina a L, Vedado',
-    municipality: 'Plaza de la Revolución',
-    city:         'La Habana',
-    country:      'Cuba',
-  },
-
-  // ── Horarios ──────────────────────────────────────────────────────────────
-  hours: [
-    { day: 'Lunes',     open: '08:00', close: '22:00', isClosed: false },
-    { day: 'Martes',    open: '08:00', close: '22:00', isClosed: false },
-    { day: 'Miércoles', open: '08:00', close: '22:00', isClosed: false },
-    { day: 'Jueves',    open: '08:00', close: '22:00', isClosed: false },
-    { day: 'Viernes',   open: '08:00', close: '22:00', isClosed: false },
-    { day: 'Sábado',    open: '08:00', close: '22:00', isClosed: false },
-    { day: 'Domingo',   open: '09:00', close: '18:00', isClosed: false },
-  ],
-
-  // ── Redes sociales ────────────────────────────────────────────────────────
-  social: {
-    instagram: 'https://instagram.com/cafelaesquina',
-    facebook:  'https://facebook.com/cafelaesquina',
-  },
-
   // ── Módulos ───────────────────────────────────────────────────────────────
   modules: {
-    // Módulos de página — cada ruta del sitio (excepto Home) es un módulo activable.
-    pages: pageModules,
-
-    // Secciones de la home: orden, visibilidad y props visuales
+    pages:    pageModules,
     sections: sectionModules,
-
-    // Feature modules funcionales (no tienen página propia)
     features: {
       cart:             { enabled: false },
       whatsappOrdering: { enabled: false },
     },
   },
-
-  // ── SEO ───────────────────────────────────────────────────────────────────
-  seoDefaults: {
-    titleTemplate:      `%s | ${identity.name}`,
-    defaultDescription: identity.shortDescription ?? identity.description,
-    ogImage:            identity.coverImageUrl,
-  },
 };
 
 // ─── Validación de arranque ───────────────────────────────────────────────────
-// Se ejecuta al cargar el módulo (una sola vez por proceso / build worker).
-// Si globalConfig está mal formada, el build o el servidor fallan de inmediato
-// con un listado claro de errores — nunca de forma silenciosa.
 assertValidBusinessConfig(globalConfig);

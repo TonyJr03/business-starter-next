@@ -1,7 +1,4 @@
 import type { ContentFeature } from '@/types';
-import { globalConfig } from '@/config';
-
-const { location } = globalConfig;
 
 /**
  * highlightItems — ítems editoriales para la sección "highlights" de la Home.
@@ -21,8 +18,8 @@ export const highlightItems: ContentFeature[] = [
   },
   {
     icon: '📍',
-    title: location.city,
-    description: `Encuéntranos${location.street ? ` en ${location.street}` : ''}${location.municipality ? `, ${location.municipality}` : ''}.`,
+    title: 'Ubicación conveniente',
+    description: 'Encuéntranos en una ubicación accesible y céntrica.',
   },
   {
     icon: '🕐',

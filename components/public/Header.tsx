@@ -10,8 +10,6 @@
  */
 
 import Link from 'next/link'
-import Image from 'next/image'
-import { globalConfig } from '@/config'
 import { resolveModules } from '@/lib/modules/resolver'
 import { MobileMenu } from './MobileMenu'
 import { NavLink } from './NavLink'
@@ -38,7 +36,6 @@ function buildTenantNav(business: BusinessSettings, slug: string): NavItem[] {
 
 export function Header({ business, slug }: HeaderProps) {
   const nav = buildTenantNav(business, slug)
-  const { identity } = globalConfig
 
   const waNumber = business.whatsapp?.replace(/\D/g, '')
   const whatsappUrl = waNumber ? `https://wa.me/${waNumber}` : undefined
@@ -57,18 +54,7 @@ export function Header({ business, slug }: HeaderProps) {
             className="text-xl font-bold shrink-0"
             style={{ color: 'var(--color-primary)' }}
           >
-            {identity.logo?.url ? (
-              <Image
-                src={identity.logo.url}
-                alt={identity.logo.alt}
-                width={identity.logo.width ?? 120}
-                height={identity.logo.height ?? 32}
-                className="h-8 w-auto"
-                priority
-              />
-            ) : (
-              business.name
-            )}
+            {business.name}
           </Link>
 
           {/* Navegación desktop */}

@@ -10,7 +10,6 @@
  */
 
 import Link from 'next/link'
-import { globalConfig } from '@/config'
 import { resolveModules } from '@/lib/modules/resolver'
 import type { BusinessSettings } from '@/types'
 import type { NavItem, FooterSection } from '@/types'

@@ -171,34 +171,24 @@ export interface BusinessSeoDefaults {
 // ─── Root Contract ─────────────────────────────────────────────────────────────
 
 /**
- * Contrato unificado de configuración global del negocio.
+ * Configuración global del sistema — define los defaults de plataforma
+ * que aplican a todos los tenants como base.
  *
- * Estructura en bloques — cada campo agrupa una responsabilidad:
+ * Solo contiene lo que el sistema necesita en código:
  *
- * | bloque       | responsabilidad                                           |
- * |--------------|-----------------------------------------------------------|
- * | `identity`   | nombre, razón social, tagline, descripción, logo          |
- * | `branding`   | tema visual, colores sobreescritos, tipografías           |
- * | `contact`    | WhatsApp, teléfono, email, dirección postal               |
- * | `location`   | ciudad, país, URL de mapa, coordenadas                    |
- * | `hours`      | horarios por día de la semana                             |
- * | `social`     | URLs de redes sociales                                    |
- * | `modules`    | módulos de página + secciones home + feature modules      |
- * | `seoDefaults`| plantilla de título, descripción y og:image por defecto   |
+ * | bloque    | responsabilidad                                               |
+ * |-----------|---------------------------------------------------------------|
+ * | `branding`| colores y tipografías por defecto (fallback si el tenant      |
+ * |           | no tiene branding propio en DB)                               |
+ * | `modules` | módulos de página + secciones home + feature modules.         |
+ * |           | El tenant puede sobreescribir partes vía `BusinessModulesOverride` |
  *
- * @example
- * import type { BusinessGlobalConfig } from '@/types';
- * const config: BusinessGlobalConfig = { ... };
+ * Los datos operativos de cada negocio (identity, contact, location,
+ * hours, social) viven en la tabla `businesses` de Supabase, no aquí.
  */
 export interface BusinessGlobalConfig {
-  identity: BusinessIdentity;
   branding: BusinessBranding;
-  contact: BusinessContact;
-  location: BusinessLocation;
-  hours: DayHours[];
-  social: BusinessSocial;
   modules: BusinessModulesConfig;
-  seoDefaults: BusinessSeoDefaults;
 }
 
 // ─── Validación en tiempo de ejecución ────────────────────────────────────────
@@ -208,11 +198,7 @@ export type ConfigValidationError = string;
 
 /**
  * Valida la estructura básica de `BusinessGlobalConfig`.
- * Comprueba presencia y formato de los campos obligatorios.
- *
- * La validación de tipos en tiempo de compilación (TypeScript) cubre la
- * estructura general; esta función detecta problemas de valor en tiempo
- * de ejecución (campos vacíos, formatos incorrectos).
+ * Comprueba que los módulos requeridos estén presentes.
  *
  * @returns Array de mensajes de error. Array vacío indica config válida.
  */
@@ -221,72 +207,11 @@ export function validateBusinessConfig(
 ): ConfigValidationError[] {
   const errors: ConfigValidationError[] = [];
 
-  // ── identity ──────────────────────────────────────────────────────────────
-  if (!config.identity.name?.trim()) {
-    errors.push('identity.name es obligatorio.');
+  if (!config.modules?.pages) {
+    errors.push('modules.pages es obligatorio.');
   }
-  if (!config.identity.tagline?.trim()) {
-    errors.push('identity.tagline es obligatorio.');
-  }
-  if (!config.identity.description?.trim()) {
-    errors.push('identity.description es obligatorio.');
-  }
-
-  // ── contact ───────────────────────────────────────────────────────────────
-  if (!config.contact.whatsapp?.trim()) {
-    errors.push('contact.whatsapp es obligatorio.');
-  } else if (!/^\+\d{7,15}$/.test(config.contact.whatsapp)) {
-    errors.push(
-      'contact.whatsapp debe tener formato E.164 (ej. "+5350000000").',
-    );
-  }
-  if (
-    config.contact.email &&
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(config.contact.email)
-  ) {
-    errors.push(
-      'contact.email no tiene un formato de correo electrónico válido.',
-    );
-  }
-
-  // ── location ──────────────────────────────────────────────────────────────
-  if (!config.location.city?.trim()) {
-    errors.push('location.city es obligatorio.');
-  }
-  if (!config.location.country?.trim()) {
-    errors.push('location.country es obligatorio.');
-  }
-
-  // ── hours ─────────────────────────────────────────────────────────────────
-  if (!Array.isArray(config.hours) || config.hours.length === 0) {
-    errors.push('hours debe ser un array con al menos una entrada.');
-  } else {
-    const timeRe = /^\d{2}:\d{2}$/;
-    config.hours.forEach((h, i) => {
-      if (!h.day?.trim()) {
-        errors.push(`hours[${i}].day es obligatorio.`);
-      }
-      if (!h.isClosed) {
-        if (!timeRe.test(h.open)) {
-          errors.push(`hours[${i}].open debe tener formato HH:MM.`);
-        }
-        if (!timeRe.test(h.close)) {
-          errors.push(`hours[${i}].close debe tener formato HH:MM.`);
-        }
-      }
-    });
-  }
-
-  // ── seoDefaults ───────────────────────────────────────────────────────────
-  if (!config.seoDefaults.titleTemplate?.trim()) {
-    errors.push('seoDefaults.titleTemplate es obligatorio.');
-  } else if (!config.seoDefaults.titleTemplate.includes('%s')) {
-    errors.push(
-      'seoDefaults.titleTemplate debe incluir "%s" como marcador del título de página.',
-    );
-  }
-  if (!config.seoDefaults.defaultDescription?.trim()) {
-    errors.push('seoDefaults.defaultDescription es obligatorio.');
+  if (!Array.isArray(config.modules?.sections)) {
+    errors.push('modules.sections debe ser un array.');
   }
 
   return errors;
@@ -295,13 +220,7 @@ export function validateBusinessConfig(
 /**
  * Lanza un error descriptivo si `BusinessGlobalConfig` contiene problemas estructurales.
  *
- * Úsalo en el arranque de la aplicación para detectar configuraciones incorrectas temprano.
- *
  * @throws {Error} Con el listado completo de errores encontrados.
- *
- * @example
- * import { assertValidBusinessConfig } from '@/types';
- * assertValidBusinessConfig(myConfig); // lanza si hay errores
  */
 export function assertValidBusinessConfig(config: BusinessGlobalConfig): void {
   const errors = validateBusinessConfig(config);
