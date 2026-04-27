@@ -7,7 +7,6 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { updateSettingsAction } from './actions'
 import type { AdminActionState } from '@/lib/admin'
 import type { DayHours } from '@/types'
-import { globalConfig } from '@/config'
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
 
@@ -261,11 +260,10 @@ export function SettingsForm({ slug, defaults }: Props) {
           </div>
 
           {DAYS.map((day, i) => {
-            const fallback = globalConfig.hours[i]
             const saved    = defaults.hours?.[i]
-            const open     = saved?.open     ?? fallback?.open     ?? '09:00'
-            const close    = saved?.close    ?? fallback?.close    ?? '18:00'
-            const isClosed = saved?.isClosed ?? fallback?.isClosed ?? false
+            const open     = saved?.open     ?? '09:00'
+            const close    = saved?.close    ?? '18:00'
+            const isClosed = saved?.isClosed ?? false
 
             return (
               <div key={day} className="grid grid-cols-2 sm:grid-cols-[8rem_1fr_1fr_5rem] gap-2 items-center">

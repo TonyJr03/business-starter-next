@@ -39,7 +39,6 @@ export interface ProductFilters {
 
 // ─── Lectores privados de Supabase ────────────────────────────────────────────
 // Devuelven null si Supabase no está disponible o falla la consulta,
-// lo que activa el fallback a datos locales en cada función pública.
 
 async function fetchCategoriesFromDB(): Promise<Category[] | null> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
