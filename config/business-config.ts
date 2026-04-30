@@ -69,7 +69,7 @@ const pageModules: PageModulesConfig = {
     subtitle: 'Estamos disponibles para atenderte. La forma más rápida es por WhatsApp.',
   },
   faq: {
-    enabled:  false,
+    enabled:  true,
     path:     '/faq',
     navLabel: 'FAQ',
     title:    'Preguntas Frecuentes',

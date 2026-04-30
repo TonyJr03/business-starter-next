@@ -28,7 +28,7 @@
 -- ---------------------------------------------------------------------------
 -- Limpiar en orden inverso al de dependencias (seguro en entorno de dev)
 -- ---------------------------------------------------------------------------
-TRUNCATE business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
+TRUNCATE business_faq_items, business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
 
 
 -- =============================================================================
@@ -374,5 +374,93 @@ BEGIN
     ),
     'https://picsum.photos/seed/cafe-equipo/800/600'
   );
+
+  -- ===========================================================================
+  -- 7. FAQ: preguntas frecuentes de Café La Esquina
+  -- Categorías: 'Pedidos', 'Horarios y visitas', 'Productos', 'Pagos'
+  -- ===========================================================================
+  INSERT INTO business_faq_items
+    (id, business_id, question, answer, category, sort_order)
+  VALUES
+
+    -- ── Pedidos ──────────────────────────────────────────────────────────────
+    (
+      '60000000-0000-4000-8000-000000000001', biz,
+      '¿Cómo puedo hacer un pedido?',
+      'La forma más rápida es escribirnos directamente por WhatsApp. Indícanos qué producto te interesa, la cantidad y si lo recogerás en el local o necesitas envío. Respondemos en minutos.',
+      'Pedidos', 1
+    ),
+    (
+      '60000000-0000-4000-8000-000000000002', biz,
+      '¿Hacen pedidos para llevar?',
+      'Sí, todos nuestros productos están disponibles para llevar. Puedes ordenarlos por WhatsApp con anticipación o pedirlos directamente en el mostrador al llegar.',
+      'Pedidos', 2
+    ),
+    (
+      '60000000-0000-4000-8000-000000000003', biz,
+      '¿Realizan entregas a domicilio?',
+      'Por el momento no contamos con servicio de entrega propia. Sin embargo, trabajamos con mensajeros de confianza del barrio. Consúltanos por WhatsApp y te orientamos según tu ubicación.',
+      'Pedidos', 3
+    ),
+    (
+      '60000000-0000-4000-8000-000000000004', biz,
+      '¿Con cuánta anticipación debo hacer un pedido grande?',
+      'Para pedidos de más de 10 personas o productos de dulcería elaborados (tortas, postres), recomendamos avisarnos con al menos 24 horas de antelación. Para pedidos habituales, no hace falta anticipación.',
+      'Pedidos', 4
+    ),
+
+    -- ── Horarios y visitas ────────────────────────────────────────────────────
+    (
+      '60000000-0000-4000-8000-000000000005', biz,
+      '¿Cuál es el horario de atención?',
+      'Abrimos de lunes a domingo de 8:00 AM a 10:00 PM. Los domingos cerramos a las 8:00 PM. Puedes consultar el horario completo en nuestra sección de Contacto.',
+      'Horarios y visitas', 1
+    ),
+    (
+      '60000000-0000-4000-8000-000000000006', biz,
+      '¿Dónde están ubicados?',
+      'Estamos en Calle 23 esquina a L, en el Vedado, La Habana. Somos el local de la esquina con la fachada marrón y la pizarra de ofertas en la puerta.',
+      'Horarios y visitas', 2
+    ),
+    (
+      '60000000-0000-4000-8000-000000000007', biz,
+      '¿Tienen mesas disponibles para sentarse?',
+      'Sí, contamos con un pequeño salón interior con 8 mesas y una terraza exterior con 4 mesas adicionales. En horas pico (mediodía y merienda) puede haber espera breve.',
+      'Horarios y visitas', 3
+    ),
+
+    -- ── Productos ────────────────────────────────────────────────────────────
+    (
+      '60000000-0000-4000-8000-000000000008', biz,
+      '¿El café es cubano de verdad?',
+      'Absolutamente. Trabajamos con granos seleccionados de la Sierra Maestra, los tostamos en pequeños lotes nosotros mismos y lo preparamos al estilo tradicional cubano: concentrado, aromático y sin aditivos.',
+      'Productos', 1
+    ),
+    (
+      '60000000-0000-4000-8000-000000000009', biz,
+      '¿Los productos de dulcería son elaboración propia?',
+      'Sí. Todas las tortas, bollería y postres fríos son de producción propia. No vendemos productos de fábrica ni con conservantes. Por eso nuestra disponibilidad puede variar según el día.',
+      'Productos', 2
+    ),
+    (
+      '60000000-0000-4000-8000-000000000010', biz,
+      '¿Tienen opciones sin azúcar o para personas con restricciones alimentarias?',
+      'Contamos con algunas opciones bajas en azúcar bajo pedido previo. Si tienes alguna alergia o restricción alimentaria, escríbenos por WhatsApp antes de tu visita y nos adaptamos en la medida de lo posible.',
+      'Productos', 3
+    ),
+
+    -- ── Pagos ────────────────────────────────────────────────────────────────
+    (
+      '60000000-0000-4000-8000-000000000011', biz,
+      '¿Qué formas de pago aceptan?',
+      'Aceptamos efectivo en CUP y transferencias bancarias. También puedes pagar con tarjeta magnética en el local. Para pedidos por WhatsApp, coordinamos el pago al momento de la entrega o recogida.',
+      'Pagos', 1
+    ),
+    (
+      '60000000-0000-4000-8000-000000000012', biz,
+      '¿Puedo pagar por adelantado para asegurar mi pedido?',
+      'Para pedidos grandes o con mucha anticipación, sí aceptamos un pago parcial por adelantado como confirmación. Te indicaremos los detalles al coordinar tu pedido por WhatsApp.',
+      'Pagos', 2
+    );
 
 END $$;

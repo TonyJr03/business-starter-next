@@ -3,12 +3,23 @@
  *
  * Ruta: /negocios/[slug]/faq
  * Acceso: público
+ *
+ * Secciones:
+ *   1. Hero      — H1 + subtítulo del módulo (bg secondary)
+ *   2. Preguntas — acordeón agrupado por categoría vía FaqSection (bg default)
+ *   3. Vacío     — mensaje cuando no hay ítems en BD (bg default)
+ *   4. CTA       — llamada a la acción por WhatsApp (bg surface)
+ *
+ * Los ítems provienen de la tabla `business_faq_items` vía faq.service.
+ * Si no hay ítems, se muestra un estado vacío con CTA directo a WhatsApp.
  */
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug } from '@/services/business.service'
+import { getFaqItems } from '@/services/faq.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
+import { Section } from '@/components/ui/Section'
 import { FaqSection } from '@/components/sections/FaqSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
@@ -32,40 +43,49 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function FaqPage({ params }: Props) {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
+  if (!business) notFound()
 
-  // Guarda de módulo — respeta overrides por tenant
-  const faqModule = resolvePageModule(business, 'faq')
+  const [faqModule, items] = await Promise.all([
+    Promise.resolve(resolvePageModule(business, 'faq')),
+    getFaqItems(business.id),
+  ])
+
   if (!faqModule.enabled) notFound()
 
   return (
     <>
-      {/* ── Encabezado ─────────────────────────────────────────────── */}
-      <section
-        className="w-full py-16"
-        style={{ backgroundColor: 'var(--color-secondary)' }}
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1
-              className="text-4xl font-bold tracking-tight mb-3"
-              style={{ color: 'var(--color-primary)' }}
-            >
-              {faqModule.title ?? 'Preguntas Frecuentes'}
-            </h1>
-            {faqModule.subtitle && (
-              <p className="text-lg" style={{ color: 'var(--color-text-muted)' }}>
-                {faqModule.subtitle}
-              </p>
-            )}
-          </div>
+      {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
+      <Section bg="secondary" size="md">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1
+            className="text-4xl font-bold tracking-tight mb-4"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            {faqModule.title ?? 'Preguntas Frecuentes'}
+          </h1>
+          {faqModule.subtitle && (
+            <p className="text-lg leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+              {faqModule.subtitle}
+            </p>
+          )}
         </div>
-      </section>
+      </Section>
 
-      {/* ── Acordeón de preguntas ───────────────────────────────────── */}
-      <FaqSection items={[]} bg="default" size="md" />
+      {/* ── 2. Acordeón / 3. Estado vacío ─────────────────────────────────── */}
+      {items.length > 0 ? (
+        <FaqSection items={items} bg="default" size="md" />
+      ) : (
+        <Section bg="default" size="md">
+          <div className="max-w-2xl mx-auto text-center py-8">
+            <p className="text-base" style={{ color: 'var(--color-text-muted)' }}>
+              {faqModule.emptyMessage ?? 'Pronto publicaremos las preguntas frecuentes. Mientras tanto, escríbenos directamente.'}
+            </p>
+          </div>
+        </Section>
+      )}
 
-      {/* ── CTA WhatsApp ───────────────────────────────────────────── */}
-      {business?.whatsapp && faqModule.cta && (
+      {/* ── 4. CTA WhatsApp ─────────────────────────────────────────────────── */}
+      {business.whatsapp && faqModule.cta && (
         <CtaWhatsappSection
           title={faqModule.cta.title}
           subtitle={faqModule.cta.subtitle}
