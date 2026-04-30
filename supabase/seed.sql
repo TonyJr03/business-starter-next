@@ -28,7 +28,7 @@
 -- ---------------------------------------------------------------------------
 -- Limpiar en orden inverso al de dependencias (seguro en entorno de dev)
 -- ---------------------------------------------------------------------------
-TRUNCATE gallery_photos, gallery_albums, business_faq_items, business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
+TRUNCATE business_blog_posts, gallery_photos, gallery_albums, business_faq_items, business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
 
 
 -- =============================================================================
@@ -605,6 +605,67 @@ BEGIN
       'Personal de servicio atendiendo mesa con amabilidad',
       'Siempre con una sonrisa para recibirte',
       4
+    );
+
+  -- ═══════════════════════════════════════════════════════════════════════════
+  -- 9. BLOG: artículos de Café La Esquina
+  --    3 posts publicados con body completo, tags y autor
+  --    IDs: 80000000-0000-4000-8000-000000000001..3
+  -- ═══════════════════════════════════════════════════════════════════════════
+
+  INSERT INTO business_blog_posts
+    (id, business_id, slug, title, summary, body, published_at, author, tags)
+  VALUES
+    (
+      '80000000-0000-4000-8000-000000000001', biz,
+      'el-arte-del-cafe-perfecto',
+      'El Arte del Café Perfecto',
+      'Descubre los secretos detrás de cada taza que preparamos y cómo lograr el equilibrio ideal entre acidez, cuerpo y aroma.',
+      ARRAY[
+        'En Café La Esquina creemos que un buen café no es accidente — es ciencia y pasión aplicadas a cada gramo de café molido. Desde la selección del origen hasta la temperatura del agua, cada variable importa.',
+        'La base de todo es el grano. Trabajamos con cafés de origen único, seleccionados por su perfil de sabor: notas cítricas de los arábicas de altura, o el cuerpo achocolatado de los robustas de tierras bajas. Cada mes exploramos nuevos orígenes para ofrecerte algo diferente.',
+        'La extracción es donde todo se decide. Para un espresso perfecto buscamos entre 25 y 30 segundos de extracción con una presión de 9 bares. Demasiado rápido y el café será ácido y aguado; demasiado lento y será amargo y astringente.',
+        'El agua, que constituye el 98% de tu taza, debe estar entre 90°C y 96°C. El agua hirviendo quema el café; demasiado fría no extrae los compuestos aromáticos. En La Esquina usamos agua filtrada a exactamente 93°C para todos nuestros espressos.',
+        'El arte latte — o latte art — es la firma visual de nuestro trabajo. Aunque parece decorativo, la técnica de vertido del vapor en la leche indica que la textura es perfecta: cremosa, suave y a la temperatura correcta para disfrutarse sin quemarse.',
+        'La próxima vez que visites La Esquina, cuéntale a nuestro barista qué perfil buscas. ¿Prefirieres algo intenso y achocolatado, o floral y ligero? Con esa información, elegiremos juntos el café y la preparación ideal para tu momento.'
+      ],
+      '2026-04-15',
+      'Carlos Medina',
+      ARRAY['café', 'técnicas', 'barista']
+    ),
+    (
+      '80000000-0000-4000-8000-000000000002', biz,
+      'nuestros-pasteles-artesanales',
+      'Nuestros Pasteles Artesanales: Horneados Cada Mañana',
+      'Conoce el proceso detrás de los pasteles y dulces que preparamos a diario: ingredientes locales, recetas propias y mucho cariño en cada pieza.',
+      ARRAY[
+        'Cada mañana, antes de que abra la cafetería, nuestra chef pastelera Ana ya lleva dos horas en la cocina. El olor a mantequilla dorada y vainilla recorre el local cuando los primeros clientes llegan — y eso no es casualidad.',
+        'Trabajamos exclusivamente con ingredientes frescos y locales. La harina proviene de un molino artesanal de la provincia, los huevos son de granjas pequeñas, y las frutas llegan directamente del mercado cada dos días. Sin conservantes, sin mezclas industriales.',
+        'El pastel estrella de La Esquina es nuestro bizcocho de café y chocolate. La receta lleva tres años perfeccionándose: capas esponjosas de bizcocho de cacao, crema de mascarpone con espresso reducido, y un glaseado de chocolate negro al 70%. Cada porción lleva el trabajo de horas.',
+        'También preparamos torticas de guayaba con queso crema, magdalenas de coco y limón, y una selección rotativa que cambia según la temporada y lo que el mercado ofrezca esa semana. Si hay mangos frescos en julio, habrá tarta de mango.',
+        'Para los pedidos especiales — cumpleaños, reuniones, celebraciones — ofrecemos pasteles personalizados con al menos 48 horas de antelación. Escríbenos por WhatsApp para coordinar tu pedido y cuéntanos la ocasión; nos encargaremos de hacer algo memorable.',
+        'Cuando visites la vitrina del local, no dudes en preguntar qué hay de nuevo ese día. La variedad es parte de nuestra filosofía: queremos que cada visita te sorprenda con algo que no esperabas encontrar.'
+      ],
+      '2026-04-08',
+      'Ana García',
+      ARRAY['repostería', 'artesanal', 'ingredientes']
+    ),
+    (
+      '80000000-0000-4000-8000-000000000003', biz,
+      'la-historia-de-cafe-la-esquina',
+      'La Historia de Café La Esquina',
+      'Cómo un pequeño local de barrio se convirtió en el punto de encuentro favorito de la comunidad, y por qué el café siempre fue el hilo conductor.',
+      ARRAY[
+        'Todo comenzó con una pregunta simple: ¿por qué en este barrio no hay un lugar donde tomarse un buen café con calma? Esa pregunta, que Luis Pérez se hacía cada mañana mientras caminaba al trabajo, fue la semilla de lo que hoy es Café La Esquina.',
+        'En 2019, Luis alquiló un pequeño local de esquina — de ahí el nombre — que había sido peluquería, ferretería y un breve periodo panadería. Las paredes guardaban capas de historia que decidió respetar: las vigas de madera original se limpiaron y barnizaron, los azulejos del suelo se restauraron, y los ventanales se dejaron abiertos al barrio.',
+        'Los primeros meses fueron un aprendizaje constante. El menú inicial era austero: espresso, café americano, dos tipos de tostadas y un pastel del día. Pero la calidad del café — seleccionado con obsesión desde el inicio — comenzó a correr de boca en boca.',
+        'El equipo creció orgánicamente. Carlos, el barista principal, llegó al segundo mes buscando trabajo y demostró en la primera prueba que sabía más de extracción que nadie en el local. Ana, la chef pastelera, se unió seis meses después con sus propias recetas familiares que transformaron por completo la vitrina.',
+        'Hoy, Café La Esquina es mucho más que una cafetería. Es el lugar donde los vecinos se reúnen por la mañana antes del trabajo, donde los estudiantes estudian por las tardes, y donde las familias celebran los domingos con algo dulce. El café sigue siendo el hilo que une todo.',
+        'Mirando hacia adelante, queremos seguir siendo ese lugar de la esquina: cercano, auténtico y con la mejor taza de café que puedas encontrar. Gracias por ser parte de esta historia que, en realidad, la escribís vosotros cada día que nos visitáis.'
+      ],
+      '2026-03-22',
+      'Luis Pérez',
+      ARRAY['historia', 'equipo', 'comunidad']
     );
 
 END $$;

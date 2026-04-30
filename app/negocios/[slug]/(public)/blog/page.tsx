@@ -34,11 +34,12 @@ export default async function BlogPage({ params }: Props) {
   const { slug } = await params
 
   const business = await resolveBusinessBySlug(slug)
+  if (!business) notFound()
 
   // Guarda de módulo — respeta overrides por tenant
   const blogModule = resolvePageModule(business, 'blog')
   if (!blogModule.enabled) notFound()
-  const posts = await getPosts()
+  const posts = await getPosts(business.id)
 
   return (
     <>

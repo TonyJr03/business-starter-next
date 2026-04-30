@@ -89,7 +89,7 @@ const pageModules: PageModulesConfig = {
     subtitle: 'Conoce nuestro espacio y nuestras creaciones.',
   },
   blog: {
-    enabled:  false,
+    enabled:  true,
     path:     '/blog',
     navLabel: 'Blog',
     title:    'Blog',

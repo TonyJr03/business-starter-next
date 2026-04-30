@@ -8,6 +8,7 @@
  */
 
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug } from '@/services/business.service'
 import { resolvePageModule } from '@/lib/modules/resolver'
@@ -20,7 +21,8 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, post: postSlug } = await params
-  const blogPost = await getPostBySlug(postSlug)
+  const business = await resolveBusinessBySlug(slug)
+  const blogPost = await getPostBySlug(business?.id ?? '', postSlug)
 
   if (!blogPost) {
     return { title: 'Artículo no encontrado' }
@@ -46,12 +48,13 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug, post: postSlug } = await params
 
   const business = await resolveBusinessBySlug(slug)
+  if (!business) notFound()
 
   // Guarda de módulo — respeta overrides por tenant
   if (!resolvePageModule(business, 'blog').enabled) notFound()
 
   // Post no encontrado → 404 idiomático
-  const post = await getPostBySlug(postSlug)
+  const post = await getPostBySlug(business.id, postSlug)
   if (!post) notFound()
 
   const formattedDate = dateFormatter.format(new Date(`${post.publishedAt}T00:00:00`))
@@ -144,13 +147,13 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Volver al listado */}
           <div className="mt-10">
-            <a
-              href={`/negocios/${slug}/blog`}
-              className="text-sm font-semibold transition-opacity hover:opacity-75"
-              style={{ color: 'var(--color-primary)' }}
-            >
-              ← Volver al blog
-            </a>
+          <Link
+            href={`/negocios/${slug}/blog`}
+            className="text-sm font-semibold transition-opacity hover:opacity-75"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            ← Volver al blog
+          </Link>
           </div>
 
         </article>
