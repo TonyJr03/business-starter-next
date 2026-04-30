@@ -5,6 +5,7 @@
  *
  * - Logo / nombre del negocio como enlace a la home del tenant
  * - Navegación desktop construida desde los módulos de página activos
+ * - Si hay 2+ catálogos, el item "Catálogo" se convierte en dropdown
  * - Botón WhatsApp en desktop
  * - MobileMenu (Client Component) para el toggle móvil
  */
@@ -13,29 +14,47 @@ import Link from 'next/link'
 import { resolveModules } from '@/lib/modules/resolver'
 import { MobileMenu } from './MobileMenu'
 import { NavLink } from './NavLink'
-import type { BusinessSettings } from '@/types'
+import type { BusinessSettings, Catalog } from '@/types'
 import type { NavItem } from '@/types'
 import type { PageModuleConfig } from '@/types'
 
 interface HeaderProps {
   business: BusinessSettings
   slug: string
+  catalogs: Catalog[]
 }
 
 /** Construye la navegación del tenant prefijando las rutas con /negocios/[slug]. */
-function buildTenantNav(business: BusinessSettings, slug: string): NavItem[] {
+function buildTenantNav(business: BusinessSettings, slug: string, catalogs: Catalog[]): NavItem[] {
   const base = `/negocios/${slug}`
   const { pages } = resolveModules(business)
 
   const pageItems = (Object.values(pages) as PageModuleConfig[])
     .filter((mod) => mod.enabled)
-    .map((mod) => ({ label: mod.navLabel, href: `${base}${mod.path}` }))
+    .map((mod): NavItem => {
+      // Item de catálogo con múltiples catálogos → dropdown
+      if (mod.path === '/catalog' && catalogs.length >= 2) {
+        return {
+          label: mod.navLabel,
+          href: `${base}/catalog`,
+          children: catalogs.map((cat) => ({
+            label: cat.name,
+            href: `${base}/catalog/${cat.slug}`,
+          })),
+        }
+      }
+      // Item normal o catálogo único → enlace directo al primer catálogo
+      if (mod.path === '/catalog' && catalogs.length === 1) {
+        return { label: mod.navLabel, href: `${base}/catalog/${catalogs[0].slug}` }
+      }
+      return { label: mod.navLabel, href: `${base}${mod.path}` }
+    })
 
   return [{ label: 'Inicio', href: base }, ...pageItems]
 }
 
-export function Header({ business, slug }: HeaderProps) {
-  const nav = buildTenantNav(business, slug)
+export function Header({ business, slug, catalogs }: HeaderProps) {
+  const nav = buildTenantNav(business, slug, catalogs)
 
   const waNumber = business.whatsapp?.replace(/\D/g, '')
   const whatsappUrl = waNumber ? `https://wa.me/${waNumber}` : undefined
@@ -59,14 +78,48 @@ export function Header({ business, slug }: HeaderProps) {
 
           {/* Navegación desktop */}
           <nav className="hidden md:flex items-center gap-6">
-            {nav.map((item) => (
-              <NavLink
-                key={item.href}
-                href={item.href}
-                label={item.label}
-                isExternal={item.isExternal}
-              />
-            ))}
+            {nav.map((item) =>
+              item.children ? (
+                // Dropdown de catálogos
+                <div key={item.href} className="relative group">
+                  <button
+                    className="flex items-center gap-1 text-sm font-medium transition-colors"
+                    style={{ color: 'var(--color-text-muted)' }}
+                    aria-haspopup="true"
+                  >
+                    {item.label}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-4 opacity-60">
+                      <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  <div
+                    className="absolute left-0 top-full pt-2 hidden group-hover:block min-w-40 z-50"
+                  >
+                    <ul
+                      className="flex flex-col rounded-xl border shadow-md overflow-hidden"
+                      style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}
+                    >
+                      {item.children.map((child) => (
+                        <li key={child.href}>
+                          <NavLink
+                            href={child.href}
+                            label={child.label}
+                            className="block px-4 py-2.5 text-sm font-medium transition-colors hover:bg-(--color-secondary)"
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <NavLink
+                  key={item.href}
+                  href={item.href}
+                  label={item.label}
+                  isExternal={item.isExternal}
+                />
+              )
+            )}
 
             {/* CTA WhatsApp */}
             {whatsappUrl && (

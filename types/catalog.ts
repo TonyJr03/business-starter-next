@@ -1,3 +1,26 @@
+// ─── Catálogo ────────────────────────────────────────────────────────────────
+
+/**
+ * Agrupador de categorías. Un negocio puede tener uno o más catálogos.
+ *
+ * Regla de dominio:
+ *   - Siempre hay al menos un catálogo por negocio.
+ *   - Con un solo catálogo, la UI lo trata como catálogo único (sin selección).
+ *   - Con dos o más, activa el modo multi-catálogo: página de selección +
+ *     sub-rutas /catalog/[catalogSlug] + dropdown en la navegación.
+ */
+export interface Catalog {
+  id: string;
+  /** Segmento URL único del catálogo dentro del negocio (ej. 'cafeteria'). */
+  slug: string;
+  /** Nombre visible en la UI (ej. 'Cafetería'). */
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
 // ─── Tipos primitivos ────────────────────────────────────────────────────────
 
 /** Valor monetario con divisa explícita (ISO 4217). */
@@ -63,8 +86,9 @@ export interface Category {
   /** Nombre visible en la interfaz. */
   name: string;
   /** Segmento URL único (ej. 'cafes'). */
-  slug: string;
-
+  slug: string;  
+  /** Catálogo al que pertenece esta categoría. NOT NULL en BD; opcional en datos de fallback local. */
+  catalogId?: string;
   // ── Campos opcionales ─────────────────────────────────────────────────────
   /** Descripción breve que aparece en listados y páginas de categoría. */
   description?: string;

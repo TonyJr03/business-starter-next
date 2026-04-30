@@ -28,7 +28,7 @@
 -- ---------------------------------------------------------------------------
 -- Limpiar en orden inverso al de dependencias (seguro en entorno de dev)
 -- ---------------------------------------------------------------------------
-TRUNCATE promotions, products, categories, businesses RESTART IDENTITY CASCADE;
+TRUNCATE promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
 
 
 -- =============================================================================
@@ -48,10 +48,19 @@ DECLARE
   -- grupo '8xxx') para ser RFC 4122 válidos y pasar la validación de Zod.
   biz     CONSTANT UUID := '10000000-0000-4000-8000-000000000001';
 
+  -- ── Catálogos ────────────────────────────────────────────────────────────
+  cat_main  CONSTANT UUID := '50000000-0000-4000-8000-000000000001';  -- Cafetería
+  cat_dulce CONSTANT UUID := '50000000-0000-4000-8000-000000000002';  -- Dulcería
+
   -- ── Categorías ────────────────────────────────────────────────────────────
+  -- Cafetería (cat_main)
   cat_1   CONSTANT UUID := '20000000-0000-4000-8000-000000000001';  -- Cafés
   cat_2   CONSTANT UUID := '20000000-0000-4000-8000-000000000002';  -- Bebidas frías
   cat_3   CONSTANT UUID := '20000000-0000-4000-8000-000000000003';  -- Bocados
+  -- Dulcería (cat_dulce)
+  cat_4   CONSTANT UUID := '20000000-0000-4000-8000-000000000004';  -- Tortas
+  cat_5   CONSTANT UUID := '20000000-0000-4000-8000-000000000005';  -- Bollería
+  cat_6   CONSTANT UUID := '20000000-0000-4000-8000-000000000006';  -- Postres fríos
 
   -- ── Productos ─────────────────────────────────────────────────────────────
   -- Cafés (cat_1)
@@ -68,6 +77,17 @@ DECLARE
   p9      CONSTANT UUID := '30000000-0000-4000-8000-000000000009';  -- Tostada con Mantequilla *
   p10     CONSTANT UUID := '30000000-0000-4000-8000-000000000010';  -- Croqueta de Jamón
   -- * p9 is_available=false (temporalmente agotada); referenciada en promo1.
+  -- Tortas (cat_4)
+  p11     CONSTANT UUID := '30000000-0000-4000-8000-000000000011';  -- Torta de Tres Leches
+  p12     CONSTANT UUID := '30000000-0000-4000-8000-000000000012';  -- Torta de Chocolate
+  p13     CONSTANT UUID := '30000000-0000-4000-8000-000000000013';  -- Torta de Zanahoria
+  -- Bollería (cat_5)
+  p14     CONSTANT UUID := '30000000-0000-4000-8000-000000000014';  -- Pan de Guayaba
+  p15     CONSTANT UUID := '30000000-0000-4000-8000-000000000015';  -- Croissant de Mantequilla
+  p16     CONSTANT UUID := '30000000-0000-4000-8000-000000000016';  -- Donut Glaseado
+  -- Postres fríos (cat_6)
+  p17     CONSTANT UUID := '30000000-0000-4000-8000-000000000017';  -- Helado de Coco
+  p18     CONSTANT UUID := '30000000-0000-4000-8000-000000000018';  -- Flan de Leche
 
   -- ── Promociones ───────────────────────────────────────────────────────────
   promo1  CONSTANT UUID := '40000000-0000-4000-8000-000000000001';  -- Desayuno Completo
@@ -108,15 +128,30 @@ BEGIN
 
 
   -- ===========================================================================
-  -- 2. Categorías (cat_1 · cat_2 · cat_3)
+  -- 2. Catálogos (cat_main)
+  -- Un solo catálogo para el negocio demo. Múltiples catálogos se añaden
+  -- insertando más filas; la UI se adapta automáticamente (dropdown nav, etc.).
+  -- ===========================================================================
+  INSERT INTO catalogs
+    (id, business_id, slug, name, description, image_url, sort_order, is_active)
+  VALUES
+    (cat_main,  biz, 'cafeteria', 'Cafetería',  'El menú completo del café: bebidas, bocados y más.',  NULL, 1, true),
+    (cat_dulce, biz, 'dulceria',  'Dulcería',   'Tortas, bollería y postres fríos artesanales.', NULL, 2, true);
+
+
+  -- ===========================================================================
+  -- 3. Categorías (cat_1 · cat_2 · cat_3)
   -- Equivalentes a src/data/categories.ts (fallback usa IDs cortos 'cat-1', etc.)
   -- ===========================================================================
   INSERT INTO categories
-    (id, business_id, slug, name, description, sort_order, is_active)
+    (id, business_id, catalog_id, slug, name, description, sort_order, is_active)
   VALUES
-    (cat_1, biz, 'cafes',         'Cafés',        'Café cubano, espresso, americano y más.',   1, true),
-    (cat_2, biz, 'bebidas-frias', 'Bebidas frías', 'Jugos, batidos y refrescos naturales.',    2, true),
-    (cat_3, biz, 'bocados',       'Bocados',       'Pastelitos, snacks y algo para acompañar.', 3, true);
+    (cat_1, biz, cat_main,  'cafes',         'Cafés',          'Café cubano, espresso, americano y más.',    1, true),
+    (cat_2, biz, cat_main,  'bebidas-frias',  'Bebidas frías',  'Jugos, batidos y refrescos naturales.',      2, true),
+    (cat_3, biz, cat_main,  'bocados',        'Bocados',         'Pastelitos, snacks y algo para acompañar.',  3, true),
+    (cat_4, biz, cat_dulce, 'tortas',         'Tortas',          'Tortas caseras horneadas cada mañana.',      1, true),
+    (cat_5, biz, cat_dulce, 'bolleria',       'Bollería',        'Pan dulce, croissants y donas artesanales.', 2, true),
+    (cat_6, biz, cat_dulce, 'postres-frios',  'Postres fríos',  'Helados, flanes y cremitas bien frías.',     3, true);
 
 
   -- ===========================================================================
@@ -131,33 +166,55 @@ BEGIN
   -- ===========================================================================
   INSERT INTO products
     (id, business_id, category_id, slug, name, description,
-     money_amount, money_currency, is_available, is_featured, badge, sort_order)
+     money_amount, money_currency, is_available, is_featured, badge, sort_order, image_url)
   VALUES
     -- ── Cafés (cat_1) ────────────────────────────────────────────────────────
     (p1,  biz, cat_1, 'cafe-cubano',         'Café Cubano',
-      'Nuestro café cubano tradicional, fuerte y aromático.',             25.00, 'CUP', true,  true,  'popular', 1),
+      'Nuestro café cubano tradicional, fuerte y aromático.',             25.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/cafe-cubano/600/450'),
     (p2,  biz, cat_1, 'cortadito',           'Cortadito',
-      'Café cubano con un toque de leche suave.',                         30.00, 'CUP', true,  true,  NULL,      2),
+      'Café cubano con un toque de leche suave.',                         30.00, 'CUP', true,  true,  NULL,      2, 'https://picsum.photos/seed/cortadito/600/450'),
     (p3,  biz, cat_1, 'cafe-con-leche',      'Café con Leche',
-      'La combinación perfecta para comenzar el día.',                    40.00, 'CUP', true,  false, NULL,      3),
+      'La combinación perfecta para comenzar el día.',                    40.00, 'CUP', true,  false, NULL,      3, 'https://picsum.photos/seed/cafe-con-leche/600/450'),
     (p4,  biz, cat_1, 'espresso-doble',      'Espresso Doble',
-      'Concentrado e intenso, para los que no se conforman con poco.',    45.00, 'CUP', true,  false, 'new',     4),
+      'Concentrado e intenso, para los que no se conforman con poco.',    45.00, 'CUP', true,  false, 'new',     4, 'https://picsum.photos/seed/espresso-doble/600/450'),
 
     -- ── Bebidas frías (cat_2) ─────────────────────────────────────────────────
     (p5,  biz, cat_2, 'jugo-guayaba',        'Jugo de Guayaba',
-      'Natural, fresco y bien cubano.',                                   35.00, 'CUP', true,  true,  'new',     1),
+      'Natural, fresco y bien cubano.',                                   35.00, 'CUP', true,  true,  'new',     1, 'https://picsum.photos/seed/jugo-guayaba/600/450'),
     (p6,  biz, cat_2, 'batido-mango',        'Batido de Mango',
-      'Cremoso y dulce, hecho con mango fresco.',                         50.00, 'CUP', true,  false, NULL,      2),
+      'Cremoso y dulce, hecho con mango fresco.',                         50.00, 'CUP', true,  false, NULL,      2, 'https://picsum.photos/seed/batido-mango/600/450'),
     (p7,  biz, cat_2, 'agua-de-coco',        'Agua de Coco',
-      'Refrescante y natural, directo del coco.',                         40.00, 'CUP', true,  false, NULL,      3),
+      'Refrescante y natural, directo del coco.',                         40.00, 'CUP', true,  false, NULL,      3, 'https://picsum.photos/seed/agua-de-coco/600/450'),
 
     -- ── Bocados (cat_3) ───────────────────────────────────────────────────────
     (p8,  biz, cat_3, 'pastelito-guayaba',   'Pastelito de Guayaba',
-      'Hojaldrado y relleno de guayaba, igual que en casa.',              20.00, 'CUP', true,  true,  'popular', 1),
+      'Hojaldrado y relleno de guayaba, igual que en casa.',              20.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/pastelito-guayaba/600/450'),
     (p9,  biz, cat_3, 'tostada-mantequilla', 'Tostada con Mantequilla',
-      'Pan tostado, crujiente y bien untado.',                            15.00, 'CUP', false, false, NULL,      2),
+      'Pan tostado, crujiente y bien untado.',                            15.00, 'CUP', false, false, NULL,      2, 'https://picsum.photos/seed/tostada-mantequilla/600/450'),
     (p10, biz, cat_3, 'croqueta-jamon',      'Croqueta de Jamón',
-      'Crujiente por fuera, cremosa por dentro. Perfecta con el café.',   25.00, 'CUP', true,  false, NULL,      3);
+      'Crujiente por fuera, cremosa por dentro. Perfecta con el café.',   25.00, 'CUP', true,  false, NULL,      3, 'https://picsum.photos/seed/croqueta-jamon/600/450'),
+
+    -- ── Tortas (cat_4) ────────────────────────────────────────────────────────
+    (p11, biz, cat_4, 'torta-tres-leches',   'Torta de Tres Leches',
+      'Esponjosa, húmeda y bañada en tres tipos de leche. La favorita.',  85.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/torta-tres-leches/600/450'),
+    (p12, biz, cat_4, 'torta-chocolate',     'Torta de Chocolate',
+      'Dos pisos de bizcocho intenso con ganache de chocolate cubano.',   90.00, 'CUP', true,  true,  NULL,      2, 'https://picsum.photos/seed/torta-chocolate/600/450'),
+    (p13, biz, cat_4, 'torta-zanahoria',     'Torta de Zanahoria',
+      'Suave y especiada, con cobertura de queso crema.',                 80.00, 'CUP', true,  false, 'new',     3, 'https://picsum.photos/seed/torta-zanahoria/600/450'),
+
+    -- ── Bollería (cat_5) ─────────────────────────────────────────────────────
+    (p14, biz, cat_5, 'pan-guayaba',         'Pan de Guayaba',
+      'Suave por dentro, hojaldrado por fuera y relleno de guayaba.',     18.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/pan-guayaba/600/450'),
+    (p15, biz, cat_5, 'croissant-mantequilla','Croissant de Mantequilla',
+      'Capas doradas y crujientes, elaborado con mantequilla real.',      22.00, 'CUP', true,  false, NULL,      2, 'https://picsum.photos/seed/croissant-mantequilla/600/450'),
+    (p16, biz, cat_5, 'donut-glaseado',      'Donut Glaseado',
+      'Esponjoso, azucarado y con glaseado de colores. Para todos.',      15.00, 'CUP', true,  false, 'new',     3, 'https://picsum.photos/seed/donut-glaseado/600/450'),
+
+    -- ── Postres fríos (cat_6) ─────────────────────────────────────────────────
+    (p17, biz, cat_6, 'helado-coco',         'Helado de Coco',
+      'Cremoso, natural y servido en copa. Sabor caribeño puro.',         30.00, 'CUP', true,  true,  NULL,      1, 'https://picsum.photos/seed/helado-coco/600/450'),
+    (p18, biz, cat_6, 'flan-leche',          'Flan de Leche',
+      'El clásico cubano: suave, tembloroso y con caramelo de verdad.',   25.00, 'CUP', true,  false, NULL,      2, 'https://picsum.photos/seed/flan-leche/600/450');
 
 
   -- ===========================================================================

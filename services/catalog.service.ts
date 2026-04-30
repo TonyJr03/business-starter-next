@@ -1,5 +1,9 @@
-import type { Category, Product } from '@/types';
+import type { Catalog, Category, Product } from '@/types';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import {
+  type CatalogRow,
+  rowToCatalog,
+} from '@/lib/persistence/catalog';
 import {
   type CategoryRow,
   rowToCategory,
@@ -10,7 +14,7 @@ import {
 } from '@/lib/persistence/product';
 
 /**
- * Servicio de catálogo — lectura de categorías y productos.
+ * Servicio de catálogo — lectura de catálogos, categorías y productos.
  *
  * Fuente de datos: Supabase.
  * Si Supabase no está disponible o la consulta falla, se devuelve array vacío.
@@ -27,10 +31,18 @@ import {
 
 // ─── Filtros ─────────────────────────────────────────────────────────────────
 
+/** Opciones de filtrado para getCategories(). */
+export interface CategoryFilters {
+  /** Devuelve solo categorías de este catálogo. */
+  catalogId?: string;
+}
+
 /** Opciones de filtrado para getProducts(). */
 export interface ProductFilters {
   /** Devuelve solo productos de esta categoría. */
   categoryId?: string;
+  /** Devuelve solo productos de cualquiera de estas categorías (OR). */
+  categoryIds?: string[];
   /** Si es false, incluye productos no disponibles. Por defecto: true. */
   onlyAvailable?: boolean;
   /** Devuelve solo productos marcados como destacados. */
@@ -38,17 +50,45 @@ export interface ProductFilters {
 }
 
 // ─── Lectores privados de Supabase ────────────────────────────────────────────
-// Devuelven null si Supabase no está disponible o falla la consulta,
+// Devuelven null si Supabase no está disponible o falla la consulta.
 
-async function fetchCategoriesFromDB(): Promise<Category[] | null> {
+async function fetchCatalogsFromDB(): Promise<Catalog[] | null> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
   const db = await createSupabaseServerClient();
 
   const { data, error } = await db
+    .from('catalogs')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order');
+
+  if (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[catalog.service] Error al leer catálogos de Supabase:', error.message);
+    }
+    return null;
+  }
+
+  if (!data || data.length === 0) return null;
+
+  return (data as CatalogRow[]).map(rowToCatalog);
+}
+
+async function fetchCategoriesFromDB(filters?: CategoryFilters): Promise<Category[] | null> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+  const db = await createSupabaseServerClient();
+
+  let query = db
     .from('categories')
     .select('*')
     .eq('is_active', true)
     .order('sort_order');
+
+  if (filters?.catalogId) {
+    query = query.eq('catalog_id', filters.catalogId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     if (process.env.NODE_ENV === 'development') {
@@ -74,6 +114,10 @@ async function fetchProductsFromDB(filters?: ProductFilters): Promise<Product[] 
 
   if (filters?.categoryId) {
     query = query.eq('category_id', filters.categoryId);
+  }
+
+  if (filters?.categoryIds && filters.categoryIds.length > 0) {
+    query = query.in('category_id', filters.categoryIds);
   }
 
   if (filters?.onlyFeatured) {
@@ -121,11 +165,29 @@ async function fetchProductBySlugFromDB(slug: string): Promise<Product | null> {
 // ─── API pública ──────────────────────────────────────────────────────────────
 
 /**
- * Devuelve todas las categorías activas, ordenadas por sortOrder.
+ * Devuelve todos los catálogos activos del negocio, ordenados por sortOrder.
  * Fuente: Supabase. Devuelve [] si no hay datos o Supabase no está disponible.
  */
-export async function getCategories(): Promise<Category[]> {
-  return (await fetchCategoriesFromDB()) ?? [];
+export async function getCatalogs(): Promise<Catalog[]> {
+  return (await fetchCatalogsFromDB()) ?? [];
+}
+
+/**
+ * Devuelve un catálogo por su slug.
+ * Devuelve undefined si no existe o Supabase no está disponible.
+ */
+export async function getCatalogBySlug(slug: string): Promise<Catalog | undefined> {
+  const all = await getCatalogs();
+  return all.find((c) => c.slug === slug);
+}
+
+/**
+ * Devuelve todas las categorías activas, ordenadas por sortOrder.
+ * Si se pasa `catalogId`, filtra solo las de ese catálogo.
+ * Fuente: Supabase. Devuelve [] si no hay datos o Supabase no está disponible.
+ */
+export async function getCategories(filters?: CategoryFilters): Promise<Category[]> {
+  return (await fetchCategoriesFromDB(filters)) ?? [];
 }
 
 /**
@@ -139,10 +201,10 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
 
 /**
  * Devuelve productos destacados y disponibles, ordenados por sortOrder.
- * Equivale a getProducts({ onlyFeatured: true, onlyAvailable: true }).
+ * Si se pasan `categoryIds`, solo devuelve destacados de esas categorías.
  */
-export async function getFeaturedProducts(): Promise<Product[]> {
-  return getProducts({ onlyFeatured: true, onlyAvailable: true });
+export async function getFeaturedProducts(categoryIds?: string[]): Promise<Product[]> {
+  return getProducts({ onlyFeatured: true, onlyAvailable: true, categoryIds });
 }
 
 /**

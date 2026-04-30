@@ -1,9 +1,8 @@
-import type { Category } from '@/types';
+import type { Catalog } from '@/types';
 
-export interface CategoryRow {
+export interface CatalogRow {
   id: string;
   business_id: string;
-  catalog_id: string;
   slug: string;
   name: string;
   description: string | null;
@@ -12,14 +11,13 @@ export interface CategoryRow {
   is_active: boolean;
 }
 
-export type CategoryInsertRow = Omit<CategoryRow, 'id' | 'business_id'>;
+export type CatalogInsertRow = Omit<CatalogRow, 'id' | 'business_id'>;
 
-export function rowToCategory(row: CategoryRow): Category {
+export function rowToCatalog(row: CatalogRow): Catalog {
   return {
     id: row.id,
-    name: row.name,
     slug: row.slug,
-    catalogId: row.catalog_id,
+    name: row.name,
     description: row.description ?? undefined,
     imageUrl: row.image_url ?? undefined,
     sortOrder: row.sort_order,

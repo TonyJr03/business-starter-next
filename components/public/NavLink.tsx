@@ -24,6 +24,7 @@ interface NavLinkProps {
   isExternal?: boolean
   className?: string
   activeClassName?: string
+  onClick?: () => void
 }
 
 export function NavLink({
@@ -32,6 +33,7 @@ export function NavLink({
   isExternal = false,
   className = 'text-sm font-medium transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:underline',
   activeClassName = 'border-b-2',
+  onClick,
 }: NavLinkProps) {
   const pathname = usePathname()
 
@@ -51,6 +53,7 @@ export function NavLink({
         borderBottomColor: isActive ? 'var(--color-primary)' : 'transparent',
         paddingBottom: '0.25rem',
       }}
+      onClick={onClick}
     >
       {label}
     </Link>
