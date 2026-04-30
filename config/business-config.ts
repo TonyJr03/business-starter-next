@@ -82,7 +82,7 @@ const pageModules: PageModulesConfig = {
     },
   },
   gallery: {
-    enabled:  false,
+    enabled:  true,
     path:     '/gallery',
     navLabel: 'Galería',
     title:    'Galería',

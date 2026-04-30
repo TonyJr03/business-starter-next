@@ -36,17 +36,29 @@ export interface FaqItem {
   category?: string;
 }
 
+/** Un álbum de la galería que agrupa fotos bajo un nombre. */
+export interface GalleryAlbum {
+  id: string;
+  /** Slug seguro para URL (ej. 'nuestro-espacio'). */
+  slug: string;
+  name: string;
+  description?: string;
+  /** URL de la foto de portada del álbum. */
+  coverImageUrl?: string;
+  sortOrder: number;
+}
+
 /** Una imagen individual en la galería. */
 export interface GalleryItem {
   id: string;
+  /** ID del álbum al que pertenece esta foto. */
+  albumId: string;
   /** URL absoluta o ruta relativa a la raíz de la imagen. */
   src: string;
   /** Descripción accesible obligatoria de la imagen. */
   alt: string;
   /** Pie de foto opcional renderizado bajo la imagen. */
   caption?: string;
-  /** Etiqueta de agrupación opcional (ej. "Espacio", "Productos"). */
-  category?: string;
 }
 
 /** Un artículo de blog individual. */

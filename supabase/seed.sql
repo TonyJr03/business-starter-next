@@ -28,7 +28,7 @@
 -- ---------------------------------------------------------------------------
 -- Limpiar en orden inverso al de dependencias (seguro en entorno de dev)
 -- ---------------------------------------------------------------------------
-TRUNCATE business_faq_items, business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
+TRUNCATE gallery_photos, gallery_albums, business_faq_items, business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
 
 
 -- =============================================================================
@@ -461,6 +461,150 @@ BEGIN
       '¿Puedo pagar por adelantado para asegurar mi pedido?',
       'Para pedidos grandes o con mucha anticipación, sí aceptamos un pago parcial por adelantado como confirmación. Te indicaremos los detalles al coordinar tu pedido por WhatsApp.',
       'Pagos', 2
+    );
+
+  -- ═══════════════════════════════════════════════════════════════════════════
+  -- 8. GALERÍA: álbumes y fotos de Café La Esquina
+  --    Álbumes: a1=Nuestro espacio, a2=Productos, a3=Equipo
+  --    Fotos:   4 por álbum = 12 en total
+  --    IDs álbum:  70000000-0000-4000-8000-000000000001..3
+  --    IDs fotos:  70000000-0000-4000-8000-000000000101..112
+  -- ═══════════════════════════════════════════════════════════════════════════
+
+  -- 8a. Álbumes
+  INSERT INTO gallery_albums (id, business_id, slug, name, description, cover_image_url, sort_order)
+  VALUES
+    (
+      '70000000-0000-4000-8000-000000000001', biz,
+      'nuestro-espacio',
+      'Nuestro Espacio',
+      'El ambiente acogedor de Café La Esquina.',
+      'https://picsum.photos/seed/cafe-espacio-cover/800/600',
+      1
+    ),
+    (
+      '70000000-0000-4000-8000-000000000002', biz,
+      'productos',
+      'Productos',
+      'Cafés, pasteles y bebidas artesanales.',
+      'https://picsum.photos/seed/cafe-productos-cover/800/600',
+      2
+    ),
+    (
+      '70000000-0000-4000-8000-000000000003', biz,
+      'equipo',
+      'Nuestro Equipo',
+      'Las personas detrás de cada taza.',
+      'https://picsum.photos/seed/cafe-equipo-cover/800/600',
+      3
+    );
+
+  -- 8b. Fotos — Álbum: Nuestro Espacio
+  INSERT INTO gallery_photos (id, business_id, album_id, image_url, alt, caption, sort_order)
+  VALUES
+    (
+      '70000000-0000-4000-8000-000000000101', biz,
+      '70000000-0000-4000-8000-000000000001',
+      'https://picsum.photos/seed/cafe-esp-1/800/600',
+      'Salón principal con mesas de madera y luz natural',
+      'Nuestro acogedor salón principal',
+      1
+    ),
+    (
+      '70000000-0000-4000-8000-000000000102', biz,
+      '70000000-0000-4000-8000-000000000001',
+      'https://picsum.photos/seed/cafe-esp-2/800/600',
+      'Barra de café con máquina espresso profesional',
+      'La barra donde preparamos cada taza',
+      2
+    ),
+    (
+      '70000000-0000-4000-8000-000000000103', biz,
+      '70000000-0000-4000-8000-000000000001',
+      'https://picsum.photos/seed/cafe-esp-3/800/600',
+      'Terraza exterior con plantas y sillas de mimbre',
+      'Terraza para disfrutar al aire libre',
+      3
+    ),
+    (
+      '70000000-0000-4000-8000-000000000104', biz,
+      '70000000-0000-4000-8000-000000000001',
+      'https://picsum.photos/seed/cafe-esp-4/800/600',
+      'Detalle de decoración con cuadros y plantas verdes',
+      'Los pequeños detalles que nos hacen únicos',
+      4
+    );
+
+  -- 8c. Fotos — Álbum: Productos
+  INSERT INTO gallery_photos (id, business_id, album_id, image_url, alt, caption, sort_order)
+  VALUES
+    (
+      '70000000-0000-4000-8000-000000000105', biz,
+      '70000000-0000-4000-8000-000000000002',
+      'https://picsum.photos/seed/cafe-prod-1/800/600',
+      'Taza de café con arte latte en forma de hoja',
+      'Nuestro espresso con arte latte',
+      1
+    ),
+    (
+      '70000000-0000-4000-8000-000000000106', biz,
+      '70000000-0000-4000-8000-000000000002',
+      'https://picsum.photos/seed/cafe-prod-2/800/600',
+      'Selección de pasteles artesanales en vitrina',
+      'Pasteles horneados cada mañana',
+      2
+    ),
+    (
+      '70000000-0000-4000-8000-000000000107', biz,
+      '70000000-0000-4000-8000-000000000002',
+      'https://picsum.photos/seed/cafe-prod-3/800/600',
+      'Frapuccino con crema batida y caramelo',
+      'Bebidas frías para cualquier momento',
+      3
+    ),
+    (
+      '70000000-0000-4000-8000-000000000108', biz,
+      '70000000-0000-4000-8000-000000000002',
+      'https://picsum.photos/seed/cafe-prod-4/800/600',
+      'Sandwich de jamón y queso con ensalada lateral',
+      'También servimos comida ligera',
+      4
+    );
+
+  -- 8d. Fotos — Álbum: Nuestro Equipo
+  INSERT INTO gallery_photos (id, business_id, album_id, image_url, alt, caption, sort_order)
+  VALUES
+    (
+      '70000000-0000-4000-8000-000000000109', biz,
+      '70000000-0000-4000-8000-000000000003',
+      'https://picsum.photos/seed/cafe-team-1/800/600',
+      'Barista preparando café con técnica de vertido',
+      'Nuestro barista principal en acción',
+      1
+    ),
+    (
+      '70000000-0000-4000-8000-000000000110', biz,
+      '70000000-0000-4000-8000-000000000003',
+      'https://picsum.photos/seed/cafe-team-2/800/600',
+      'Equipo completo sonriendo en la entrada del café',
+      'El equipo que hace posible cada día',
+      2
+    ),
+    (
+      '70000000-0000-4000-8000-000000000111', biz,
+      '70000000-0000-4000-8000-000000000003',
+      'https://picsum.photos/seed/cafe-team-3/800/600',
+      'Chef pastelera decorando un pastel de chocolate',
+      'Nuestra chef pastelera creando maravillas',
+      3
+    ),
+    (
+      '70000000-0000-4000-8000-000000000112', biz,
+      '70000000-0000-4000-8000-000000000003',
+      'https://picsum.photos/seed/cafe-team-4/800/600',
+      'Personal de servicio atendiendo mesa con amabilidad',
+      'Siempre con una sonrisa para recibirte',
+      4
     );
 
 END $$;
