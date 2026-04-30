@@ -40,7 +40,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const dateFormatter = new Intl.DateTimeFormat('es-CU', {
   day: 'numeric',
   month: 'long',
-  year: 'numeric',
   timeZone: 'America/Havana',
 })
 

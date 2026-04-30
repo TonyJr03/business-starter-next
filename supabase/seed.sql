@@ -188,7 +188,7 @@ BEGIN
   --    · 'bogo'       → value omitido; minItems = cantidad mínima para activar
   -- ===========================================================================
   INSERT INTO promotions
-    (id, business_id, title, description, status, discount_label,
+    (id, business_id, title, description, image_url, status, discount_label,
      starts_at, ends_at, rules, product_ids, category_ids, sort_order)
   VALUES
 
@@ -200,6 +200,7 @@ BEGIN
       promo1, biz,
       'Desayuno Completo',
       'Café cubano + tostada + jugo del día por un precio especial. Disponible de lunes a viernes de 8:00 a 11:00.',
+      'https://picsum.photos/seed/desayuno/600/450',
       'active', '20% OFF',
       '2026-04-01 00:00:00+00', '2026-04-30 23:59:59+00',
       jsonb_build_array(
@@ -222,6 +223,7 @@ BEGIN
       promo2, biz,
       'Happy Hour del Café',
       'Todos los cafés a mitad de precio de 3:00 PM a 5:00 PM.',
+      'https://picsum.photos/seed/cafe/600/450',
       'active', '50% OFF',
       '2026-04-01 00:00:00+00', '2026-04-30 23:59:59+00',
       jsonb_build_array(
@@ -244,6 +246,7 @@ BEGIN
       promo3, biz,
       'Combo Amigos',
       'Dos cafés cubanos + dos pastelitos de guayaba por un precio especial. Ideal para compartir.',
+      'https://picsum.photos/seed/combo/600/450',
       'active', 'Combo',
       NULL, NULL,
       jsonb_build_array(
@@ -266,6 +269,7 @@ BEGIN
       promo4, biz,
       'Tarde de Batidos',
       'Lleva dos batidos y paga uno. De 2:00 PM a 6:00 PM, de martes a jueves.',
+      'https://picsum.photos/seed/batidos/600/450',
       'paused', '2×1',
       '2026-04-15 00:00:00+00', '2026-05-15 23:59:59+00',
       jsonb_build_array(

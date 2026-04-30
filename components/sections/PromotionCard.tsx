@@ -10,7 +10,13 @@
  *  - 'upcoming' → aún no comenzó (color info)
  *  - 'paused'   → en pausa temporal (color warning)
  *  - 'expired'  → venció o está inactiva (gris)
+ *
+ * Imagen:
+ *  - Si `promotion.imageUrl` está presente se renderiza con next/image (object-cover).
+ *  - Si no hay imagen se muestra un placeholder neutro.
+ *  - Las promociones dimmed (paused/expired) reducen la opacidad de la imagen.
  */
+import Image from 'next/image'
 import type { Promotion } from '@/types'
 
 export type PromoStatus = 'active' | 'upcoming' | 'paused' | 'expired'
@@ -30,7 +36,7 @@ const statusBadge: Record<PromoStatus, { color: string; label: string }> = {
 }
 
 export function PromotionCard({ promotion, status, dateRange, orderHref }: PromotionCardProps) {
-  const { title, description, discountLabel } = promotion
+  const { title, description, discountLabel, imageUrl } = promotion
   const badge = statusBadge[status]
   const isDimmed = status === 'expired' || status === 'paused'
   const isExpired = status === 'expired'
@@ -47,6 +53,51 @@ export function PromotionCard({ promotion, status, dateRange, orderHref }: Promo
           : 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.06))',
       }}
     >
+      {/* Imagen / placeholder */}
+      <div
+        className="relative w-full overflow-hidden"
+        style={{ aspectRatio: '4 / 3', opacity: isDimmed ? 0.45 : 1 }}
+      >
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover"
+          />
+        ) : (
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ backgroundColor: 'var(--color-border)' }}
+            aria-hidden="true"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              className="size-10"
+              style={{ color: 'var(--color-text-subtle)' }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6Z" />
+            </svg>
+          </div>
+        )}
+
+        {/* Badge de descuento superpuesto */}
+        {discountLabel && !isExpired && (
+          <span
+            className="absolute top-3 left-3 inline-block text-xs font-bold px-2.5 py-1 rounded-full text-white"
+            style={{ backgroundColor: 'var(--color-accent)' }}
+          >
+            {discountLabel}
+          </span>
+        )}
+      </div>
+
       <div className="flex flex-col gap-4 p-6 h-full">
 
         {/* Cabecera: título + badges */}
@@ -69,15 +120,6 @@ export function PromotionCard({ promotion, status, dateRange, orderHref }: Promo
               >
                 {badge.label}
               </span>
-              {/* Etiqueta de descuento */}
-              {discountLabel && !isExpired && (
-                <span
-                  className="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full text-white"
-                  style={{ backgroundColor: 'var(--color-accent)' }}
-                >
-                  {discountLabel}
-                </span>
-              )}
             </div>
           </div>
 
