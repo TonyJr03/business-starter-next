@@ -28,7 +28,7 @@
 -- ---------------------------------------------------------------------------
 -- Limpiar en orden inverso al de dependencias (seguro en entorno de dev)
 -- ---------------------------------------------------------------------------
-TRUNCATE promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
+TRUNCATE business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
 
 
 -- =============================================================================
@@ -341,5 +341,38 @@ BEGIN
       jsonb_build_array(cat_2::text),  -- Categoría: Bebidas frías
       4
     );
+
+  -- ===========================================================================
+  -- 6. About: contenido editorial de Café La Esquina
+  -- ===========================================================================
+  INSERT INTO business_about
+    (business_id, story, mission, differentiators, team_image_url)
+  VALUES (
+    biz,
+    ARRAY[
+      'Café La Esquina nació en 2015 en el corazón del Vedado, ocupando el local que durante décadas fue la bodega de la familia Martínez. Lo que empezó como un sueño de tres amigos con pasión por el café cubano se convirtió en el punto de encuentro del barrio.',
+      'Hoy, más de diez años después, seguimos tostando nuestro café en pequeños lotes, seleccionando granos de las mejores fincas de la Sierra Maestra y preparando cada taza con el mismo cuidado del primer día.',
+      'Más allá del café, somos un espacio donde los vecinos se detienen a conversar, los estudiantes encuentran su rincón favorito y las familias celebran los momentos del día a día. Eso es lo que nos hace especiales: no solo el café, sino la esquina que habitamos.'
+    ],
+    'Ofrecer el mejor café cubano de La Habana en un ambiente auténtico, donde cada visita se sienta como llegar a casa.',
+    jsonb_build_array(
+      jsonb_build_object(
+        'icon',        'coffee',
+        'title',       'Café de origen cubano',
+        'description', 'Trabajamos directamente con fincas de la Sierra Maestra. Lotes pequeños, tostado propio, frescura garantizada en cada taza.'
+      ),
+      jsonb_build_object(
+        'icon',        'heart',
+        'title',       'Hecho con cariño',
+        'description', 'Cada producto sale de nuestra cocina: desde los pastelitos de guayaba hasta las tortas del día. Sin intermediarios, sin conservantes.'
+      ),
+      jsonb_build_object(
+        'icon',        'map-pin',
+        'title',       'El corazón del Vedado',
+        'description', 'Llevamos más de diez años siendo parte del barrio. Conocemos a nuestros clientes por su nombre y ellos conocen el nuestro.'
+      )
+    ),
+    'https://picsum.photos/seed/cafe-equipo/800/600'
+  );
 
 END $$;

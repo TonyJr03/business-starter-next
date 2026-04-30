@@ -49,7 +49,7 @@ const pageModules: PageModulesConfig = {
     },
   },
   about: {
-    enabled:  false,
+    enabled:  true,
     path:     '/about',
     navLabel: 'Nosotros',
     title:    'Sobre Nosotros',

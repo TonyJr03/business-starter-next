@@ -21,6 +21,8 @@ export interface AboutContent {
   mission?: string;
   /** Diferenciadores clave del negocio. */
   differentiators?: ContentFeature[];
+  /** URL de imagen del equipo o del local. Mostrada en la sección Historia. */
+  teamImageUrl?: string;
 }
 
 // ─── Contenido de módulos de página ──────────────────────────────────────────
