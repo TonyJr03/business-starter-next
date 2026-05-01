@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { toSlug } from '@/lib/utils/slug'
-import { rowToCategory } from '@/lib/persistence/category'
+import { rowToCategory } from '@/lib/persistence'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { Category } from '@/types'
 
@@ -13,33 +13,38 @@ export const categoryCreateSchema = z.object({
   isActive:    z.boolean().default(true),
 })
 
-/**
- * Todos los campos opcionales para actualizaciones parciales.
- * Solo parchea los campos presentes en el input.
- */
 export const categoryUpdateSchema = categoryCreateSchema.partial()
 
 export type CategoryCreateInput = z.infer<typeof categoryCreateSchema>
 export type CategoryUpdateInput = z.infer<typeof categoryUpdateSchema>
 
-// ─── Mutaciones ───────────────────────────────────────────────────────────────
+// ─── Create ──────────────────────────────────────────────────────────────────
 
-/**
- * Crea una categoría nueva para el negocio del contexto.
- * El slug se genera automáticamente desde el nombre.
- */
 export async function createCategory(
   ctx: AdminContext,
   input: CategoryCreateInput,
 ): Promise<MutationResult<Category>> {
+  // Obtener el catálogo por defecto del negocio
+  const { data: catalog } = await ctx.supabase
+    .from('catalog_pages')
+    .select('id')
+    .eq('business_id', ctx.businessId)
+    .eq('is_active', true)
+    .order('sort_order')
+    .limit(1)
+    .single()
+
+  if (!catalog) {
+    return { ok: false, error: 'No hay catálogos disponibles para este negocio.' }
+  }
+
   const { data, error } = await ctx.supabase
-    .from('categories')
+    .from('catalog_categories')
     .insert({
-      business_id: ctx.businessId,
+      catalog_id:  catalog.id,
       slug:        toSlug(input.name),
       name:        input.name,
       description: input.description ?? null,
-      image_url:   null,
       sort_order:  input.sortOrder,
       is_active:   input.isActive,
     })
@@ -47,7 +52,7 @@ export async function createCategory(
     .single()
 
   if (error) {
-    // 23505 = unique_violation → slug duplicado en el mismo negocio
+    // 23505 = unique_violation → slug duplicado en el mismo catálogo
     if (error.code === '23505') {
       return { ok: false, error: 'Ya existe una categoría con ese nombre.', field: 'name' }
     }
@@ -57,13 +62,8 @@ export async function createCategory(
   return { ok: true, data: rowToCategory(data) }
 }
 
-/**
- * Actualiza los campos indicados de una categoría existente.
- * El slug NO se modifica en actualizaciones para preservar URLs.
- *
- * RLS: el .eq('business_id', ctx.businessId) garantiza que solo se actualiza
- * si la categoría pertenece al negocio autenticado.
- */
+// ─── Update ──────────────────────────────────────────────────────────────────
+
 export async function updateCategory(
   ctx: AdminContext,
   id: string,
@@ -76,10 +76,9 @@ export async function updateCategory(
   if (input.isActive    !== undefined) patch.is_active   = input.isActive
 
   const { data, error } = await ctx.supabase
-    .from('categories')
+    .from('catalog_categories')
     .update(patch)
     .eq('id', id)
-    .eq('business_id', ctx.businessId) // RLS: solo el negocio propietario
     .select()
     .single()
 
@@ -91,22 +90,16 @@ export async function updateCategory(
   return { ok: true, data: rowToCategory(data) }
 }
 
-/**
- * Elimina una categoría.
- * Falla con mensaje claro si tiene productos asociados (FK RESTRICT en DB).
- *
- * RLS: el .eq('business_id', ctx.businessId) garantiza que solo se elimina
- * si la categoría pertenece al negocio autenticado.
- */
+// ─── Delete ──────────────────────────────────────────────────────────────────
+
 export async function deleteCategory(
   ctx: AdminContext,
   id: string,
 ): Promise<MutationResult<void>> {
   const { error } = await ctx.supabase
-    .from('categories')
+    .from('catalog_categories')
     .delete()
     .eq('id', id)
-    .eq('business_id', ctx.businessId)
 
   if (error) {
     // 23503 = foreign_key_violation → tiene productos asociados

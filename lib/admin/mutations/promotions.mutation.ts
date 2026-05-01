@@ -1,38 +1,23 @@
 import { z } from 'zod'
-import { rowToPromotion } from '@/lib/persistence/promotion'
+import { rowToPromotion } from '@/lib/persistence'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { Promotion } from '@/types'
 
 // ─── Esquemas de validación ───────────────────────────────────────────────────
 
-/**
- * Schema base sin refinements — necesario para poder llamar .partial() en Zod v4.
- * .partial() no puede usarse sobre un schema que ya tiene .refine().
- */
 const promotionBaseSchema = z.object({
   title:         z.string().min(1, 'El título es obligatorio').max(200),
   description:   z.string().max(1000).optional(),
   status:        z.enum(['upcoming', 'active', 'expired', 'paused']).default('active'),
   discountLabel: z.string().max(50).optional(),
-  /**
-   * Fechas opcionales en formato ISO 8601 o datetime-local (YYYY-MM-DDTHH:mm).
-   * Se almacenan directamente en la columna TIMESTAMPTZ de Supabase.
-   */
   startsAt:      z.string().optional(),
   endsAt:        z.string().optional(),
   sortOrder:     z.coerce.number().int().min(0).default(0),
-  /**
-   * Regla simple opcional. El panel admin solo gestiona una regla a la vez.
-   * Múltiples reglas y builder visual: M8+.
-   */
   ruleType:        z.enum(['percentage', 'fixed', 'bogo', 'combo', 'custom']).optional(),
   ruleValue:       z.coerce.number().min(0).optional(),
   ruleDescription: z.string().max(300).optional(),
 })
 
-/**
- * Schema de creación: añade la validación de fechas sobre el base.
- */
 export const promotionCreateSchema = promotionBaseSchema.refine(
   (data) => {
     if (data.startsAt && data.endsAt) {
@@ -46,10 +31,6 @@ export const promotionCreateSchema = promotionBaseSchema.refine(
   },
 )
 
-/**
- * Schema de actualización: partial sobre el base (sin refinement).
- * La validación de fechas se hace manualmente en la mutación si ambas están presentes.
- */
 export const promotionUpdateSchema = promotionBaseSchema.partial()
 
 export type PromotionCreateInput = z.infer<typeof promotionCreateSchema>
@@ -67,12 +48,8 @@ function buildRules(input: PromotionCreateInput | PromotionUpdateInput) {
   }]
 }
 
-// ─── Mutaciones ───────────────────────────────────────────────────────────────
+// ─── Create ──────────────────────────────────────────────────────────────────
 
-/**
- * Crea una promoción nueva para el negocio del contexto.
- * product_ids y category_ids quedan en null (builder visual M8+).
- */
 export async function createPromotion(
   ctx: AdminContext,
   input: PromotionCreateInput,
@@ -89,8 +66,6 @@ export async function createPromotion(
       starts_at:      input.startsAt ?? null,
       ends_at:        input.endsAt ?? null,
       rules:          buildRules(input),
-      product_ids:    null,
-      category_ids:   null,
       sort_order:     input.sortOrder,
     })
     .select()
@@ -103,12 +78,8 @@ export async function createPromotion(
   return { ok: true, data: rowToPromotion(data) }
 }
 
-/**
- * Actualiza los campos indicados de una promoción existente.
- *
- * RLS: el .eq('business_id', ctx.businessId) garantiza que solo se actualiza
- * si la promoción pertenece al negocio autenticado.
- */
+// ─── Update ──────────────────────────────────────────────────────────────────
+
 export async function updatePromotion(
   ctx: AdminContext,
   id: string,
@@ -147,12 +118,8 @@ export async function updatePromotion(
   return { ok: true, data: rowToPromotion(data) }
 }
 
-/**
- * Elimina una promoción.
- *
- * RLS: el .eq('business_id', ctx.businessId) garantiza que solo se elimina
- * si la promoción pertenece al negocio autenticado.
- */
+// ─── Delete ──────────────────────────────────────────────────────────────────
+
 export async function deletePromotion(
   ctx: AdminContext,
   id: string,

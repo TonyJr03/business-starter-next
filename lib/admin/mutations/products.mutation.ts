@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { toSlug } from '@/lib/utils/slug'
-import { rowToProduct } from '@/lib/persistence/product'
+import { rowToProduct } from '@/lib/persistence'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
 import type { Product } from '@/types'
 
@@ -18,35 +18,23 @@ export const productCreateSchema = z.object({
   sortOrder:     z.coerce.number().int().min(0).default(0),
 })
 
-/**
- * Todos los campos opcionales para actualizaciones parciales.
- */
 export const productUpdateSchema = productCreateSchema.partial()
 
 export type ProductCreateInput = z.infer<typeof productCreateSchema>
 export type ProductUpdateInput = z.infer<typeof productUpdateSchema>
 
-// ─── Mutaciones ───────────────────────────────────────────────────────────────
+// ─── Create ──────────────────────────────────────────────────────────────────
 
-/**
- * Crea un producto nuevo para el negocio del contexto.
- * El slug se genera automáticamente desde el nombre.
- * image_url y tags quedan en null hasta que se implemente subida de archivos.
- *
- * Validación:
- *   - Verifica que la categoría existe y pertenece al negocio (RLS en DB).
- *   - Rechaza si el slug ya existe en el negocio.
- */
 export async function createProduct(
   ctx: AdminContext,
   input: ProductCreateInput,
 ): Promise<MutationResult<Product>> {
-  // Validar que la categoría existe y pertenece al negocio
+  // Validar que la categoría existe y pertenece al negocio (via catálogo)
   const { data: category } = await ctx.supabase
-    .from('categories')
-    .select('id')
+    .from('catalog_categories')
+    .select('id, catalog_pages!inner(business_id)')
     .eq('id', input.categoryId)
-    .eq('business_id', ctx.businessId)
+    .eq('catalog_pages.business_id', ctx.businessId)
     .single()
 
   if (!category) {
@@ -54,9 +42,8 @@ export async function createProduct(
   }
 
   const { data, error } = await ctx.supabase
-    .from('products')
+    .from('catalog_products')
     .insert({
-      business_id:    ctx.businessId,
       category_id:    input.categoryId,
       slug:           toSlug(input.name),
       name:           input.name,
@@ -66,7 +53,6 @@ export async function createProduct(
       is_available:   input.isAvailable,
       is_featured:    input.isFeatured,
       badge:          input.badge ?? null,
-      tags:           null,
       image_url:      null,
       sort_order:     input.sortOrder,
     })
@@ -83,13 +69,8 @@ export async function createProduct(
   return { ok: true, data: rowToProduct(data) }
 }
 
-/**
- * Actualiza los campos indicados de un producto existente.
- * El slug NO se modifica en actualizaciones para preservar URLs.
- *
- * RLS: el .eq('business_id', ctx.businessId) garantiza que solo se actualiza
- * si el producto pertenece al negocio autenticado.
- */
+// ─── Update ──────────────────────────────────────────────────────────────────
+
 export async function updateProduct(
   ctx: AdminContext,
   id: string,
@@ -98,10 +79,10 @@ export async function updateProduct(
   // Si cambia la categoría, verificar que pertenece al mismo negocio
   if (input.categoryId !== undefined) {
     const { data: category } = await ctx.supabase
-      .from('categories')
-      .select('id')
+      .from('catalog_categories')
+      .select('id, catalog_pages!inner(business_id)')
       .eq('id', input.categoryId)
-      .eq('business_id', ctx.businessId)
+      .eq('catalog_pages.business_id', ctx.businessId)
       .single()
 
     if (!category) {
@@ -121,10 +102,9 @@ export async function updateProduct(
   if (input.sortOrder     !== undefined) patch.sort_order     = input.sortOrder
 
   const { data, error } = await ctx.supabase
-    .from('products')
+    .from('catalog_products')
     .update(patch)
     .eq('id', id)
-    .eq('business_id', ctx.businessId) // RLS: solo el negocio propietario
     .select()
     .single()
 
@@ -136,21 +116,16 @@ export async function updateProduct(
   return { ok: true, data: rowToProduct(data) }
 }
 
-/**
- * Elimina un producto.
- *
- * RLS: el .eq('business_id', ctx.businessId) garantiza que solo se elimina
- * si el producto pertenece al negocio autenticado.
- */
+// ─── Delete ──────────────────────────────────────────────────────────────────
+
 export async function deleteProduct(
   ctx: AdminContext,
   id: string,
 ): Promise<MutationResult<void>> {
   const { error } = await ctx.supabase
-    .from('products')
+    .from('catalog_products')
     .delete()
     .eq('id', id)
-    .eq('business_id', ctx.businessId)
 
   if (error) {
     return { ok: false, error: 'No se pudo eliminar el producto. Por favor, intenta de nuevo.' }
