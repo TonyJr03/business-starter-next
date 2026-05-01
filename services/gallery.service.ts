@@ -1,22 +1,12 @@
 import { cache } from 'react';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { GalleryAlbum, GalleryItem } from '@/types';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import {
   type GalleryAlbumRow, rowToGalleryAlbum,
   type GalleryPhotoRow, rowToGalleryItem,
-} from '@/lib/persistence/gallery';
+} from '@/lib/persistence';
 
-/**
- * Servicio de galería — lectura desde BD.
- *
- * Fuente de datos: tablas `gallery_albums` y `gallery_photos`.
- * Ambas funciones degradan a array vacío si Supabase no está disponible
- * o el negocio no tiene datos — la página galería muestra el estado vacío.
- *
- * Contrato estable: las firmas públicas no cambian al migrar la fuente.
- */
-
-// ─── Albums ───────────────────────────────────────────────────────────────────
+// ─── Fetch ────────────────────────────────────────────────────────────────────
 
 async function fetchGalleryAlbumsFromDB(businessId: string): Promise<GalleryAlbum[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return [];
@@ -24,14 +14,14 @@ async function fetchGalleryAlbumsFromDB(businessId: string): Promise<GalleryAlbu
 
   const { data, error } = await db
     .from('gallery_albums')
-    .select('id, business_id, slug, name, description, cover_image_url, sort_order, is_active, created_at, updated_at')
+    .select('*')
     .eq('business_id', businessId)
     .eq('is_active', true)
     .order('sort_order');
 
   if (error) {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[gallery.service] Error al leer gallery_albums:', error.message);
+      console.warn('[gallery.service] Error:', error.message);
     }
     return [];
   }
@@ -40,10 +30,6 @@ async function fetchGalleryAlbumsFromDB(businessId: string): Promise<GalleryAlbu
 
   return (data as GalleryAlbumRow[]).map(rowToGalleryAlbum);
 }
-
-export const getGalleryAlbums = cache(fetchGalleryAlbumsFromDB);
-
-// ─── Photos ───────────────────────────────────────────────────────────────────
 
 async function fetchGalleryPhotosFromDB(
   businessId: string,
@@ -54,7 +40,7 @@ async function fetchGalleryPhotosFromDB(
 
   let query = db
     .from('gallery_photos')
-    .select('id, business_id, album_id, image_url, alt, caption, sort_order, is_active, created_at, updated_at')
+    .select('*')
     .eq('business_id', businessId)
     .eq('is_active', true)
     .order('sort_order');
@@ -67,7 +53,7 @@ async function fetchGalleryPhotosFromDB(
 
   if (error) {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[gallery.service] Error al leer gallery_photos:', error.message);
+      console.warn('[gallery.service] Error:', error.message);
     }
     return [];
   }
@@ -77,4 +63,7 @@ async function fetchGalleryPhotosFromDB(
   return (data as GalleryPhotoRow[]).map(rowToGalleryItem);
 }
 
+// ─── API pública ──────────────────────────────────────────────────────────────
+
+export const getGalleryAlbums = cache(fetchGalleryAlbumsFromDB);
 export const getGalleryPhotos = cache(fetchGalleryPhotosFromDB);

@@ -1,22 +1,12 @@
+import { cache } from 'react';
 import type { Promotion, PromotionStatus } from '@/types';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { type PromotionRow, rowToPromotion } from '@/lib/persistence/promotion';
+import { type PromotionRow, rowToPromotion } from '@/lib/persistence';
 
-/**
- * Servicio de promociones — lectura y resolución de estado.
- *
- * Fuente de datos: Supabase.
- * Si Supabase no está disponible o la consulta falla, se devuelve array vacío.
- * No existe fallback a datos locales — la ausencia de datos es un estado válido.
- *
- * Contrato estable: las firmas públicas no cambian al migrar la fuente.
- */
+// ─── Fetch ────────────────────────────────────────────────────────────────────
 
-// ─── Lector privado de Supabase ───────────────────────────────────────────────
-// Devuelve null si Supabase no está disponible o la consulta falla.
-
-async function fetchPromotionsFromDB(): Promise<Promotion[] | null> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+async function fetchPromotionsFromDB(): Promise<Promotion[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return [];
   const db = await createSupabaseServerClient();
 
   const { data, error } = await db
@@ -26,37 +16,40 @@ async function fetchPromotionsFromDB(): Promise<Promotion[] | null> {
 
   if (error) {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[promotions.service] Error al leer promociones de Supabase:', error.message);
+      console.warn('[promotions.service] Error:', error.message);
     }
-    return null;
+    return [];
   }
 
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) return [];
 
   return (data as PromotionRow[]).map(rowToPromotion).filter((x): x is Promotion => x !== null);
 }
 
-// ─── Estado ───────────────────────────────────────────────────────────────────
+async function fetchPromotionById(id: string): Promise<Promotion | undefined> {
+  const all = await fetchPromotionsFromDB();
+  return all.find((p) => p.id === id);
+}
 
-/**
- * Resuelve el estado de ciclo de vida de una promoción en un momento dado.
- *
- * Prioridad de resolución:
- *  1. `promotion.status` explícito en el dato → se usa directamente.
- *  2. Derivado de startsAt / endsAt comparado con `now` (inicio del día).
- *  3. Retrocompat: `isActive === false` → 'paused'; ausente → 'active'.
- *
- * @param promotion - Objeto Promotion tipado.
- * @param now       - Fecha de referencia. Por defecto: Date actual. Útil en tests.
- */
+async function fetchActivePromotions(now: Date = new Date()): Promise<Promotion[]> {
+  const all = await fetchPromotionsFromDB();
+  return all.filter((p) => getPromotionStatus(p, now) === 'active');
+}
+
+// ─── API pública ──────────────────────────────────────────────────────────────
+
+export const getPromotions = cache(fetchPromotionsFromDB);
+export const getPromotionById = cache(fetchPromotionById);
+export const getActivePromotions = cache(fetchActivePromotions);
+
+// ─── Helpers de dominio ───────────────────────────────────────────────────────
+
 export function getPromotionStatus(
   promotion: Promotion,
   now: Date = new Date(),
 ): PromotionStatus {
-  // 1. Estado explícito en el dato
   if (promotion.status) return promotion.status;
 
-  // 2. Derivar por fechas (normalizar a inicio del día)
   const dayStart = new Date(now);
   dayStart.setHours(0, 0, 0, 0);
 
@@ -66,54 +59,11 @@ export function getPromotionStatus(
   if (starts && starts > dayStart) return 'upcoming';
   if (ends   && ends   < dayStart) return 'expired';
 
-  // 3. Retrocompat con el campo booleano heredado
   if (promotion.isActive === false) return 'paused';
 
   return 'active';
 }
 
-// ─── API pública ──────────────────────────────────────────────────────────────
-
-/**
- * Devuelve todas las promociones sin filtrar.
- * Fuente: Supabase. Devuelve [] si no hay datos o Supabase no está disponible.
- */
-export async function getPromotions(): Promise<Promotion[]> {
-  return (await fetchPromotionsFromDB()) ?? [];
-}
-
-/**
- * Devuelve solo las promociones cuyo estado resuelto es 'active'.
- * Fuente: Supabase → fallback local.
- *
- * @param now - Fecha de referencia. Por defecto: Date actual.
- */
-export async function getActivePromotions(now: Date = new Date()): Promise<Promotion[]> {
-  const all = await getPromotions();
-  return all.filter((p) => getPromotionStatus(p, now) === 'active');
-}
-
-/**
- * Busca una promoción por su id.
- * Devuelve undefined si no existe.
- * Fuente: Supabase → fallback local.
- */
-export async function getPromotionById(id: string): Promise<Promotion | undefined> {
-  const all = await getPromotions();
-  return all.find((p) => p.id === id);
-}
-
-// ─── Helpers de dominio ───────────────────────────────────────────────────────
-
-/**
- * Devuelve true si la promoción está activa en el momento indicado.
- * Equivale a `getPromotionStatus(promotion, now) === 'active'`.
- *
- * Útil como guard rápido sin necesitar el tipo PromotionStatus completo.
- *
- * @param promotion - Objeto Promotion tipado.
- * @param now       - Fecha de referencia. Por defecto: Date actual.
- */
 export function isPromotionActive(promotion: Promotion, now: Date = new Date()): boolean {
   return getPromotionStatus(promotion, now) === 'active';
 }
