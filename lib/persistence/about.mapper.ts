@@ -13,9 +13,9 @@ export interface AboutRow {
 
 export function rowToAboutContent(row: AboutRow): AboutContent {
   return {
-    story:            row.story,
-    mission:          row.mission ?? undefined,
-    differentiators:  row.differentiators ?? undefined,
-    teamImageUrl:     row.team_image_url ?? undefined,
+    story:           row.story,
+    mission:         row.mission ?? undefined,
+    differentiators: row.differentiators ?? undefined,
+    teamImageUrl:    row.team_image_url ?? undefined,
   };
 }

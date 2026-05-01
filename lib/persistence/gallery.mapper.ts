@@ -8,7 +8,6 @@ export interface GalleryAlbumRow {
   slug: string;
   name: string;
   description: string | null;
-  cover_image_url: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -17,12 +16,11 @@ export interface GalleryAlbumRow {
 
 export function rowToGalleryAlbum(row: GalleryAlbumRow): GalleryAlbum {
   return {
-    id:            row.id,
-    slug:          row.slug,
-    name:          row.name,
-    description:   row.description ?? undefined,
-    coverImageUrl: row.cover_image_url ?? undefined,
-    sortOrder:     row.sort_order,
+    id:          row.id,
+    slug:        row.slug,
+    name:        row.name,
+    description: row.description ?? undefined,
+    sortOrder:   row.sort_order,
   };
 }
 
@@ -43,10 +41,10 @@ export interface GalleryPhotoRow {
 
 export function rowToGalleryItem(row: GalleryPhotoRow): GalleryItem {
   return {
-    id:       row.id,
-    albumId:  row.album_id,
-    src:      row.image_url,
-    alt:      row.alt,
-    caption:  row.caption ?? undefined,
+    id:      row.id,
+    albumId: row.album_id,
+    src:     row.image_url,
+    alt:     row.alt,
+    caption: row.caption ?? undefined,
   };
 }
