@@ -9,25 +9,32 @@ export type {
 
 export { getAdminContext } from './context'
 
-// ─── Categorías ───────────────────────────────────────────────────────────────
+// ─── Catálogo ─────────────────────────────────────────────────────────────────
 export {
+  catalogPageCreateSchema,
+  catalogPageUpdateSchema,
+  createCatalogPage,
+  updateCatalogPage,
+  deleteCatalogPage,
   categoryCreateSchema,
   categoryUpdateSchema,
   createCategory,
   updateCategory,
   deleteCategory,
-} from './mutations/categories.mutation'
-export type { CategoryCreateInput, CategoryUpdateInput } from './mutations/categories.mutation'
-
-// ─── Productos ────────────────────────────────────────────────────────────────
-export {
   productCreateSchema,
   productUpdateSchema,
   createProduct,
   updateProduct,
   deleteProduct,
-} from './mutations/products.mutation'
-export type { ProductCreateInput, ProductUpdateInput } from './mutations/products.mutation'
+} from './mutations/catalog.mutation'
+export type {
+  CatalogPageCreateInput,
+  CatalogPageUpdateInput,
+  CategoryCreateInput,
+  CategoryUpdateInput,
+  ProductCreateInput,
+  ProductUpdateInput,
+} from './mutations/catalog.mutation'
 
 // ─── Promociones ──────────────────────────────────────────────────────────────
 export {
@@ -39,9 +46,57 @@ export {
 } from './mutations/promotions.mutation'
 export type { PromotionCreateInput, PromotionUpdateInput } from './mutations/promotions.mutation'
 
+// ─── About ────────────────────────────────────────────────────────────────────
+export {
+  aboutUpdateSchema,
+  updateAbout,
+} from './mutations/about.mutation'
+export type { AboutUpdateInput } from './mutations/about.mutation'
+
+// ─── FAQ ──────────────────────────────────────────────────────────────────────
+export {
+  faqItemCreateSchema,
+  faqItemUpdateSchema,
+  createFaqItem,
+  updateFaqItem,
+  deleteFaqItem,
+} from './mutations/faq.mutation'
+export type { FaqItemCreateInput, FaqItemUpdateInput } from './mutations/faq.mutation'
+
+// ─── Galería ──────────────────────────────────────────────────────────────────
+export {
+  albumCreateSchema,
+  albumUpdateSchema,
+  createAlbum,
+  updateAlbum,
+  deleteAlbum,
+  photoCreateSchema,
+  photoUpdateSchema,
+  createPhoto,
+  updatePhoto,
+  deletePhoto,
+} from './mutations/gallery.mutation'
+export type {
+  AlbumCreateInput,
+  AlbumUpdateInput,
+  PhotoCreateInput,
+  PhotoUpdateInput,
+} from './mutations/gallery.mutation'
+
+// ─── Blog ─────────────────────────────────────────────────────────────────────
+export {
+  blogPostCreateSchema,
+  blogPostUpdateSchema,
+  createPost,
+  updatePost,
+  deletePost,
+} from './mutations/blog.mutation'
+export type { BlogPostCreateInput, BlogPostUpdateInput } from './mutations/blog.mutation'
+
 // ─── Ajustes del negocio ──────────────────────────────────────────────────────
 export {
   settingsUpdateSchema,
   updateSettings,
 } from './mutations/settings.mutation'
 export type { SettingsUpdateInput } from './mutations/settings.mutation'
+
