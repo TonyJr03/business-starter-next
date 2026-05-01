@@ -28,7 +28,7 @@
 -- ---------------------------------------------------------------------------
 -- Limpiar en orden inverso al de dependencias (seguro en entorno de dev)
 -- ---------------------------------------------------------------------------
-TRUNCATE business_blog_posts, gallery_photos, gallery_albums, business_faq_items, business_about, promotions, products, categories, catalogs, businesses RESTART IDENTITY CASCADE;
+TRUNCATE blog, gallery_photos, gallery_albums, faq, about, promotions, catalog_products, catalog_categories, catalog_pages, businesses RESTART IDENTITY CASCADE;
 
 
 -- =============================================================================
@@ -132,7 +132,7 @@ BEGIN
   -- Un solo catálogo para el negocio demo. Múltiples catálogos se añaden
   -- insertando más filas; la UI se adapta automáticamente (dropdown nav, etc.).
   -- ===========================================================================
-  INSERT INTO catalogs
+  INSERT INTO catalog_pages
     (id, business_id, slug, name, description, image_url, sort_order, is_active)
   VALUES
     (cat_main,  biz, 'cafeteria', 'Cafetería',  'El menú completo del café: bebidas, bocados y más.',  NULL, 1, true),
@@ -143,15 +143,15 @@ BEGIN
   -- 3. Categorías (cat_1 · cat_2 · cat_3)
   -- Equivalentes a src/data/categories.ts (fallback usa IDs cortos 'cat-1', etc.)
   -- ===========================================================================
-  INSERT INTO categories
-    (id, business_id, catalog_id, slug, name, description, sort_order, is_active)
+  INSERT INTO catalog_categories
+    (id, catalog_id, slug, name, description, sort_order, is_active)
   VALUES
-    (cat_1, biz, cat_main,  'cafes',         'Cafés',          'Café cubano, espresso, americano y más.',    1, true),
-    (cat_2, biz, cat_main,  'bebidas-frias',  'Bebidas frías',  'Jugos, batidos y refrescos naturales.',      2, true),
-    (cat_3, biz, cat_main,  'bocados',        'Bocados',         'Pastelitos, snacks y algo para acompañar.',  3, true),
-    (cat_4, biz, cat_dulce, 'tortas',         'Tortas',          'Tortas caseras horneadas cada mañana.',      1, true),
-    (cat_5, biz, cat_dulce, 'bolleria',       'Bollería',        'Pan dulce, croissants y donas artesanales.', 2, true),
-    (cat_6, biz, cat_dulce, 'postres-frios',  'Postres fríos',  'Helados, flanes y cremitas bien frías.',     3, true);
+    (cat_1, cat_main,  'cafes',         'Cafés',          'Café cubano, espresso, americano y más.',    1, true),
+    (cat_2, cat_main,  'bebidas-frias',  'Bebidas frías',  'Jugos, batidos y refrescos naturales.',      2, true),
+    (cat_3, cat_main,  'bocados',        'Bocados',         'Pastelitos, snacks y algo para acompañar.',  3, true),
+    (cat_4, cat_dulce, 'tortas',         'Tortas',          'Tortas caseras horneadas cada mañana.',      1, true),
+    (cat_5, cat_dulce, 'bolleria',       'Bollerı́a',        'Pan dulce, croissants y donas artesanales.', 2, true),
+    (cat_6, cat_dulce, 'postres-frios',  'Postres fríos',  'Helados, flanes y cremitas bien frías.',     3, true);
 
 
   -- ===========================================================================
@@ -164,56 +164,56 @@ BEGIN
   --   incluye en su combo. El service filtra is_available de forma independiente;
   --   la promo puede seguir activa aunque un componente esté fuera de stock.
   -- ===========================================================================
-  INSERT INTO products
-    (id, business_id, category_id, slug, name, description,
+  INSERT INTO catalog_products
+    (id, category_id, slug, name, description,
      money_amount, money_currency, is_available, is_featured, badge, sort_order, image_url)
   VALUES
     -- ── Cafés (cat_1) ────────────────────────────────────────────────────────
-    (p1,  biz, cat_1, 'cafe-cubano',         'Café Cubano',
+    (p1,  cat_1, 'cafe-cubano',         'Café Cubano',
       'Nuestro café cubano tradicional, fuerte y aromático.',             25.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/cafe-cubano/600/450'),
-    (p2,  biz, cat_1, 'cortadito',           'Cortadito',
+    (p2,  cat_1, 'cortadito',           'Cortadito',
       'Café cubano con un toque de leche suave.',                         30.00, 'CUP', true,  true,  NULL,      2, 'https://picsum.photos/seed/cortadito/600/450'),
-    (p3,  biz, cat_1, 'cafe-con-leche',      'Café con Leche',
+    (p3,  cat_1, 'cafe-con-leche',      'Café con Leche',
       'La combinación perfecta para comenzar el día.',                    40.00, 'CUP', true,  false, NULL,      3, 'https://picsum.photos/seed/cafe-con-leche/600/450'),
-    (p4,  biz, cat_1, 'espresso-doble',      'Espresso Doble',
+    (p4,  cat_1, 'espresso-doble',      'Espresso Doble',
       'Concentrado e intenso, para los que no se conforman con poco.',    45.00, 'CUP', true,  false, 'new',     4, 'https://picsum.photos/seed/espresso-doble/600/450'),
 
-    -- ── Bebidas frías (cat_2) ─────────────────────────────────────────────────
-    (p5,  biz, cat_2, 'jugo-guayaba',        'Jugo de Guayaba',
+    -- ── Bebidas frías (cat_2) ───────────────────────────────────────────────
+    (p5,  cat_2, 'jugo-guayaba',        'Jugo de Guayaba',
       'Natural, fresco y bien cubano.',                                   35.00, 'CUP', true,  true,  'new',     1, 'https://picsum.photos/seed/jugo-guayaba/600/450'),
-    (p6,  biz, cat_2, 'batido-mango',        'Batido de Mango',
+    (p6,  cat_2, 'batido-mango',        'Batido de Mango',
       'Cremoso y dulce, hecho con mango fresco.',                         50.00, 'CUP', true,  false, NULL,      2, 'https://picsum.photos/seed/batido-mango/600/450'),
-    (p7,  biz, cat_2, 'agua-de-coco',        'Agua de Coco',
+    (p7,  cat_2, 'agua-de-coco',        'Agua de Coco',
       'Refrescante y natural, directo del coco.',                         40.00, 'CUP', true,  false, NULL,      3, 'https://picsum.photos/seed/agua-de-coco/600/450'),
 
     -- ── Bocados (cat_3) ───────────────────────────────────────────────────────
-    (p8,  biz, cat_3, 'pastelito-guayaba',   'Pastelito de Guayaba',
+    (p8,  cat_3, 'pastelito-guayaba',   'Pastelito de Guayaba',
       'Hojaldrado y relleno de guayaba, igual que en casa.',              20.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/pastelito-guayaba/600/450'),
-    (p9,  biz, cat_3, 'tostada-mantequilla', 'Tostada con Mantequilla',
+    (p9,  cat_3, 'tostada-mantequilla', 'Tostada con Mantequilla',
       'Pan tostado, crujiente y bien untado.',                            15.00, 'CUP', false, false, NULL,      2, 'https://picsum.photos/seed/tostada-mantequilla/600/450'),
-    (p10, biz, cat_3, 'croqueta-jamon',      'Croqueta de Jamón',
+    (p10, cat_3, 'croqueta-jamon',      'Croqueta de Jamón',
       'Crujiente por fuera, cremosa por dentro. Perfecta con el café.',   25.00, 'CUP', true,  false, NULL,      3, 'https://picsum.photos/seed/croqueta-jamon/600/450'),
 
     -- ── Tortas (cat_4) ────────────────────────────────────────────────────────
-    (p11, biz, cat_4, 'torta-tres-leches',   'Torta de Tres Leches',
+    (p11, cat_4, 'torta-tres-leches',   'Torta de Tres Leches',
       'Esponjosa, húmeda y bañada en tres tipos de leche. La favorita.',  85.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/torta-tres-leches/600/450'),
-    (p12, biz, cat_4, 'torta-chocolate',     'Torta de Chocolate',
+    (p12, cat_4, 'torta-chocolate',     'Torta de Chocolate',
       'Dos pisos de bizcocho intenso con ganache de chocolate cubano.',   90.00, 'CUP', true,  true,  NULL,      2, 'https://picsum.photos/seed/torta-chocolate/600/450'),
-    (p13, biz, cat_4, 'torta-zanahoria',     'Torta de Zanahoria',
+    (p13, cat_4, 'torta-zanahoria',     'Torta de Zanahoria',
       'Suave y especiada, con cobertura de queso crema.',                 80.00, 'CUP', true,  false, 'new',     3, 'https://picsum.photos/seed/torta-zanahoria/600/450'),
 
     -- ── Bollería (cat_5) ─────────────────────────────────────────────────────
-    (p14, biz, cat_5, 'pan-guayaba',         'Pan de Guayaba',
+    (p14, cat_5, 'pan-guayaba',         'Pan de Guayaba',
       'Suave por dentro, hojaldrado por fuera y relleno de guayaba.',     18.00, 'CUP', true,  true,  'popular', 1, 'https://picsum.photos/seed/pan-guayaba/600/450'),
-    (p15, biz, cat_5, 'croissant-mantequilla','Croissant de Mantequilla',
+    (p15, cat_5, 'croissant-mantequilla','Croissant de Mantequilla',
       'Capas doradas y crujientes, elaborado con mantequilla real.',      22.00, 'CUP', true,  false, NULL,      2, 'https://picsum.photos/seed/croissant-mantequilla/600/450'),
-    (p16, biz, cat_5, 'donut-glaseado',      'Donut Glaseado',
+    (p16, cat_5, 'donut-glaseado',      'Donut Glaseado',
       'Esponjoso, azucarado y con glaseado de colores. Para todos.',      15.00, 'CUP', true,  false, 'new',     3, 'https://picsum.photos/seed/donut-glaseado/600/450'),
 
     -- ── Postres fríos (cat_6) ─────────────────────────────────────────────────
-    (p17, biz, cat_6, 'helado-coco',         'Helado de Coco',
+    (p17, cat_6, 'helado-coco',         'Helado de Coco',
       'Cremoso, natural y servido en copa. Sabor caribeño puro.',         30.00, 'CUP', true,  true,  NULL,      1, 'https://picsum.photos/seed/helado-coco/600/450'),
-    (p18, biz, cat_6, 'flan-leche',          'Flan de Leche',
+    (p18, cat_6, 'flan-leche',          'Flan de Leche',
       'El clásico cubano: suave, tembloroso y con caramelo de verdad.',   25.00, 'CUP', true,  false, NULL,      2, 'https://picsum.photos/seed/flan-leche/600/450');
 
 
@@ -222,22 +222,8 @@ BEGIN
   --
   -- ─── Decisiones de modelado JSONB (temporales, Sprint 12) ─────────────────
   --
-  -- A) Columnas product_ids / category_ids (nivel de fila)
-  --    Arrays JSON de UUIDs que indican a qué entidades aplica la promoción.
-  --    Propósito: filtrado eficiente en queries sin parsear el JSONB de rules.
-  --    Ejemplo: "¿qué promos tienen a p1 en product_ids?" → índice GIN futuro.
-  --    Estado TEMPORAL → se reemplazarán por tablas de relación en sprint futuro:
-  --      · promotion_products(promotion_id UUID, product_id UUID)
-  --      · promotion_categories(promotion_id UUID, category_id UUID)
-  --    La migración será no destructiva: crear tablas, migrar datos del JSONB,
-  --    eliminar columnas en migración posterior.
-  --
-  -- B) rules[].productIds / rules[].categoryIds (dentro del JSONB rules)
-  --    Los mismos UUIDs embebidos dentro del objeto de regla.
-  --    Propósito: evaluación de la lógica de descuento sin JOINs adicionales.
-  --    La duplicación respecto a (A) es intencional en esta fase.
-  --    INVARIANTE: deben ser idénticos a los de la columna product_ids /
-  --    category_ids correspondiente.
+  -- Los product_ids/category_ids se han eliminado del nivel de fila.
+  -- Las referencias a productos/categorías viven dentro del JSONB rules[].
   --
   -- C) Tipos de descuento presentes en este seed:
   --    · 'percentage' → value = % del 0 al 100
@@ -246,7 +232,7 @@ BEGIN
   -- ===========================================================================
   INSERT INTO promotions
     (id, business_id, title, description, image_url, status, discount_label,
-     starts_at, ends_at, rules, product_ids, category_ids, sort_order)
+     starts_at, ends_at, rules, sort_order)
   VALUES
 
     -- ── promo1: Desayuno Completo ─────────────────────────────────────────────
@@ -269,8 +255,6 @@ BEGIN
           'description','20% de descuento al pedir café cubano, jugo del día y tostada juntos.'
         )
       ),
-      jsonb_build_array(p1::text, p5::text, p9::text),  -- Café Cubano · Jugo de Guayaba · Tostada
-      NULL,
       1
     ),
 
@@ -291,8 +275,6 @@ BEGIN
           'description', 'Mitad de precio en todos los cafés durante el happy hour.'
         )
       ),
-      NULL,
-      jsonb_build_array(cat_1::text),  -- Categoría: Cafés
       2
     ),
 
@@ -314,8 +296,6 @@ BEGIN
           'description','Precio especial al pedir 2 cafés cubanos y 2 pastelitos de guayaba.'
         )
       ),
-      jsonb_build_array(p1::text, p8::text),  -- Café Cubano · Pastelito de Guayaba
-      NULL,
       3
     ),
 
@@ -337,15 +317,13 @@ BEGIN
           'description', 'Segundo batido gratis al comprar el primero en el horario indicado.'
         )
       ),
-      NULL,
-      jsonb_build_array(cat_2::text),  -- Categoría: Bebidas frías
       4
     );
 
   -- ===========================================================================
   -- 6. About: contenido editorial de Café La Esquina
   -- ===========================================================================
-  INSERT INTO business_about
+  INSERT INTO about
     (business_id, story, mission, differentiators, team_image_url)
   VALUES (
     biz,
@@ -379,7 +357,7 @@ BEGIN
   -- 7. FAQ: preguntas frecuentes de Café La Esquina
   -- Categorías: 'Pedidos', 'Horarios y visitas', 'Productos', 'Pagos'
   -- ===========================================================================
-  INSERT INTO business_faq_items
+  INSERT INTO faq
     (id, business_id, question, answer, category, sort_order)
   VALUES
 
@@ -472,14 +450,13 @@ BEGIN
   -- ═══════════════════════════════════════════════════════════════════════════
 
   -- 8a. Álbumes
-  INSERT INTO gallery_albums (id, business_id, slug, name, description, cover_image_url, sort_order)
+  INSERT INTO gallery_albums (id, business_id, slug, name, description, sort_order)
   VALUES
     (
       '70000000-0000-4000-8000-000000000001', biz,
       'nuestro-espacio',
       'Nuestro Espacio',
       'El ambiente acogedor de Café La Esquina.',
-      'https://picsum.photos/seed/cafe-espacio-cover/800/600',
       1
     ),
     (
@@ -487,7 +464,6 @@ BEGIN
       'productos',
       'Productos',
       'Cafés, pasteles y bebidas artesanales.',
-      'https://picsum.photos/seed/cafe-productos-cover/800/600',
       2
     ),
     (
@@ -495,7 +471,6 @@ BEGIN
       'equipo',
       'Nuestro Equipo',
       'Las personas detrás de cada taza.',
-      'https://picsum.photos/seed/cafe-equipo-cover/800/600',
       3
     );
 
@@ -613,7 +588,7 @@ BEGIN
   --    IDs: 80000000-0000-4000-8000-000000000001..3
   -- ═══════════════════════════════════════════════════════════════════════════
 
-  INSERT INTO business_blog_posts
+  INSERT INTO blog
     (id, business_id, slug, title, summary, body, published_at, author, tags)
   VALUES
     (
