@@ -18,8 +18,7 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
-import { getGalleryAlbums, getGalleryPhotos } from '@/services/gallery.service'
+import { resolveBusinessBySlug, getGalleryAlbums, getGalleryPhotos } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'

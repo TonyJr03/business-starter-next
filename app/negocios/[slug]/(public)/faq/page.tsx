@@ -16,8 +16,7 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
-import { getFaqItems } from '@/services/faq.service'
+import { resolveBusinessBySlug, getFaqItems } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { FaqSection } from '@/components/sections/FaqSection'

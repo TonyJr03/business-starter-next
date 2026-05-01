@@ -10,9 +10,8 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug, getPromotions, getPromotionStatus } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
-import { getPromotions, getPromotionStatus } from '@/services/promotions.service'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { PromotionCard } from '@/components/sections/PromotionCard'

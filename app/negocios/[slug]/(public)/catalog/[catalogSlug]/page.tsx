@@ -15,14 +15,8 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug, getCatalogBySlug, getCategories, getProducts, getFeaturedProducts } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
-import {
-  getCatalogBySlug,
-  getCategories,
-  getProducts,
-  getFeaturedProducts,
-} from '@/services/catalog.service'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { CategoryNav } from '@/components/sections/CategoryNav'

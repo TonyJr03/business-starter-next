@@ -16,7 +16,7 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'

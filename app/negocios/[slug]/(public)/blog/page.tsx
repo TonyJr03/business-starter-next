@@ -7,9 +7,8 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug, getPosts } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
-import { getPosts } from '@/services/blog.service'
 import { Section } from '@/components/ui/Section'
 import { BlogPostCard } from '@/components/sections/BlogPostCard'
 

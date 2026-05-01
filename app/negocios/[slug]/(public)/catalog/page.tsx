@@ -15,9 +15,8 @@ import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug, getCatalogs } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
-import { getCatalogs } from '@/services/catalog.service'
 import { Section } from '@/components/ui/Section'
 
 interface Props {

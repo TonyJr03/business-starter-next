@@ -10,8 +10,7 @@
  * pueda construir el dropdown de multi-catálogo.
  */
 import { notFound } from 'next/navigation'
-import { resolveBusinessBySlug } from '@/services/business.service'
-import { getCatalogs } from '@/services/catalog.service'
+import { resolveBusinessBySlug, getCatalogs } from '@/services'
 import { Header } from '@/components/public/Header'
 import { Footer } from '@/components/public/Footer'
 import type { ReactNode } from 'react'

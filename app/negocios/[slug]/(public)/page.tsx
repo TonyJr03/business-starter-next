@@ -12,7 +12,7 @@
 import type { Metadata } from 'next'
 import { resolveActiveSections } from '@/lib/modules/resolver'
 import { SectionRenderer } from '@/components/sections/SectionRenderer'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug } from '@/services'
 
 interface TenantHomeProps {
   params: Promise<{ slug: string }>

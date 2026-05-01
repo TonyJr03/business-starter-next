@@ -14,7 +14,7 @@
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug } from '@/services'
 import { resolveBrandVars, resolveThemeKey } from '@/lib/branding/resolver'
 import type { ReactNode } from 'react'
 

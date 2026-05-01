@@ -10,9 +10,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug } from '@/services/business.service'
+import { resolveBusinessBySlug, getPostBySlug } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
-import { getPostBySlug } from '@/services/blog.service'
 import { Section } from '@/components/ui/Section'
 
 interface Props {

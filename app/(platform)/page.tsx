@@ -8,7 +8,7 @@
  */
 
 import type { Metadata } from 'next'
-import { listActiveBusinesses } from '@/services/business.service'
+import { listActiveBusinesses } from '@/services'
 import { BusinessCard } from '@/components/platform/BusinessCard'
 
 export const metadata: Metadata = {
