@@ -14,27 +14,45 @@ interface AdminDashboardProps {
 
 const quickLinks = [
   {
-    id: 'categories',
-    title: 'Categorías',
-    description: 'Organiza el catálogo en secciones. Define el orden de aparición y activa o desactiva categorías.',
-    path: 'catalog/categories',
+    id: 'catalog',
+    title: 'Catálogo',
+    description: 'Gestiona catálogos, categorías y productos.',
+    path: 'catalog',
   },
   {
-    id: 'products',
-    title: 'Productos',
-    description: 'Gestiona el listado de productos con precios, disponibilidad y destacados.',
-    path: 'catalog/products',
+    id: 'about',
+    title: 'Nosotros',
+    description: 'Historia, misión y diferenciadores del negocio.',
+    path: 'about',
+  },
+  {
+    id: 'faq',
+    title: 'FAQ',
+    description: 'Preguntas frecuentes de los clientes.',
+    path: 'faq',
+  },
+  {
+    id: 'gallery',
+    title: 'Galería',
+    description: 'Álbumes y fotos del negocio.',
+    path: 'gallery',
+  },
+  {
+    id: 'blog',
+    title: 'Blog',
+    description: 'Artículos y noticias.',
+    path: 'blog',
   },
   {
     id: 'promotions',
     title: 'Promociones',
-    description: 'Crea y administra promociones activas, próximas y pausadas con reglas de descuento.',
+    description: 'Crea y administra promociones activas, próximas y pausadas.',
     path: 'promotions',
   },
   {
     id: 'settings',
     title: 'Ajustes',
-    description: 'Configura el nombre del negocio, contacto, ubicación, redes sociales y horarios.',
+    description: 'Configura el nombre, contacto, ubicación y horarios.',
     path: 'settings',
   },
 ]

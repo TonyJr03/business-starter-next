@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Tag, Package, Percent, Settings, LogOut, type LucideIcon } from 'lucide-react'
+import { LayoutDashboard, BookOpen, Percent, Settings, LogOut, Info, HelpCircle, Images, FileText, type LucideIcon } from 'lucide-react'
 
 interface AdminNavProps {
   slug: string
@@ -53,8 +53,13 @@ export function AdminNav({ slug, businessName, userEmail, logoutAction }: AdminN
         {navLink(`/negocios/${slug}/admin`, 'Dashboard', LayoutDashboard, true)}
 
         {sectionLabel('Catálogo')}
-        {navLink(`/negocios/${slug}/admin/catalog/categories`, 'Categorías', Tag)}
-        {navLink(`/negocios/${slug}/admin/catalog/products`, 'Productos', Package)}
+        {navLink(`/negocios/${slug}/admin/catalog`, 'Catálogo', BookOpen)}
+
+        {sectionLabel('Contenido')}
+        {navLink(`/negocios/${slug}/admin/about`, 'Nosotros', Info)}
+        {navLink(`/negocios/${slug}/admin/faq`, 'FAQ', HelpCircle)}
+        {navLink(`/negocios/${slug}/admin/gallery`, 'Galería', Images)}
+        {navLink(`/negocios/${slug}/admin/blog`, 'Blog', FileText)}
 
         {sectionLabel('Marketing')}
         {navLink(`/negocios/${slug}/admin/promotions`, 'Promociones', Percent)}

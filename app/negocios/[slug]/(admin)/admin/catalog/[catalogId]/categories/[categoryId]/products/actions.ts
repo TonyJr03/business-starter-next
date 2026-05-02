@@ -4,52 +4,47 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import {
   getAdminContext,
-  promotionCreateSchema,
-  promotionUpdateSchema,
-  createPromotion,
-  updatePromotion,
-  deletePromotion,
+  productCreateSchema,
+  productUpdateSchema,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 } from '@/lib/admin'
 import type { AdminActionState } from '@/lib/admin'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function extractRaw(formData: FormData) {
-  const ruleType  = String(formData.get('ruleType')  ?? '')
-  const ruleValue = String(formData.get('ruleValue') ?? '')
-
+function extractRaw(formData: FormData, categoryId: string) {
   return {
-    title:           String(formData.get('title')           ?? ''),
-    description:     String(formData.get('description')     ?? '') || undefined,
-    status:          String(formData.get('status')          ?? 'active'),
-    discountLabel:   String(formData.get('discountLabel')   ?? '') || undefined,
-    startsAt:        String(formData.get('startsAt')        ?? '') || undefined,
-    endsAt:          String(formData.get('endsAt')          ?? '') || undefined,
-    sortOrder:       String(formData.get('sortOrder')       ?? '0'),
-    ruleType:        ruleType  || undefined,
-    ruleValue:       ruleValue || undefined,
-    ruleDescription: String(formData.get('ruleDescription') ?? '') || undefined,
+    name:          String(formData.get('name')          ?? ''),
+    description:   String(formData.get('description')   ?? '') || undefined,
+    categoryId,
+    moneyAmount:   String(formData.get('moneyAmount')   ?? '0'),
+    moneyCurrency: String(formData.get('moneyCurrency') ?? 'CUP'),
+    isAvailable:   formData.get('isAvailable') === 'on',
+    isFeatured:    formData.get('isFeatured')  === 'on',
+    badge:         String(formData.get('badge')         ?? '') || undefined,
+    sortOrder:     String(formData.get('sortOrder')     ?? '0'),
   }
 }
 
 // ─── Create ────────────────────────────────────────────────────────────────────
 
-export async function createPromotionAction(
+export async function createProductAction(
   slug: string,
+  catalogId: string,
+  categoryId: string,
   _prevState: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
-  const raw = extractRaw(formData)
-  const parsed = promotionCreateSchema.safeParse(raw)
+  const raw = extractRaw(formData, categoryId)
+
+  const parsed = productCreateSchema.safeParse(raw)
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors
-    const formErrors = parsed.error.flatten().formErrors
-    if (formErrors.length > 0) {
-      return { ok: false, error: formErrors[0]!, field: 'startsAt' }
-    }
     const firstField = Object.keys(errors)[0] as string
     return {
       ok: false,
@@ -58,17 +53,19 @@ export async function createPromotionAction(
     }
   }
 
-  const result = await createPromotion(ctxResult.ctx, parsed.data)
+  const result = await createProduct(ctxResult.ctx, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
   revalidatePath(`/negocios/${slug}`, 'layout')
-  redirect(`/negocios/${slug}/admin/promotions?created=1`)
+  redirect(`/negocios/${slug}/admin/catalog/${catalogId}/categories/${categoryId}/products?created=1`)
 }
 
 // ─── Update ────────────────────────────────────────────────────────────────────
 
-export async function updatePromotionAction(
+export async function updateProductAction(
   slug: string,
+  catalogId: string,
+  categoryId: string,
   id: string,
   _prevState: AdminActionState,
   formData: FormData,
@@ -76,15 +73,9 @@ export async function updatePromotionAction(
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
-  const raw = extractRaw(formData)
+  const raw = extractRaw(formData, categoryId)
 
-  if (raw.startsAt && raw.endsAt) {
-    if (new Date(raw.startsAt) >= new Date(raw.endsAt)) {
-      return { ok: false, error: 'La fecha de inicio debe ser anterior a la fecha de fin.', field: 'startsAt' }
-    }
-  }
-
-  const parsed = promotionUpdateSchema.safeParse(raw)
+  const parsed = productUpdateSchema.safeParse(raw)
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors
     const firstField = Object.keys(errors)[0] as string
@@ -95,28 +86,29 @@ export async function updatePromotionAction(
     }
   }
 
-  const result = await updatePromotion(ctxResult.ctx, id, parsed.data)
+  const result = await updateProduct(ctxResult.ctx, id, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
   revalidatePath(`/negocios/${slug}`, 'layout')
-  redirect(`/negocios/${slug}/admin/promotions?updated=1`)
+  redirect(`/negocios/${slug}/admin/catalog/${catalogId}/categories/${categoryId}/products?updated=1`)
 }
 
 // ─── Delete ────────────────────────────────────────────────────────────────────
 
-export async function deletePromotionAction(
+export async function deleteProductAction(
   slug: string,
+  catalogId: string,
+  categoryId: string,
   id: string,
-  // prevState y formData requeridos por la firma de useActionState, no se usan en delete
-  _prevState: AdminActionState, 
-  _formData: FormData,           
+  _prevState: AdminActionState,
+  _formData: FormData,
 ): Promise<AdminActionState> {
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
-  const result = await deletePromotion(ctxResult.ctx, id)
+  const result = await deleteProduct(ctxResult.ctx, id)
   if (!result.ok) return { ok: false, error: result.error }
 
   revalidatePath(`/negocios/${slug}`, 'layout')
-  redirect(`/negocios/${slug}/admin/promotions?deleted=1`)
+  redirect(`/negocios/${slug}/admin/catalog/${catalogId}/categories/${categoryId}/products?deleted=1`)
 }

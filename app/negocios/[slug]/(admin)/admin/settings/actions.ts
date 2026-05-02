@@ -11,6 +11,8 @@ import type { AdminActionState } from '@/lib/admin'
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
 
+// ─── Update ──────────────────────────────────────────────────────────────────
+
 export async function updateSettingsAction(
   slug: string,
   _prevState: AdminActionState,
@@ -19,7 +21,6 @@ export async function updateSettingsAction(
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
-  // Extraer horarios (7 días fijos)
   const hours = DAYS.map((day, i) => ({
     day,
     open:     String(formData.get(`hours_open_${i}`)   ?? '09:00'),

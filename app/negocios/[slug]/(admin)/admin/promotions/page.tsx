@@ -1,9 +1,3 @@
-/**
- * /negocios/[slug]/admin/promotions — Listado de promociones
- *
- * Server Component.
- */
-
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
@@ -11,10 +5,7 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
 
-interface Props {
-  params:      Promise<{ slug: string }>
-  searchParams: Promise<Record<string, string | undefined>>
-}
+interface Props { params: Promise<{ slug: string }>, searchParams: Promise<Record<string, string | undefined>> }
 
 const STATUS_LABEL: Record<string, string> = {
   active:   'Activa',
@@ -36,13 +27,14 @@ function formatDate(iso: string | null) {
 }
 
 export default async function PromotionsPage({ params, searchParams }: Props) {
-  const [{ slug }, sp] = await Promise.all([params, searchParams])
+  const { slug } = await params
+  const sp = await searchParams
 
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) notFound()
   const { ctx } = ctxResult
 
-  const { data: rows } = await ctx.supabase
+  const { data: rows, error: queryError } = await ctx.supabase
     .from('promotions')
     .select('id, title, status, discount_label, starts_at, ends_at, sort_order')
     .eq('business_id', ctx.businessId)
@@ -75,12 +67,11 @@ export default async function PromotionsPage({ params, searchParams }: Props) {
         }
       />
 
-      {/* Feedback flash */}
-      {sp.created && <AdminAlert type="success" message="Promoción creada correctamente." />}
-      {sp.updated && <AdminAlert type="success" message="Promoción actualizada correctamente." />}
-      {sp.deleted && <AdminAlert type="neutral" message="Promoción eliminada." />}
+      {sp.created === '1' && <AdminAlert type="success" message="Promoción creada correctamente." />}
+      {sp.updated === '1' && <AdminAlert type="success" message="Promoción actualizada correctamente." />}
+      {sp.deleted === '1' && <AdminAlert type="neutral"  message="Promoción eliminada." />}
+      {queryError  && <AdminAlert type="error"   message="No se pudieron cargar las promociones. Por favor, recarga la página." />}
 
-      {/* Tabla / Estado vacío */}
       <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
         {promotions.length === 0 ? (
           <AdminEmptyState

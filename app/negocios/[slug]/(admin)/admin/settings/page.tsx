@@ -1,21 +1,15 @@
-/**
- * /negocios/[slug]/admin/settings — Ajustes del negocio
- *
- * Server Component: carga los datos actuales del negocio y los pasa al formulario.
- */
-
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { AdminAlert } from '@/components/admin/AdminAlert'
 import type { DayHours } from '@/types'
-import { SettingsForm } from './SettingsForm'
+import { SettingsEditForm } from './SettingsEditForm'
 
-interface Props {
-  params:       Promise<{ slug: string }>
-  searchParams: Promise<Record<string, string | undefined>>
-}
+interface Props { params: Promise<{ slug: string }>, searchParams: Promise<Record<string, string | undefined>> }
 
 export default async function SettingsPage({ params, searchParams }: Props) {
-  const [{ slug }, sp] = await Promise.all([params, searchParams])
+  const { slug } = await params
+  const sp = await searchParams
 
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) notFound()
@@ -35,20 +29,14 @@ export default async function SettingsPage({ params, searchParams }: Props) {
   return (
     <div className="space-y-6 max-w-xl">
 
-      <div>
-        <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Ajustes del negocio</h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          Información básica visible en el catálogo público.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Ajustes del negocio"
+        description="Información básica visible en el catálogo público."
+      />
 
-      {sp.saved && (
-        <div className="border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 rounded-r-lg px-4 py-3 text-sm" role="status">
-          Ajustes guardados correctamente.
-        </div>
-      )}
+      {sp.saved === '1' && <AdminAlert type="success" message="Ajustes guardados correctamente." />}
 
-      <SettingsForm
+      <SettingsEditForm
         slug={slug}
         defaults={{
           name:             row.name,

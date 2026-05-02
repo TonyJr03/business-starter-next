@@ -1,0 +1,105 @@
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { getAdminContext } from '@/lib/admin'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { AdminAlert } from '@/components/admin/AdminAlert'
+import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
+
+interface Props { params: Promise<{ slug: string }>, searchParams: Promise<{ created?: string; updated?: string; deleted?: string }> }
+
+export default async function GalleryListPage({ params, searchParams }: Props) {
+  const { slug } = await params
+  const sp = await searchParams
+
+  const ctxResult = await getAdminContext(slug)
+  if (!ctxResult.ok) notFound()
+  const { ctx } = ctxResult
+
+  const { data: rows, error: queryError } = await ctx.supabase
+    .from('gallery_albums')
+    .select('id, slug, name, description, sort_order, is_active')
+    .eq('business_id', ctx.businessId)
+    .order('sort_order', { ascending: true })
+    .order('name',       { ascending: true })
+
+  const albums = rows ?? []
+
+  return (
+    <div className="space-y-5">
+
+      <AdminPageHeader
+        title="Galería"
+        description={`${albums.length} ${albums.length === 1 ? 'álbum' : 'álbumes'}`}
+        action={
+          <Link href={`/negocios/${slug}/admin/gallery/new`}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors">
+            + Nuevo álbum
+          </Link>
+        }
+      />
+
+      {sp.created === '1' && <AdminAlert type="success" message="Álbum creado correctamente." />}
+      {sp.updated === '1' && <AdminAlert type="success" message="Álbum actualizado correctamente." />}
+      {sp.deleted === '1' && <AdminAlert type="neutral"  message="Álbum eliminado." />}
+      {queryError  && <AdminAlert type="error"   message="No se pudieron cargar los álbumes. Por favor, recarga la página." />}
+
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
+        {albums.length === 0 ? (
+          <AdminEmptyState
+            title="No hay álbumes aún."
+            description="Organiza las fotos del negocio en álbumes temáticos."
+            action={
+              <Link href={`/negocios/${slug}/admin/gallery/new`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors">
+                Crear primer álbum
+              </Link>
+            }
+          />
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800">
+              <tr>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Nombre</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden sm:table-cell">Slug</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Estado</th>
+                <th className="px-4 py-3" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+              {albums.map((album: {
+                id: string; slug: string; name: string; description: string | null
+                sort_order: number; is_active: boolean
+              }) => (
+                <tr key={album.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                  <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{album.name}</td>
+                  <td className="px-4 py-3 text-zinc-400 dark:text-zinc-500 font-mono text-xs hidden sm:table-cell">{album.slug}</td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
+                      album.is_active
+                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20'
+                        : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
+                    }`}>
+                      {album.is_active ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right space-x-3">
+                    <Link
+                      href={`/negocios/${slug}/admin/gallery/${album.id}/photos`}
+                      className="text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                      Fotos
+                    </Link>
+                    <Link
+                      href={`/negocios/${slug}/admin/gallery/${album.id}`}
+                      className="text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                      Editar
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  )
+}
