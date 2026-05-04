@@ -1,7 +1,7 @@
 import type { SectionModuleEntry } from './section-modules';
 import type { PageModulesConfig } from './page-modules';
 import type { FeatureModulesConfig } from './feature-modules';
-import type { BusinessBranding } from './business';
+import type { BusinessBranding } from './branding';
 
 // ─── Modules ──────────────────────────────────────────────────────────────────
 

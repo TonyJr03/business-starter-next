@@ -1,12 +1,7 @@
-// ─── Estado ──────────────────────────────────────────────────────────────────
+// ─── Tipos de apoyo ───────────────────────────────────────────────────────────
 
-/**
- * Estado del ciclo de vida de una promoción.
- * Puede derivarse de las fechas o definirse explícitamente.
- */
+/** Estado del ciclo de vida de una promoción. */
 export type PromotionStatus = 'upcoming' | 'active' | 'expired' | 'paused';
-
-// ─── Regla de promoción ──────────────────────────────────────────────────────
 
 /**
  * Tipo de descuento — determina cómo se calcula el beneficio para el cliente.
@@ -41,7 +36,6 @@ export interface PromotionRule {
   categoryIds?: string[];
   /** Número máximo de usos antes de desactivar la regla. */
   maxUses?: number;
-  /** Descripción legible para mostrar al cliente o en el panel de admin. */
   description?: string;
 }
 
@@ -49,39 +43,19 @@ export interface PromotionRule {
 
 /** Oferta especial, campaña de descuento o bundle del negocio. */
 export interface Promotion {
-  // ── Campos mínimos ────────────────────────────────────────────────────────
-  /** Identificador único (ej. 'promo-1'). */
   id: string;
   /** Título visible en la interfaz (ej. 'Desayuno Completo'). */
   title: string;
-  /** Descripción completa de la oferta para el cliente. */
-  description: string;
-
-  // ── Campos opcionales ─────────────────────────────────────────────────────
-  /** URL de imagen ilustrativa de la promoción. */
+  description?: string;
   imageUrl?: string;
+  status: PromotionStatus;
   /** Etiqueta visual corta para llamar la atención (ej. '20% OFF', '2×1'). */
   discountLabel?: string;
-  /**
-   * Estado explícito del ciclo de vida.
-   * Si se omite, puede derivarse comparando startsAt/endsAt con la fecha actual.
-   */
-  status?: PromotionStatus;
-  /**
-   * Visibilidad activa de la promoción (retrocompatibilidad).
-   * Equivale a status === 'active' cuando no se usa PromotionStatus.
-   */
-  isActive?: boolean;
-  /** Fecha/hora de inicio en formato ISO 8601 (ej. '2026-04-01'). */
+  /** Fecha/hora de inicio en formato ISO 8601. */
   startsAt?: string;
-  /** Fecha/hora de fin en formato ISO 8601 (ej. '2026-04-30'). */
+  /** Fecha/hora de fin en formato ISO 8601. */
   endsAt?: string;
-  /** Reglas que definen las condiciones y el beneficio de esta promoción. */
   rules?: PromotionRule[];
-  /** Productos específicos a los que aplica (IDs de Product). */
-  productIds?: string[];
-  /** Categorías a las que aplica (IDs de Category). */
-  categoryIds?: string[];
-  /** Posición en el listado de promociones (menor = primero). */
+  /** Posición en el listado (menor = primero). */
   sortOrder?: number;
 }
