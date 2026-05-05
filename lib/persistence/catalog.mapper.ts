@@ -11,9 +11,9 @@ export interface CatalogRow {
   image_url: string | null;
   sort_order: number;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
-
-export type CatalogInsertRow = Omit<CatalogRow, 'id' | 'business_id'>;
 
 export function rowToCatalog(row: CatalogRow): Catalog {
   return {
@@ -37,9 +37,9 @@ export interface CategoryRow {
   description: string | null;
   sort_order: number;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
-
-export type CategoryInsertRow = Omit<CategoryRow, 'id'>;
 
 export function rowToCategory(row: CategoryRow): Category {
   return {
@@ -61,31 +61,25 @@ export interface ProductRow {
   slug: string;
   name: string;
   description: string | null;
-  money_amount: number;
-  money_currency: string;
+  money: Money;
   is_available: boolean;
   is_featured: boolean;
-  badge: string | null;
+  badge: ProductBadge | null;
   image_url: string | null;
   sort_order: number;
+  created_at: string;
+  updated_at: string;
 }
 
-export type ProductInsertRow = Omit<ProductRow, 'id'>;
-
 export function rowToProduct(row: ProductRow): Product {
-  const money: Money = {
-    amount:   Number(row.money_amount),
-    currency: row.money_currency,
-  };
-
   return {
     id:          row.id,
     categoryId:  row.category_id,
     name:        row.name,
     slug:        row.slug,
-    description: row.description ?? '',
-    money,
-    badge:       (row.badge as ProductBadge) ?? undefined,
+    description: row.description ?? undefined,
+    money:       { amount: Number(row.money.amount), currency: row.money.currency },
+    badge:       row.badge ?? undefined,
     imageUrl:    row.image_url ?? undefined,
     isAvailable: row.is_available,
     isFeatured:  row.is_featured,

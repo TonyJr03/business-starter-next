@@ -1,4 +1,4 @@
-import type { GalleryAlbum, GalleryItem } from '@/types';
+import type { GalleryAlbum, GalleryPhoto } from '@/types';
 
 // ─── Album ────────────────────────────────────────────────────────────────────
 
@@ -21,6 +21,7 @@ export function rowToGalleryAlbum(row: GalleryAlbumRow): GalleryAlbum {
     name:        row.name,
     description: row.description ?? undefined,
     sortOrder:   row.sort_order,
+    isActive:    row.is_active,
   };
 }
 
@@ -39,12 +40,14 @@ export interface GalleryPhotoRow {
   updated_at: string;
 }
 
-export function rowToGalleryItem(row: GalleryPhotoRow): GalleryItem {
+export function rowToGalleryPhoto(row: GalleryPhotoRow): GalleryPhoto {
   return {
-    id:      row.id,
-    albumId: row.album_id,
-    src:     row.image_url,
-    alt:     row.alt,
-    caption: row.caption ?? undefined,
+    id:        row.id,
+    albumId:   row.album_id,
+    imageUrl:  row.image_url,
+    alt:       row.alt,
+    caption:   row.caption ?? undefined,
+    sortOrder: row.sort_order,
+    isActive:  row.is_active,
   };
 }

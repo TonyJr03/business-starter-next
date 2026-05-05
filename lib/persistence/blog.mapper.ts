@@ -5,11 +5,11 @@ export interface BlogPostRow {
   business_id: string;
   slug: string;
   title: string;
-  summary: string;
+  summary: string | null;      
   body: string[];
-  published_at: string;   // DATE → string 'YYYY-MM-DD'
+  published_at: string | null;
   author: string | null;
-  tags: string[] | null;
+  tags: string[];
   is_published: boolean;
   created_at: string;
   updated_at: string;
@@ -17,12 +17,14 @@ export interface BlogPostRow {
 
 export function rowToBlogPost(row: BlogPostRow): BlogPost {
   return {
+    id:          row.id,
     slug:        row.slug,
     title:       row.title,
-    summary:     row.summary,
+    summary:     row.summary ?? undefined,
     body:        row.body,
-    publishedAt: row.published_at,
+    publishedAt: row.published_at ?? undefined,
     author:      row.author ?? undefined,
-    tags:        row.tags ?? undefined,
+    tags:        row.tags,
+    isPublished: row.is_published,
   };
 }

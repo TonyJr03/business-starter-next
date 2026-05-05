@@ -14,9 +14,11 @@ export interface FaqItemRow {
 
 export function rowToFaqItem(row: FaqItemRow): FaqItem {
   return {
-    id:       row.id,
-    question: row.question,
-    answer:   row.answer,
-    category: row.category ?? undefined,
+    id:        row.id,
+    question:  row.question,
+    answer:    row.answer,
+    category:  row.category ?? undefined,
+    sortOrder: row.sort_order,
+    isActive:  row.is_active,
   };
 }

@@ -12,15 +12,15 @@ export interface PromotionRow {
   ends_at: string | null;
   rules: PromotionRule[] | null;
   sort_order: number;
+  created_at: string;
+  updated_at: string;
 }
-
-export type PromotionInsertRow = Omit<PromotionRow, 'id' | 'business_id'>;
 
 export function rowToPromotion(row: PromotionRow): Promotion {
   return {
     id:            row.id,
     title:         row.title,
-    description:   row.description ?? '',
+    description:   row.description ?? undefined,
     status:        row.status,
     discountLabel: row.discount_label ?? undefined,
     imageUrl:      row.image_url ?? undefined,
