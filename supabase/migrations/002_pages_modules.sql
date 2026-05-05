@@ -51,10 +51,10 @@ CREATE POLICY "catalog_pages_delete_admin"
 
 
 -- ── catalog_categories ────────────────────────────────────────────────────────
--- Sin business_id: el negocio se resuelve vía catalog_pages.business_id.
 -- Sin image_url: no implementado en este sprint.
 CREATE TABLE catalog_categories (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id UUID        NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   catalog_id  UUID        NOT NULL REFERENCES catalog_pages(id) ON DELETE CASCADE,
   slug        TEXT        NOT NULL,
   name        TEXT        NOT NULL,
@@ -86,10 +86,10 @@ CREATE POLICY "catalog_categories_delete_admin"
 
 
 -- ── catalog_products ──────────────────────────────────────────────────────────
--- Sin business_id: el negocio se resuelve vía category → catalog_pages.business_id.
 -- Sin tags: funcionalidad pendiente de sprint futuro.
 CREATE TABLE catalog_products (
   id              UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id     UUID          NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   category_id     UUID          NOT NULL REFERENCES catalog_categories(id) ON DELETE CASCADE,
   slug            TEXT          NOT NULL,
   name            TEXT          NOT NULL,

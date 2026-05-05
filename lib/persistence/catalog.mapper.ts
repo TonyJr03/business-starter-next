@@ -31,6 +31,7 @@ export function rowToCatalog(row: CatalogRow): Catalog {
 
 export interface CategoryRow {
   id: string;
+  business_id: string;
   catalog_id: string;
   slug: string;
   name: string;
@@ -57,6 +58,7 @@ export function rowToCategory(row: CategoryRow): Category {
 
 export interface ProductRow {
   id: string;
+  business_id: string;
   category_id: string;
   slug: string;
   name: string;

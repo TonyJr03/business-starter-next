@@ -139,14 +139,14 @@ BEGIN
   -- Equivalentes a src/data/categories.ts (fallback usa IDs cortos 'cat-1', etc.)
   -- ===========================================================================
   INSERT INTO catalog_categories
-    (id, catalog_id, slug, name, description, sort_order, is_active)
+    (id, business_id, catalog_id, slug, name, description, sort_order, is_active)
   VALUES
-    (cat_1, cat_main,  'cafes',         'Cafés',          'Café cubano, espresso, americano y más.',    1, true),
-    (cat_2, cat_main,  'bebidas-frias',  'Bebidas frías',  'Jugos, batidos y refrescos naturales.',      2, true),
-    (cat_3, cat_main,  'bocados',        'Bocados',         'Pastelitos, snacks y algo para acompañar.',  3, true),
-    (cat_4, cat_dulce, 'tortas',         'Tortas',          'Tortas caseras horneadas cada mañana.',      1, true),
-    (cat_5, cat_dulce, 'bolleria',       'Bollerı́a',        'Pan dulce, croissants y donas artesanales.', 2, true),
-    (cat_6, cat_dulce, 'postres-frios',  'Postres fríos',  'Helados, flanes y cremitas bien frías.',     3, true);
+    (cat_1, biz, cat_main,  'cafes',         'Cafés',          'Café cubano, espresso, americano y más.',    1, true),
+    (cat_2, biz, cat_main,  'bebidas-frias',  'Bebidas frías',  'Jugos, batidos y refrescos naturales.',      2, true),
+    (cat_3, biz, cat_main,  'bocados',        'Bocados',         'Pastelitos, snacks y algo para acompañar.',  3, true),
+    (cat_4, biz, cat_dulce, 'tortas',         'Tortas',          'Tortas caseras horneadas cada mañana.',      1, true),
+    (cat_5, biz, cat_dulce, 'bolleria',       'Bollería',        'Pan dulce, croissants y donas artesanales.', 2, true),
+    (cat_6, biz, cat_dulce, 'postres-frios',  'Postres fríos',  'Helados, flanes y cremitas bien frías.',     3, true);
 
 
   -- ===========================================================================
@@ -160,56 +160,55 @@ BEGIN
   --   la promo puede seguir activa aunque un componente esté fuera de stock.
   -- ===========================================================================
   INSERT INTO catalog_products
-    (id, category_id, slug, name, description,
+    (id, business_id, category_id, slug, name, description,
      money, is_available, is_featured, badge, sort_order, image_url)
   VALUES
-    -- ── Cafés (cat_1) ────────────────────────────────────────────────────────
-    (p1,  cat_1, 'cafe-cubano',         'Café Cubano',
+    -- ── Cafés (cat_1) ────────────────────────────────────────────────────────────
+    (p1,  biz, cat_1, 'cafe-cubano',         'Café Cubano',
       'Nuestro café cubano tradicional, fuerte y aromático.',             '{"amount":25.00,"currency":"CUP"}'::jsonb, true,  true,  'popular', 1, 'https://picsum.photos/seed/cafe-cubano/600/450'),
-    (p2,  cat_1, 'cortadito',           'Cortadito',
+    (p2,  biz, cat_1, 'cortadito',           'Cortadito',
       'Café cubano con un toque de leche suave.',                         '{"amount":30.00,"currency":"CUP"}'::jsonb, true,  true,  NULL,      2, 'https://picsum.photos/seed/cortadito/600/450'),
-    (p3,  cat_1, 'cafe-con-leche',      'Café con Leche',
+    (p3,  biz, cat_1, 'cafe-con-leche',      'Café con Leche',
       'La combinación perfecta para comenzar el día.',                    '{"amount":40.00,"currency":"CUP"}'::jsonb, true,  false, NULL,      3, 'https://picsum.photos/seed/cafe-con-leche/600/450'),
-    (p4,  cat_1, 'espresso-doble',      'Espresso Doble',
+    (p4,  biz, cat_1, 'espresso-doble',      'Espresso Doble',
       'Concentrado e intenso, para los que no se conforman con poco.',    '{"amount":45.00,"currency":"CUP"}'::jsonb, true,  false, 'new',     4, 'https://picsum.photos/seed/espresso-doble/600/450'),
 
     -- ── Bebidas frías (cat_2) ───────────────────────────────────────────────
-    -- ── Bebidas frías (cat_2) ───────────────────────────────────────────────
-    (p5,  cat_2, 'jugo-guayaba',        'Jugo de Guayaba',
+    (p5,  biz, cat_2, 'jugo-guayaba',        'Jugo de Guayaba',
       'Natural, fresco y bien cubano.',                                   '{"amount":35.00,"currency":"CUP"}'::jsonb, true,  true,  'new',     1, 'https://picsum.photos/seed/jugo-guayaba/600/450'),
-    (p6,  cat_2, 'batido-mango',        'Batido de Mango',
+    (p6,  biz, cat_2, 'batido-mango',        'Batido de Mango',
       'Cremoso y dulce, hecho con mango fresco.',                         '{"amount":50.00,"currency":"CUP"}'::jsonb, true,  false, NULL,      2, 'https://picsum.photos/seed/batido-mango/600/450'),
-    (p7,  cat_2, 'agua-de-coco',        'Agua de Coco',
+    (p7,  biz, cat_2, 'agua-de-coco',        'Agua de Coco',
       'Refrescante y natural, directo del coco.',                         '{"amount":40.00,"currency":"CUP"}'::jsonb, true,  false, NULL,      3, 'https://picsum.photos/seed/agua-de-coco/600/450'),
 
     -- ── Bocados (cat_3) ───────────────────────────────────────────────────────
-    (p8,  cat_3, 'pastelito-guayaba',   'Pastelito de Guayaba',
+    (p8,  biz, cat_3, 'pastelito-guayaba',   'Pastelito de Guayaba',
       'Hojaldrado y relleno de guayaba, igual que en casa.',              '{"amount":20.00,"currency":"CUP"}'::jsonb, true,  true,  'popular', 1, 'https://picsum.photos/seed/pastelito-guayaba/600/450'),
-    (p9,  cat_3, 'tostada-mantequilla', 'Tostada con Mantequilla',
+    (p9,  biz, cat_3, 'tostada-mantequilla', 'Tostada con Mantequilla',
       'Pan tostado, crujiente y bien untado.',                            '{"amount":15.00,"currency":"CUP"}'::jsonb, false, false, NULL,      2, 'https://picsum.photos/seed/tostada-mantequilla/600/450'),
-    (p10, cat_3, 'croqueta-jamon',      'Croqueta de Jamón',
+    (p10, biz, cat_3, 'croqueta-jamon',      'Croqueta de Jamón',
       'Crujiente por fuera, cremosa por dentro. Perfecta con el café.',   '{"amount":25.00,"currency":"CUP"}'::jsonb, true,  false, NULL,      3, 'https://picsum.photos/seed/croqueta-jamon/600/450'),
 
     -- ── Tortas (cat_4) ────────────────────────────────────────────────────────
-    (p11, cat_4, 'torta-tres-leches',   'Torta de Tres Leches',
+    (p11, biz, cat_4, 'torta-tres-leches',   'Torta de Tres Leches',
       'Esponjosa, húmeda y bañada en tres tipos de leche. La favorita.',  '{"amount":85.00,"currency":"CUP"}'::jsonb, true,  true,  'popular', 1, 'https://picsum.photos/seed/torta-tres-leches/600/450'),
-    (p12, cat_4, 'torta-chocolate',     'Torta de Chocolate',
+    (p12, biz, cat_4, 'torta-chocolate',     'Torta de Chocolate',
       'Dos pisos de bizcocho intenso con ganache de chocolate cubano.',   '{"amount":90.00,"currency":"CUP"}'::jsonb, true,  true,  NULL,      2, 'https://picsum.photos/seed/torta-chocolate/600/450'),
-    (p13, cat_4, 'torta-zanahoria',     'Torta de Zanahoria',
+    (p13, biz, cat_4, 'torta-zanahoria',     'Torta de Zanahoria',
       'Suave y especiada, con cobertura de queso crema.',                 '{"amount":80.00,"currency":"CUP"}'::jsonb, true,  false, 'new',     3, 'https://picsum.photos/seed/torta-zanahoria/600/450'),
 
     -- ── Bollería (cat_5) ─────────────────────────────────────────────────────
-    (p14, cat_5, 'pan-guayaba',         'Pan de Guayaba',
+    (p14, biz, cat_5, 'pan-guayaba',         'Pan de Guayaba',
       'Suave por dentro, hojaldrado por fuera y relleno de guayaba.',     '{"amount":18.00,"currency":"CUP"}'::jsonb, true,  true,  'popular', 1, 'https://picsum.photos/seed/pan-guayaba/600/450'),
-    (p15, cat_5, 'croissant-mantequilla','Croissant de Mantequilla',
+    (p15, biz, cat_5, 'croissant-mantequilla','Croissant de Mantequilla',
       'Capas doradas y crujientes, elaborado con mantequilla real.',      '{"amount":22.00,"currency":"CUP"}'::jsonb, true,  false, NULL,      2, 'https://picsum.photos/seed/croissant-mantequilla/600/450'),
-    (p16, cat_5, 'donut-glaseado',      'Donut Glaseado',
+    (p16, biz, cat_5, 'donut-glaseado',      'Donut Glaseado',
       'Esponjoso, azucarado y con glaseado de colores. Para todos.',      '{"amount":15.00,"currency":"CUP"}'::jsonb, true,  false, 'new',     3, 'https://picsum.photos/seed/donut-glaseado/600/450'),
 
     -- ── Postres fríos (cat_6) ─────────────────────────────────────────────────
-    (p17, cat_6, 'helado-coco',         'Helado de Coco',
+    (p17, biz, cat_6, 'helado-coco',         'Helado de Coco',
       'Cremoso, natural y servido en copa. Sabor caribeño puro.',         '{"amount":30.00,"currency":"CUP"}'::jsonb, true,  true,  NULL,      1, 'https://picsum.photos/seed/helado-coco/600/450'),
-    (p18, cat_6, 'flan-leche',          'Flan de Leche',
+    (p18, biz, cat_6, 'flan-leche',          'Flan de Leche',
       'El clásico cubano: suave, tembloroso y con caramelo de verdad.',   '{"amount":25.00,"currency":"CUP"}'::jsonb, true,  false, NULL,      2, 'https://picsum.photos/seed/flan-leche/600/450');
 
 
