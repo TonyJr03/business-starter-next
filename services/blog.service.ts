@@ -28,10 +28,7 @@ async function fetchPostsFromDB(businessId: string): Promise<BlogPost[]> {
   return (data as BlogPostRow[]).map(rowToBlogPost);
 }
 
-async function fetchPostBySlugFromDB(
-  businessId: string,
-  slug: string,
-): Promise<BlogPost | undefined> {
+async function fetchPostBySlugFromDB(businessId: string, slug: string): Promise<BlogPost | undefined> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return undefined;
   const db = await createSupabaseServerClient();
 

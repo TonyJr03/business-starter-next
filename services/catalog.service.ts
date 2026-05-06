@@ -7,35 +7,16 @@ import {
   type ProductRow, rowToProduct,
 } from '@/lib/persistence';
 
-// ─── Tipos ────────────────────────────────────────────────────────────────────
-
-/** Opciones de filtrado para getCategories(). */
-export interface CategoryFilters {
-  /** Devuelve solo categorías de este catálogo. */
-  catalogId?: string;
-}
-
-/** Opciones de filtrado para getProducts(). */
-export interface ProductFilters {
-  /** Devuelve solo productos de esta categoría. */
-  categoryId?: string;
-  /** Devuelve solo productos de cualquiera de estas categorías (OR). */
-  categoryIds?: string[];
-  /** Si es false, incluye productos no disponibles. Por defecto: true. */
-  onlyAvailable?: boolean;
-  /** Devuelve solo productos marcados como destacados. */
-  onlyFeatured?: boolean;
-}
-
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 
-async function fetchCatalogsFromDB(): Promise<Catalog[]> {
+async function fetchCatalogsFromDB(businessId: string): Promise<Catalog[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return [];
   const db = await createSupabaseServerClient();
 
   const { data, error } = await db
     .from('catalog_pages')
     .select('*')
+    .eq('business_id', businessId)
     .eq('is_active', true)
     .order('sort_order');
 
@@ -51,22 +32,17 @@ async function fetchCatalogsFromDB(): Promise<Catalog[]> {
   return (data as CatalogRow[]).map(rowToCatalog);
 }
 
-async function fetchCategoriesFromDB(filters?: CategoryFilters): Promise<Category[]> {
+async function fetchCategoriesFromDB(businessId: string): Promise<Category[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return [];
   const db = await createSupabaseServerClient();
 
-  let query = db
+  const { data, error } = await db
     .from('catalog_categories')
     .select('*')
+    .eq('business_id', businessId)
     .eq('is_active', true)
     .order('sort_order');
 
-  if (filters?.catalogId) {
-    query = query.eq('catalog_id', filters.catalogId);
-  }
-
-  const { data, error } = await query;
-
   if (error) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('[catalog.service] Error:', error.message);
@@ -76,32 +52,18 @@ async function fetchCategoriesFromDB(filters?: CategoryFilters): Promise<Categor
 
   if (!data || data.length === 0) return [];
 
-  return (data as CategoryRow[]).map(rowToCategory).filter((x): x is Category => x !== null);
+  return (data as CategoryRow[]).map(rowToCategory);
 }
 
-async function fetchProductsFromDB(filters?: ProductFilters): Promise<Product[]> {
+async function fetchProductsFromDB(businessId: string): Promise<Product[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return [];
   const db = await createSupabaseServerClient();
 
-  let query = db.from('catalog_products').select('*').order('sort_order');
-
-  if (filters?.onlyAvailable !== false) {
-    query = query.eq('is_available', true);
-  }
-
-  if (filters?.categoryId) {
-    query = query.eq('category_id', filters.categoryId);
-  }
-
-  if (filters?.categoryIds && filters.categoryIds.length > 0) {
-    query = query.in('category_id', filters.categoryIds);
-  }
-
-  if (filters?.onlyFeatured) {
-    query = query.eq('is_featured', true);
-  }
-
-  const { data, error } = await query;
+  const { data, error } = await db
+    .from('catalog_products')
+    .select('*')
+    .eq('business_id', businessId)
+    .order('sort_order');
 
   if (error) {
     if (process.env.NODE_ENV === 'development') {
@@ -112,19 +74,18 @@ async function fetchProductsFromDB(filters?: ProductFilters): Promise<Product[]>
 
   if (!data || data.length === 0) return [];
 
-  return (data as ProductRow[])
-    .map(rowToProduct)
-    .filter((x): x is Product => x !== null);
+  return (data as ProductRow[]).map(rowToProduct);
 }
 
-async function fetchProductBySlugFromDB(slug: string): Promise<Product | undefined> {
+async function fetchProductBySlugFromDB(businessId: string, productSlug: string): Promise<Product | undefined> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return undefined;
   const db = await createSupabaseServerClient();
 
   const { data, error } = await db
     .from('catalog_products')
     .select('*')
-    .eq('slug', slug)
+    .eq('business_id', businessId)
+    .eq('slug', productSlug)
     .maybeSingle();
 
   if (error) {
@@ -139,17 +100,28 @@ async function fetchProductBySlugFromDB(slug: string): Promise<Product | undefin
   return rowToProduct(data as ProductRow);
 }
 
-async function fetchCatalogBySlug(slug: string): Promise<Catalog | undefined> {
-  const all = await fetchCatalogsFromDB();
+// ─── Derived ──────────────────────────────────────────────────────────────────
+
+async function fetchCatalogBySlug(businessId: string, slug: string): Promise<Catalog | undefined> {
+  const all = await getCatalogs(businessId);
   return all.find((c) => c.slug === slug);
 }
 
-async function fetchFeaturedProducts(categoryIds?: string[]): Promise<Product[]> {
-  return fetchProductsFromDB({ onlyFeatured: true, onlyAvailable: true, categoryIds });
+async function fetchCategoriesByCatalog(businessId: string, catalogId: string): Promise<Category[]> {
+  const all = await getCategories(businessId);
+  return all.filter((c) => c.catalogId === catalogId);
 }
 
-async function fetchProductsByCategory(categoryId: string): Promise<Product[]> {
-  return fetchProductsFromDB({ categoryId, onlyAvailable: true });
+async function fetchProductsByCategory(businessId: string, categoryId: string): Promise<Product[]> {
+  const all = await getProducts(businessId);
+  return all.filter((p) => p.categoryId === categoryId && (p.isAvailable ?? true));
+}
+
+async function fetchFeaturedProducts(businessId: string, categoryIds?: string[]): Promise<Product[]> {
+  const all = await getProducts(businessId);
+  const featured = all.filter((p) => p.isFeatured && (p.isAvailable ?? true));
+  if (!categoryIds || categoryIds.length === 0) return featured;
+  return featured.filter((p) => p.categoryId && categoryIds.includes(p.categoryId));
 }
 
 // ─── API pública ──────────────────────────────────────────────────────────────
@@ -157,13 +129,8 @@ async function fetchProductsByCategory(categoryId: string): Promise<Product[]> {
 export const getCatalogs = cache(fetchCatalogsFromDB);
 export const getCatalogBySlug = cache(fetchCatalogBySlug);
 export const getCategories = cache(fetchCategoriesFromDB);
+export const getCategoriesByCatalog = cache(fetchCategoriesByCatalog);
 export const getProducts = cache(fetchProductsFromDB);
 export const getProductBySlug = cache(fetchProductBySlugFromDB);
 export const getFeaturedProducts = cache(fetchFeaturedProducts);
 export const getProductsByCategory = cache(fetchProductsByCategory);
-
-// ─── Helpers de dominio ───────────────────────────────────────────────────────
-
-export function isProductAvailable(product: Product): boolean {
-  return product.isAvailable ?? true;
-}

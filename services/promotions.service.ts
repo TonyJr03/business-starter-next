@@ -5,13 +5,14 @@ import { type PromotionRow, rowToPromotion } from '@/lib/persistence';
 
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 
-async function fetchPromotionsFromDB(): Promise<Promotion[]> {
+async function fetchPromotionsFromDB(businessId: string): Promise<Promotion[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return [];
   const db = await createSupabaseServerClient();
 
   const { data, error } = await db
     .from('promotions')
     .select('*')
+    .eq('business_id', businessId)
     .order('sort_order');
 
   if (error) {
@@ -23,17 +24,19 @@ async function fetchPromotionsFromDB(): Promise<Promotion[]> {
 
   if (!data || data.length === 0) return [];
 
-  return (data as PromotionRow[]).map(rowToPromotion).filter((x): x is Promotion => x !== null);
+  return (data as PromotionRow[]).map(rowToPromotion);
 }
 
-async function fetchPromotionById(id: string): Promise<Promotion | undefined> {
-  const all = await fetchPromotionsFromDB();
+// ─── Derived ──────────────────────────────────────────────────────────────────
+
+async function fetchPromotionById(businessId: string, id: string): Promise<Promotion | undefined> {
+  const all = await getPromotions(businessId);
   return all.find((p) => p.id === id);
 }
 
-async function fetchActivePromotions(now: Date = new Date()): Promise<Promotion[]> {
-  const all = await fetchPromotionsFromDB();
-  return all.filter((p) => getPromotionStatus(p, now) === 'active');
+async function fetchActivePromotions(businessId: string): Promise<Promotion[]> {
+  const all = await getPromotions(businessId);
+  return all.filter((p) => getPromotionStatus(p) === 'active');
 }
 
 // ─── API pública ──────────────────────────────────────────────────────────────
@@ -44,26 +47,15 @@ export const getActivePromotions = cache(fetchActivePromotions);
 
 // ─── Helpers de dominio ───────────────────────────────────────────────────────
 
-export function getPromotionStatus(
-  promotion: Promotion,
-  now: Date = new Date(),
-): PromotionStatus {
-  if (promotion.status) return promotion.status;
+export function getPromotionStatus(promotion: Promotion): PromotionStatus {
+  if (promotion.status === 'paused') return 'paused';
 
-  const dayStart = new Date(now);
-  dayStart.setHours(0, 0, 0, 0);
-
-  const starts = promotion.startsAt ? new Date(promotion.startsAt) : null;
-  const ends   = promotion.endsAt   ? new Date(promotion.endsAt)   : null;
-
-  if (starts && starts > dayStart) return 'upcoming';
-  if (ends   && ends   < dayStart) return 'expired';
-
-  if (promotion.isActive === false) return 'paused';
-
+  const now = new Date();
+  if (promotion.endsAt && new Date(promotion.endsAt) < now) return 'expired';
+  if (promotion.startsAt && new Date(promotion.startsAt) > now) return 'upcoming';
   return 'active';
 }
 
-export function isPromotionActive(promotion: Promotion, now: Date = new Date()): boolean {
-  return getPromotionStatus(promotion, now) === 'active';
+export function isPromotionActive(promotion: Promotion): boolean {
+  return getPromotionStatus(promotion) === 'active';
 }

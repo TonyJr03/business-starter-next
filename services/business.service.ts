@@ -34,7 +34,7 @@ async function fetchActiveBusinessesFromDB(): Promise<BusinessDirectoryItem[]> {
 
   const { data, error } = await db
     .from('businesses')
-    .select('id, slug, name, short_description, city')
+    .select('id, slug, name, short_description, location')
     .eq('is_active', true)
     .order('name', { ascending: true })
     .returns<BusinessDirectoryRow[]>();
