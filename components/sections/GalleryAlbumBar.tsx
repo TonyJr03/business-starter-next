@@ -8,8 +8,8 @@
  * Uso:
  *   <GalleryAlbumBar albums={albums} activeSlug={searchParams.album} basePath="/negocios/mi-neg/gallery" />
  */
-import Link from 'next/link';
-import type { GalleryAlbum } from '@/types';
+import Link from 'next/link'
+import type { GalleryAlbum } from '@/types'
 
 interface GalleryAlbumBarProps {
   albums: GalleryAlbum[];
@@ -33,8 +33,8 @@ export function GalleryAlbumBar({ albums, activeSlug, basePath }: GalleryAlbumBa
           className={[
             'whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
             allActive
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-muted text-muted-foreground hover:bg-muted/80',
+              ? 'bg-(--color-primary) text-white'
+              : 'bg-(--color-surface) text-(--color-text-muted) hover:bg-(--color-secondary)',
           ].join(' ')}
           aria-current={allActive ? 'true' : undefined}
         >
@@ -50,8 +50,8 @@ export function GalleryAlbumBar({ albums, activeSlug, basePath }: GalleryAlbumBa
               className={[
                 'whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80',
+                  ? 'bg-(--color-primary) text-white'
+                  : 'bg-(--color-surface) text-(--color-text-muted) hover:bg-(--color-secondary)',
               ].join(' ')}
               aria-current={isActive ? 'true' : undefined}
             >

@@ -7,10 +7,10 @@
 import Image from 'next/image'
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { GalleryItem } from '@/types'
+import type { GalleryPhoto } from '@/types'
 
 interface GalleryGridProps {
-  items: GalleryItem[]
+  items: GalleryPhoto[]
   title?: string
   subtitle?: string
   columns?: 2 | 3 | 4
@@ -56,7 +56,7 @@ export function GalleryGrid({
             <figure>
               <div className="relative aspect-4/3 overflow-hidden">
                 <Image
-                  src={item.src}
+                  src={item.imageUrl}
                   alt={item.alt}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"

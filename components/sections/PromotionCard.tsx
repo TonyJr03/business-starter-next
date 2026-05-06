@@ -17,18 +17,16 @@
  *  - Las promociones dimmed (paused/expired) reducen la opacidad de la imagen.
  */
 import Image from 'next/image'
-import type { Promotion } from '@/types'
-
-export type PromoStatus = 'active' | 'upcoming' | 'paused' | 'expired'
+import type { Promotion, PromotionStatus } from '@/types'
 
 interface PromotionCardProps {
   promotion: Promotion
-  status: PromoStatus
+  status: PromotionStatus
   dateRange?: string
   orderHref?: string
 }
 
-const statusBadge: Record<PromoStatus, { color: string; label: string }> = {
+const statusBadge: Record<PromotionStatus, { color: string; label: string }> = {
   active:   { color: '#16a34a', label: 'Vigente' },
   upcoming: { color: '#2563eb', label: 'Próximamente' },
   paused:   { color: '#d97706', label: 'En pausa' },
@@ -135,15 +133,17 @@ export function PromotionCard({ promotion, status, dateRange, orderHref }: Promo
         </div>
 
         {/* Descripción */}
-        <p
-          className="text-sm leading-relaxed flex-1"
-          style={{
-            color: 'var(--color-text-muted)',
-            opacity: isDimmed ? 0.5 : 1,
-          }}
-        >
-          {description}
-        </p>
+        {description && (
+          <p
+            className="text-sm leading-relaxed flex-1"
+            style={{
+              color: 'var(--color-text-muted)',
+              opacity: isDimmed ? 0.5 : 1,
+            }}
+          >
+            {description}
+          </p>
+        )}
 
         {/* CTA — solo si vigente y hay número */}
         {status === 'active' && orderHref && (

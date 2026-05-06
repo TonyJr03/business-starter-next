@@ -21,7 +21,9 @@ const dateFormatter = new Intl.DateTimeFormat('es-CU', {
 })
 
 export function BlogPostCard({ post, href }: BlogPostCardProps) {
-  const formattedDate = dateFormatter.format(new Date(`${post.publishedAt}T00:00:00`))
+  const formattedDate = post.publishedAt
+    ? dateFormatter.format(new Date(`${post.publishedAt.slice(0, 10)}T12:00:00Z`))
+    : null
 
   return (
     <Link
@@ -36,13 +38,15 @@ export function BlogPostCard({ post, href }: BlogPostCardProps) {
       <div className="flex flex-col gap-3 p-6 h-full">
 
         {/* Fecha */}
-        <time
-          dateTime={post.publishedAt}
-          className="text-xs font-semibold uppercase tracking-widest"
-          style={{ color: 'var(--color-accent)' }}
-        >
-          {formattedDate}
-        </time>
+        {formattedDate && (
+          <time
+            dateTime={post.publishedAt}
+            className="text-xs font-semibold uppercase tracking-widest"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            {formattedDate}
+          </time>
+        )}
 
         {/* Título */}
         <h2

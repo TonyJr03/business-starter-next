@@ -56,7 +56,7 @@ function buildTenantNav(business: BusinessSettings, slug: string, catalogs: Cata
 export function Header({ business, slug, catalogs }: HeaderProps) {
   const nav = buildTenantNav(business, slug, catalogs)
 
-  const waNumber = business.whatsapp?.replace(/\D/g, '')
+  const waNumber = business.contact?.whatsapp?.replace(/\D/g, '')
   const whatsappUrl = waNumber ? `https://wa.me/${waNumber}` : undefined
 
   return (

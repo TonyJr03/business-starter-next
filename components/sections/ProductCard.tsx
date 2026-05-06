@@ -42,7 +42,7 @@ export function ProductCard({ product, orderHref, priority = false }: ProductCar
           : 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.06))',
       }}
     >
-      {/* ── Imagen ──────────────────────────────────────────────────── */}
+      {/* Imagen */}
       <div
         className="relative w-full overflow-hidden shrink-0"
         style={{ aspectRatio: '4 / 3' }}
