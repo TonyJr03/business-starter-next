@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { toSlug } from '@/lib/utils/slug'
-import { rowToGalleryAlbum, rowToGalleryItem } from '@/lib/persistence'
+import { rowToGalleryAlbum, rowToGalleryPhoto } from '@/lib/persistence'
 import type { AdminContext, MutationResult } from '@/lib/admin/context'
-import type { GalleryAlbum, GalleryItem } from '@/types'
+import type { GalleryAlbum, GalleryPhoto } from '@/types'
 
 // ─── Esquemas de validación ──────────────────────────────────────────────────
 
@@ -64,7 +64,7 @@ export async function createPhoto(
   ctx: AdminContext,
   albumId: string,
   input: PhotoCreateInput,
-): Promise<MutationResult<GalleryItem>> {
+): Promise<MutationResult<GalleryPhoto>> {
   const { data, error } = await ctx.supabase
     .from('gallery_photos')
     .insert({
@@ -83,7 +83,7 @@ export async function createPhoto(
     return { ok: false, error: 'No se pudo añadir la foto. Por favor, intenta de nuevo.' }
   }
 
-  return { ok: true, data: rowToGalleryItem(data) }
+  return { ok: true, data: rowToGalleryPhoto(data) }
 }
 
 // ─── Update ──────────────────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ export async function updatePhoto(
   ctx: AdminContext,
   id: string,
   input: PhotoUpdateInput,
-): Promise<MutationResult<GalleryItem>> {
+): Promise<MutationResult<GalleryPhoto>> {
   const patch: Record<string, unknown> = {}
   if (input.imageUrl  !== undefined) patch.image_url  = input.imageUrl
   if (input.alt       !== undefined) patch.alt        = input.alt
@@ -140,7 +140,7 @@ export async function updatePhoto(
   }
   if (!data) return { ok: false, error: 'Foto no encontrada.' }
 
-  return { ok: true, data: rowToGalleryItem(data) }
+  return { ok: true, data: rowToGalleryPhoto(data) }
 }
 
 // ─── Delete ──────────────────────────────────────────────────────────────────

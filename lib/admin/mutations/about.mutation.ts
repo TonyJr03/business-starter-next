@@ -18,7 +18,7 @@ export const aboutUpdateSchema = z.object({
 
 export type AboutUpdateInput = z.infer<typeof aboutUpdateSchema>
 
-// ─── Update ──────────────────────────────────────────────────────────────────
+// ─── Update (Upsert) ──────────────────────────────────────────────────────────
 
 export async function updateAbout(
   ctx: AdminContext,

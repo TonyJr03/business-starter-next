@@ -5,7 +5,7 @@ import type { BusinessSettings, DayHours } from '@/types'
 
 // ─── Esquemas de validación ───────────────────────────────────────────────────
 
-export const settingsUpdateSchema = z.object({
+export const businessUpdateSchema = z.object({
   name:             z.string().min(1, 'El nombre es obligatorio').max(200),
   shortDescription: z.string().max(300).optional(),
   whatsapp:         z.string().max(30).optional(),
@@ -27,13 +27,13 @@ export const settingsUpdateSchema = z.object({
   })).optional(),
 })
 
-export type SettingsUpdateInput = z.infer<typeof settingsUpdateSchema>
+export type BusinessUpdateInput = z.infer<typeof businessUpdateSchema>
 
 // ─── Update ──────────────────────────────────────────────────────────────────
 
-export async function updateSettings(
+export async function updateBusiness(
   ctx: AdminContext,
-  input: SettingsUpdateInput,
+  input: BusinessUpdateInput,
 ): Promise<MutationResult<BusinessSettings>> {
   // Ensambla el objeto social solo con los campos que tienen valor
   const social: Record<string, string> = {}
@@ -43,17 +43,23 @@ export async function updateSettings(
   if (input.socialTwitter)   social.twitter   = input.socialTwitter
   if (input.socialYoutube)   social.youtube   = input.socialYoutube
 
+  const contact: Record<string, string> = {}
+  if (input.whatsapp) contact.whatsapp = input.whatsapp
+  if (input.phone)    contact.phone    = input.phone
+  if (input.email)    contact.email    = input.email
+
+  const location: Record<string, string> = {}
+  if (input.address) location.address = input.address
+  if (input.city)    location.city    = input.city
+  if (input.country) location.country = input.country
+
   const { data, error } = await ctx.supabase
     .from('businesses')
     .update({
       name:              input.name,
       short_description: input.shortDescription ?? null,
-      whatsapp:          input.whatsapp   ?? null,
-      phone:             input.phone      ?? null,
-      email:             input.email      || null,
-      address:           input.address    ?? null,
-      city:              input.city       ?? null,
-      country:           input.country    ?? null,
+      contact:           contact,
+      location:          location,
       social:            Object.keys(social).length > 0 ? social : null,
       ...(input.hours !== undefined && { hours: input.hours as unknown as DayHours[] }),
     })

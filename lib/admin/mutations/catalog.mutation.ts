@@ -84,6 +84,7 @@ export async function createCategory(
   const { data, error } = await ctx.supabase
     .from('catalog_categories')
     .insert({
+      business_id: ctx.businessId,
       catalog_id:  catalogId,
       slug:        toSlug(input.name),
       name:        input.name,
@@ -110,9 +111,9 @@ export async function createProduct(
 ): Promise<MutationResult<Product>> {
   const { data: category } = await ctx.supabase
     .from('catalog_categories')
-    .select('id, catalog_pages!inner(business_id)')
+    .select('id')
     .eq('id', input.categoryId)
-    .eq('catalog_pages.business_id', ctx.businessId)
+    .eq('business_id', ctx.businessId)
     .single()
 
   if (!category) {
@@ -122,12 +123,12 @@ export async function createProduct(
   const { data, error } = await ctx.supabase
     .from('catalog_products')
     .insert({
+      business_id:    ctx.businessId,
       category_id:    input.categoryId,
       slug:           toSlug(input.name),
       name:           input.name,
       description:    input.description ?? null,
-      money_amount:   input.moneyAmount,
-      money_currency: input.moneyCurrency,
+      money:          { amount: input.moneyAmount, currency: input.moneyCurrency },
       is_available:   input.isAvailable,
       is_featured:    input.isFeatured,
       badge:          input.badge ?? null,
@@ -191,6 +192,7 @@ export async function updateCategory(
     .from('catalog_categories')
     .update(patch)
     .eq('id', id)
+    .eq('business_id', ctx.businessId)
     .select()
     .single()
 
@@ -210,9 +212,9 @@ export async function updateProduct(
   if (input.categoryId !== undefined) {
     const { data: category } = await ctx.supabase
       .from('catalog_categories')
-      .select('id, catalog_pages!inner(business_id)')
+      .select('id')
       .eq('id', input.categoryId)
-      .eq('catalog_pages.business_id', ctx.businessId)
+      .eq('business_id', ctx.businessId)
       .single()
 
     if (!category) {
@@ -221,12 +223,16 @@ export async function updateProduct(
   }
 
   const patch: Record<string, unknown> = {}
-  if (input.name          !== undefined) patch.name           = input.name
-  if (input.description   !== undefined) patch.description    = input.description
-  if (input.categoryId    !== undefined) patch.category_id    = input.categoryId
-  if (input.moneyAmount   !== undefined) patch.money_amount   = input.moneyAmount
-  if (input.moneyCurrency !== undefined) patch.money_currency = input.moneyCurrency
-  if (input.isAvailable   !== undefined) patch.is_available   = input.isAvailable
+  if (input.name          !== undefined) patch.name        = input.name
+  if (input.description   !== undefined) patch.description = input.description
+  if (input.categoryId    !== undefined) patch.category_id = input.categoryId
+  if (input.moneyAmount   !== undefined || input.moneyCurrency !== undefined) {
+    patch.money = {
+      amount:   input.moneyAmount   ?? undefined,
+      currency: input.moneyCurrency ?? undefined,
+    }
+  }
+  if (input.isAvailable   !== undefined) patch.is_available = input.isAvailable
   if (input.isFeatured    !== undefined) patch.is_featured    = input.isFeatured
   if (input.badge         !== undefined) patch.badge          = input.badge ?? null
   if (input.sortOrder     !== undefined) patch.sort_order     = input.sortOrder
@@ -235,6 +241,7 @@ export async function updateProduct(
     .from('catalog_products')
     .update(patch)
     .eq('id', id)
+    .eq('business_id', ctx.businessId)
     .select()
     .single()
 
@@ -276,6 +283,7 @@ export async function deleteCategory(
     .from('catalog_categories')
     .delete()
     .eq('id', id)
+    .eq('business_id', ctx.businessId)
 
   if (error) {
     if (error.code === '23503') {
@@ -295,6 +303,7 @@ export async function deleteProduct(
     .from('catalog_products')
     .delete()
     .eq('id', id)
+    .eq('business_id', ctx.businessId)
 
   if (error) {
     return { ok: false, error: 'No se pudo eliminar el producto. Por favor, intenta de nuevo.' }

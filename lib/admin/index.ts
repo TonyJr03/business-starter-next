@@ -95,8 +95,8 @@ export type { BlogPostCreateInput, BlogPostUpdateInput } from './mutations/blog.
 
 // ─── Ajustes del negocio ──────────────────────────────────────────────────────
 export {
-  settingsUpdateSchema,
-  updateSettings,
-} from './mutations/settings.mutation'
-export type { SettingsUpdateInput } from './mutations/settings.mutation'
+  businessUpdateSchema,
+  updateBusiness,
+} from './mutations/business.mutation'
+export type { BusinessUpdateInput } from './mutations/business.mutation'
 
