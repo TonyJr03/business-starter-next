@@ -1,10 +1,3 @@
-/**
- * Blog — listado de artículos del negocio
- *
- * Ruta: /negocios/[slug]/blog
- * Acceso: público
- */
-
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getPosts } from '@/services'
@@ -12,9 +5,13 @@ import { resolvePageModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { BlogPostCard } from '@/components/sections/BlogPostCard'
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Props {
   params: Promise<{ slug: string }>
 }
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -29,20 +26,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function BlogPage({ params }: Props) {
   const { slug } = await params
 
+  // — tenant
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
-
-  // Guarda de módulo — respeta overrides por tenant
   const blogModule = resolvePageModule(business, 'blog')
   if (!blogModule.enabled) notFound()
+
+  // — datos
   const posts = await getPosts(business.id)
 
   return (
     <>
-      {/* ── Encabezado ─────────────────────────────────────────────── */}
+      {/* ── Encabezado ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
           <h1
@@ -59,7 +59,7 @@ export default async function BlogPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── Listado ────────────────────────────────────────────────── */}
+      {/* ── Listado ── */}
       <Section bg="default" size="md">
         <div className="max-w-5xl mx-auto">
           {posts.length > 0 ? (

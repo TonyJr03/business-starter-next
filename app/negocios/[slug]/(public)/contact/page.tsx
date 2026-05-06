@@ -1,19 +1,3 @@
-/**
- * Contact — página de contacto del negocio
- *
- * Ruta: /negocios/[slug]/contact
- * Acceso: público
- *
- * Secciones:
- *   1. Hero      — H1 + subtítulo del módulo (bg secondary)
- *   2. Canales   — cards de WhatsApp, teléfono y email (bg default)
- *   3. Ubicación — dirección postal + redes sociales en 2 columnas (bg surface)
- *   4. Horarios  — tabla de atención (bg default)
- *
- * No hay formulario de contacto — pendiente para M7+ con backend dedicado.
- * Todo el contenido proviene del tenant resuelto; no se necesita persistencia nueva.
- */
-
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug } from '@/services'
@@ -23,9 +7,13 @@ import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Props {
   params: Promise<{ slug: string }>
 }
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -40,18 +28,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function ContactPage({ params }: Props) {
   const { slug } = await params
 
+  // — tenant
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
-
   const contactModule = resolvePageModule(business, 'contact')
   if (!contactModule.enabled) notFound()
 
+  // — datos
   const whatsappUrl = getWhatsAppUrl(
     `Hola ${business.name}, quisiera ponerme en contacto.`,
-    business.whatsapp,
+    business.contact?.whatsapp,
   )
 
   const social = business.social ?? {}
@@ -66,7 +57,7 @@ export default async function ContactPage({ params }: Props) {
 
   return (
     <>
-      {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
           <h1
@@ -81,7 +72,7 @@ export default async function ContactPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── 2. Canales de contacto ─────────────────────────────────────────── */}
+      {/* ── Canales ── */}
       <Section bg="default" size="md">
         <div className="max-w-4xl mx-auto">
           <SectionHeading title="Cómo contactarnos" className="mb-10" />
@@ -111,7 +102,7 @@ export default async function ContactPage({ params }: Props) {
                     WhatsApp
                   </p>
                   <p className="text-sm mt-0.5 truncate" style={{ color: '#166534', opacity: 0.75 }}>
-                    {business.whatsapp}
+                    {business.contact?.whatsapp}
                   </p>
                   <p className="text-xs mt-1" style={{ color: '#166534', opacity: 0.6 }}>
                     Respuesta rápida
@@ -121,9 +112,9 @@ export default async function ContactPage({ params }: Props) {
             )}
 
             {/* Teléfono */}
-            {business.phone && (
+            {business.contact?.phone && (
               <a
-                href={`tel:${business.phone}`}
+                href={`tel:${business.contact.phone}`}
                 className="flex items-start gap-4 p-5 rounded-2xl border transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 style={{
                   backgroundColor: 'var(--color-surface)',
@@ -142,7 +133,7 @@ export default async function ContactPage({ params }: Props) {
                     Teléfono
                   </p>
                   <p className="text-sm mt-0.5 truncate" style={{ color: 'var(--color-text-muted)' }}>
-                    {business.phone}
+                    {business.contact?.phone}
                   </p>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Llámanos directamente
@@ -152,9 +143,9 @@ export default async function ContactPage({ params }: Props) {
             )}
 
             {/* Email */}
-            {business.email && (
+            {business.contact?.email && (
               <a
-                href={`mailto:${business.email}`}
+                href={`mailto:${business.contact.email}`}
                 className="flex items-start gap-4 p-5 rounded-2xl border transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 style={{
                   backgroundColor: 'var(--color-surface)',
@@ -173,7 +164,7 @@ export default async function ContactPage({ params }: Props) {
                     Correo electrónico
                   </p>
                   <p className="text-sm mt-0.5 truncate" style={{ color: 'var(--color-text-muted)' }}>
-                    {business.email}
+                    {business.contact?.email}
                   </p>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Escríbenos cuando quieras
@@ -186,23 +177,23 @@ export default async function ContactPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── 3. Ubicación + Redes ───────────────────────────────────────────── */}
-      {(business.address || business.city || socialLinks.length > 0) && (
+      {/* ── Ubicación ── */}
+      {(business.location?.address || business.location?.city || socialLinks.length > 0) && (
         <Section bg="surface" size="md">
           <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
 
             {/* Dirección */}
-            {(business.address || business.city) && (
+            {(business.location?.address || business.location?.city) && (
               <div>
                 <SectionHeading title="Dónde encontrarnos" className="mb-6 text-left" />
                 <div className="flex items-start gap-3" style={{ color: 'var(--color-text)' }}>
                   <IconPin className="mt-0.5 shrink-0" />
                   <address className="not-italic leading-relaxed text-base">
-                    {business.address && <span className="block">{business.address}</span>}
-                    {business.city && (
+                    {business.location?.address && <span className="block">{business.location.address}</span>}
+                    {business.location?.city && (
                       <span className="block">
-                        {business.city}
-                        {business.country ? `, ${business.country}` : ''}
+                        {business.location.city}
+                        {business.location.country ? `, ${business.location.country}` : ''}
                       </span>
                     )}
                   </address>
@@ -237,7 +228,7 @@ export default async function ContactPage({ params }: Props) {
         </Section>
       )}
 
-      {/* ── 4. Horarios ────────────────────────────────────────────────────── */}
+      {/* ── Horarios ── */}
       {(business.hours ?? []).length > 0 && (
         <OpeningHoursSection
           hours={business.hours!}

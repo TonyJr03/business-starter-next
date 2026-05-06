@@ -22,11 +22,9 @@ interface Props {
 
 export default async function PublicLayout({ params, children }: Props) {
   const { slug } = await params
-  const [business, catalogs] = await Promise.all([
-    resolveBusinessBySlug(slug),
-    getCatalogs(),
-  ])
+  const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
+  const catalogs = await getCatalogs(business.id)
 
   return (
     <>

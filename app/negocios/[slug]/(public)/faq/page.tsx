@@ -1,19 +1,3 @@
-/**
- * FAQ — preguntas frecuentes del negocio
- *
- * Ruta: /negocios/[slug]/faq
- * Acceso: público
- *
- * Secciones:
- *   1. Hero      — H1 + subtítulo del módulo (bg secondary)
- *   2. Preguntas — acordeón agrupado por categoría vía FaqSection (bg default)
- *   3. Vacío     — mensaje cuando no hay ítems en BD (bg default)
- *   4. CTA       — llamada a la acción por WhatsApp (bg surface)
- *
- * Los ítems provienen de la tabla `business_faq_items` vía faq.service.
- * Si no hay ítems, se muestra un estado vacío con CTA directo a WhatsApp.
- */
-
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getFaqItems } from '@/services'
@@ -22,9 +6,13 @@ import { Section } from '@/components/ui/Section'
 import { FaqSection } from '@/components/sections/FaqSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Props {
   params: Promise<{ slug: string }>
 }
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -39,21 +27,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function FaqPage({ params }: Props) {
   const { slug } = await params
+
+  // — tenant
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
-
-  const [faqModule, items] = await Promise.all([
-    Promise.resolve(resolvePageModule(business, 'faq')),
-    getFaqItems(business.id),
-  ])
-
+  const faqModule = resolvePageModule(business, 'faq')
   if (!faqModule.enabled) notFound()
+
+  // — datos
+  const items = await getFaqItems(business.id)
 
   return (
     <>
-      {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
           <h1
@@ -70,7 +60,7 @@ export default async function FaqPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── 2. Acordeón / 3. Estado vacío ─────────────────────────────────── */}
+      {/* ── Preguntas ── */}
       {items.length > 0 ? (
         <FaqSection items={items} bg="default" size="md" />
       ) : (
@@ -83,14 +73,14 @@ export default async function FaqPage({ params }: Props) {
         </Section>
       )}
 
-      {/* ── 4. CTA WhatsApp ─────────────────────────────────────────────────── */}
-      {business.whatsapp && faqModule.cta && (
+      {/* ── CTA WhatsApp ── */}
+      {business.contact?.whatsapp && faqModule.cta && (
         <CtaWhatsappSection
           title={faqModule.cta.title}
           subtitle={faqModule.cta.subtitle}
           message={faqModule.cta.message}
           buttonLabel={faqModule.cta.buttonLabel}
-          phoneNumber={business.whatsapp}
+          phoneNumber={business.contact.whatsapp}
           bg="surface"
           size="md"
         />

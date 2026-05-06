@@ -1,27 +1,14 @@
-/**
- * CatalogPage — catálogo de un tipo específico
- *
- * Ruta: /negocios/[slug]/catalog/[catalogSlug]
- * Acceso: público
- *
- * Muestra productos destacados y el catálogo completo agrupado por categoría,
- * filtrado por el catálogo indicado en la ruta.
- *
- * No exporta `generateStaticParams` porque el cliente de Supabase del servidor
- * usa `cookies()`, que no es compatible con el contexto de build. La ruta se
- * renderiza dinámicamente en cada request, lo que es correcto para datos
- * que pueden cambiar.
- */
-
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { resolveBusinessBySlug, getCatalogBySlug, getCategories, getProducts, getFeaturedProducts } from '@/services'
+import { resolveBusinessBySlug, getCatalogBySlug, getCategoriesByCatalog, getProducts } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { CategoryNav } from '@/components/sections/CategoryNav'
 import { ProductCard } from '@/components/sections/ProductCard'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Props {
   params: Promise<{ slug: string; catalogSlug: string }>
@@ -31,10 +18,8 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, catalogSlug } = await params
-  const [business, catalog] = await Promise.all([
-    resolveBusinessBySlug(slug),
-    getCatalogBySlug(catalogSlug),
-  ])
+  const business = await resolveBusinessBySlug(slug)
+  const catalog = await getCatalogBySlug(business?.id ?? '', catalogSlug)
 
   const catalogName = catalog?.name ?? 'Catálogo'
 
@@ -50,44 +35,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CatalogPage({ params }: Props) {
   const { slug, catalogSlug } = await params
 
-  const [business, catalog] = await Promise.all([
-    resolveBusinessBySlug(slug),
-    getCatalogBySlug(catalogSlug),
-  ])
-
-  // Guarda de módulo
+  // — tenant
+  const business = await resolveBusinessBySlug(slug)
+  if (!business) notFound()
   const catalogModule = resolvePageModule(business, 'catalog')
   if (!catalogModule.enabled) notFound()
 
-  // Catálogo no encontrado
+  // — datos
+  const catalog = await getCatalogBySlug(business.id, catalogSlug)
   if (!catalog) notFound()
 
-  // Categorías de este catálogo
-  const categories = await getCategories({ catalogId: catalog.id })
+  const [categories, allProducts] = await Promise.all([
+    getCategoriesByCatalog(business.id, catalog.id),
+    getProducts(business.id),
+  ])
   const categoryIds = categories.map((c) => c.id)
 
-  // Carga paralela: productos por categoría + destacados filtrados por este catálogo
-  const [productsByCategory, featuredProducts] = await Promise.all([
-    Promise.all(
-      categories.map(async (cat) => ({
-        category: cat,
-        products: await getProducts({ categoryId: cat.id, onlyAvailable: false }),
-      }))
-    ),
-    categoryIds.length > 0
-      ? getFeaturedProducts(categoryIds)
-      : Promise.resolve([]),
-  ])
+  const featuredProducts = allProducts.filter(
+    (p) => p.isFeatured && (p.isAvailable ?? true) && categoryIds.includes(p.categoryId ?? '')
+  )
+  const productsByCategory = categories.map((cat) => ({
+    category: cat,
+    products: allProducts.filter((p) => p.categoryId === cat.id),
+  }))
 
-  // URL WhatsApp por producto
   function productOrderUrl(productName: string): string | undefined {
-    if (!business?.whatsapp) return undefined
-    return getWhatsAppUrl(`Hola ${business.name}, quisiera pedir: ${productName}.`, business.whatsapp)
+    if (!business?.contact?.whatsapp) return undefined
+    return getWhatsAppUrl(`Hola ${business.name}, quisiera pedir: ${productName}.`, business.contact.whatsapp)
   }
 
   return (
     <>
-      {/* ── Encabezado ─────────────────────────────────────────────── */}
+      {/* ── Encabezado ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
           <h1
@@ -104,10 +83,10 @@ export default async function CatalogPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── Navegación por categorías (sticky) ─────────────────────── */}
+      {/* ── Categorías ── */}
       <CategoryNav categories={categories} />
 
-      {/* ── Productos destacados de este catálogo ───────────────────── */}
+      {/* ── Destacados ── */}
       {featuredProducts.length > 0 && (
         <Section bg="surface" size="md">
           <h2
@@ -130,7 +109,7 @@ export default async function CatalogPage({ params }: Props) {
         </Section>
       )}
 
-      {/* ── Catálogo por categorías ─────────────────────────────────── */}
+      {/* ── Catálogo ── */}
       {productsByCategory.map(({ category, products }) => (
         <Section key={category.id} bg="default" size="md" id={category.slug}>
           <div className="flex items-center gap-4 mb-2">
@@ -174,14 +153,14 @@ export default async function CatalogPage({ params }: Props) {
         </Section>
       ))}
 
-      {/* ── CTA WhatsApp ───────────────────────────────────────────── */}
-      {business?.whatsapp && catalogModule.cta && (
+      {/* ── CTA WhatsApp ── */}
+      {business?.contact?.whatsapp && catalogModule.cta && (
         <CtaWhatsappSection
           title={catalogModule.cta.title}
           subtitle={catalogModule.cta.subtitle}
           buttonLabel={catalogModule.cta.buttonLabel}
           message={catalogModule.cta.message}
-          phoneNumber={business.whatsapp}
+          phoneNumber={business.contact.whatsapp}
           bg="secondary"
           size="md"
         />

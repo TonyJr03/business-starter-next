@@ -1,12 +1,3 @@
-/**
- * Blog post — detalle de artículo
- *
- * Ruta: /negocios/[slug]/blog/[post]
- * Acceso: público
- *
- * Si el post no existe, devuelve 404 idiomático via notFound().
- */
-
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
@@ -14,9 +5,13 @@ import { resolveBusinessBySlug, getPostBySlug } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Props {
   params: Promise<{ slug: string; post: string }>
 }
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, post: postSlug } = await params
@@ -36,6 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// ─── Helpers ────────────────────────────────────────────────────────────────────
+
 const dateFormatter = new Intl.DateTimeFormat('es-CU', {
   day: 'numeric',
   month: 'long',
@@ -43,35 +40,40 @@ const dateFormatter = new Intl.DateTimeFormat('es-CU', {
   timeZone: 'America/Havana',
 })
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function BlogPostPage({ params }: Props) {
   const { slug, post: postSlug } = await params
 
+  // — tenant
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
-
-  // Guarda de módulo — respeta overrides por tenant
   if (!resolvePageModule(business, 'blog').enabled) notFound()
 
-  // Post no encontrado → 404 idiomático
+  // — datos
   const post = await getPostBySlug(business.id, postSlug)
   if (!post) notFound()
 
-  const formattedDate = dateFormatter.format(new Date(`${post.publishedAt}T00:00:00`))
+  const formattedDate = post.publishedAt
+    ? dateFormatter.format(new Date(`${post.publishedAt.slice(0, 10)}T12:00:00Z`))
+    : null
 
   return (
     <>
-      {/* ── Encabezado del artículo ─────────────────────────────────── */}
+      {/* ── Encabezado ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
 
           {/* Fecha */}
-          <time
-            dateTime={post.publishedAt}
-            className="block text-sm font-semibold uppercase tracking-widest mb-4"
-            style={{ color: 'var(--color-accent)' }}
-          >
-            {formattedDate}
-          </time>
+          {formattedDate && (
+            <time
+              dateTime={post.publishedAt}
+              className="block text-sm font-semibold uppercase tracking-widest mb-4"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              {formattedDate}
+            </time>
+          )}
 
           {/* Título */}
           <h1
@@ -105,7 +107,7 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── Cuerpo del artículo ─────────────────────────────────────── */}
+      {/* ── Cuerpo ── */}
       <Section bg="default" size="md">
         <article className="max-w-2xl mx-auto">
 

@@ -1,16 +1,3 @@
-/**
- * Catalog entry — punto de entrada del módulo de catálogo
- *
- * Ruta: /negocios/[slug]/catalog
- * Acceso: público
- *
- * Comportamiento según cantidad de catálogos del negocio:
- *
- *   1 catálogo  → redirect transparente a /catalog/[slug] del único catálogo.
- *   2+ catálogos → página de selección: cards con cada catálogo disponible.
- *   0 catálogos → notFound() (estado inválido; toda BD debe tener al menos uno).
- */
-
 import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Image from 'next/image'
@@ -19,9 +6,13 @@ import { resolveBusinessBySlug, getCatalogs } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Props {
   params: Promise<{ slug: string }>
 }
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -34,30 +25,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function CatalogEntryPage({ params }: Props) {
   const { slug } = await params
 
-  const [business, catalogs] = await Promise.all([
-    resolveBusinessBySlug(slug),
-    getCatalogs(),
-  ])
-
-  // Guarda de módulo
+  // — tenant
+  const business = await resolveBusinessBySlug(slug)
+  if (!business) notFound()
   const catalogModule = resolvePageModule(business, 'catalog')
   if (!catalogModule.enabled) notFound()
 
-  // Estado inválido — no debería ocurrir si el seed está bien
+  // — datos
+  const catalogs = await getCatalogs(business.id)
   if (catalogs.length === 0) notFound()
+  if (catalogs.length === 1) redirect(`/negocios/${slug}/catalog/${catalogs[0].slug}`)
 
-  // Un solo catálogo → ir directo a él
-  if (catalogs.length === 1) {
-    redirect(`/negocios/${slug}/catalog/${catalogs[0].slug}`)
-  }
-
-  // Multi-catálogo → página de selección
   return (
     <>
-      {/* ── Encabezado ─────────────────────────────────────────────── */}
+      {/* ── Encabezado ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
           <h1
@@ -72,7 +58,7 @@ export default async function CatalogEntryPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── Selección de catálogos ──────────────────────────────────── */}
+      {/* ── Selección ── */}
       <Section bg="default" size="lg">
         <ul className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
           {catalogs.map((catalog) => (

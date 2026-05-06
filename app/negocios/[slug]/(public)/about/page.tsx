@@ -1,25 +1,4 @@
-/**
- * About — página informativa del negocio
- *
- * Ruta: /negocios/[slug]/about
- * Acceso: público
- *
- * Secciones:
- *   1. Hero         — H1 + subtítulo del módulo (bg secondary)
- *   2. Historia     — foto del local/equipo + párrafos de story (bg default)
- *   3. Misión       — frase destacada + cards de diferenciadores (bg surface)
- *   4. Contacto     — dirección, teléfono, email, redes sociales (bg default)
- *   5. Horarios     — tabla de horarios de atención (bg surface)
- *   6. CTA          — llamada a la acción por WhatsApp (bg secondary)
- *
- * Los datos editoriales (story, mission, differentiators, teamImageUrl) vienen
- * de la tabla `business_about` vía about.service.
- * Los datos operativos (dirección, teléfono, horarios) vienen del tenant resuelto.
- * Si `business_about` no tiene fila para el negocio, las secciones Historia y
- * Misión se omiten (degradación elegante).
- */
-
-import Image from 'next/image'
+﻿import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getAboutContent } from '@/services'
@@ -29,9 +8,13 @@ import { SectionHeading } from '@/components/ui/SectionHeading'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Props {
   params: Promise<{ slug: string }>
 }
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -46,25 +29,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function AboutPage({ params }: Props) {
   const { slug } = await params
 
-  // Datos del tenant y contenido About en paralelo
+  // — tenant
   const business = await resolveBusinessBySlug(slug)
   if (!business) notFound()
-
-  const [aboutModule, aboutContent] = await Promise.all([
-    Promise.resolve(resolvePageModule(business, 'about')),
-    getAboutContent(business.id),
-  ])
-
+  const aboutModule = resolvePageModule(business, 'about')
   if (!aboutModule.enabled) notFound()
+
+  // — datos
+  const aboutContent = await getAboutContent(business.id)
 
   const hasSocial = business.social && Object.values(business.social).some(Boolean)
 
   return (
     <>
-      {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
           <h1
@@ -79,7 +62,7 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── 2. Historia ────────────────────────────────────────────────────── */}
+      {/* ── Historia ── */}
       {aboutContent && aboutContent.story.length > 0 && (
         <Section bg="default" size="md">
           <div className="max-w-6xl mx-auto">
@@ -123,7 +106,7 @@ export default async function AboutPage({ params }: Props) {
         </Section>
       )}
 
-      {/* ── 3. Misión + Diferenciadores ────────────────────────────────────── */}
+      {/* ── Misión ── */}
       {aboutContent && (aboutContent.mission || (aboutContent.differentiators ?? []).length > 0) && (
         <Section bg="surface" size="md">
           <div className="max-w-4xl mx-auto">
@@ -184,45 +167,45 @@ export default async function AboutPage({ params }: Props) {
         </Section>
       )}
 
-      {/* ── 4. Contacto ────────────────────────────────────────────────────── */}
+      {/* ── Contacto ── */}
       <Section bg="default" size="md">
         <div className="max-w-3xl mx-auto">
           <SectionHeading title="Dónde encontrarnos" className="mb-8" />
           <ul className="space-y-5" style={{ color: 'var(--color-text)' }}>
 
-            {(business.address || business.city) && (
+            {(business.location?.address || business.location?.city) && (
               <li className="flex items-start gap-3">
                 <IconPin />
                 <span>
-                  {business.address ? `${business.address}, ` : ''}
-                  {business.city ?? ''}
-                  {business.country ? `, ${business.country}` : ''}
+                  {business.location?.address ? `${business.location.address}, ` : ''}
+                  {business.location?.city ?? ''}
+                  {business.location?.country ? `, ${business.location.country}` : ''}
                 </span>
               </li>
             )}
 
-            {business.phone && (
+            {business.contact?.phone && (
               <li className="flex items-center gap-3">
                 <IconPhone />
                 <a
-                  href={`tel:${business.phone}`}
+                  href={`tel:${business.contact.phone}`}
                   className="hover:underline"
                   style={{ color: 'var(--color-text)' }}
                 >
-                  {business.phone}
+                  {business.contact.phone}
                 </a>
               </li>
             )}
 
-            {business.email && (
+            {business.contact?.email && (
               <li className="flex items-center gap-3">
                 <IconMail />
                 <a
-                  href={`mailto:${business.email}`}
+                  href={`mailto:${business.contact.email}`}
                   className="hover:underline"
                   style={{ color: 'var(--color-text)' }}
                 >
-                  {business.email}
+                  {business.contact.email}
                 </a>
               </li>
             )}
@@ -272,7 +255,7 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── 5. Horarios ────────────────────────────────────────────────────── */}
+      {/* ── Horarios ── */}
       {(business.hours ?? []).length > 0 && (
         <OpeningHoursSection
           hours={business.hours!}
@@ -282,14 +265,14 @@ export default async function AboutPage({ params }: Props) {
         />
       )}
 
-      {/* ── 6. CTA WhatsApp ─────────────────────────────────────────────────── */}
-      {business.whatsapp && aboutModule.cta && (
+      {/* ── CTA WhatsApp ── */}
+      {business.contact?.whatsapp && aboutModule.cta && (
         <CtaWhatsappSection
           title={aboutModule.cta.title}
           subtitle={aboutModule.cta.subtitle}
           buttonLabel={aboutModule.cta.buttonLabel}
           message={aboutModule.cta.message}
-          phoneNumber={business.whatsapp}
+          phoneNumber={business.contact.whatsapp}
           bg="secondary"
           size="md"
         />

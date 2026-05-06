@@ -1,13 +1,3 @@
-/**
- * Promotions — página pública de promociones del negocio
- *
- * Ruta: /negocios/[slug]/promotions
- * Acceso: público
- *
- * Muestra todas las promociones (activas, próximas, en pausa, expiradas)
- * con su estado visual derivado de fechas.
- */
-
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getPromotions, getPromotionStatus } from '@/services'
@@ -16,11 +6,15 @@ import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { PromotionCard } from '@/components/sections/PromotionCard'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
-import type { PromoStatus } from '@/components/sections/PromotionCard'
+import type { PromotionStatus } from '@/types'
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Props {
   params: Promise<{ slug: string }>
 }
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -34,6 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   }
 }
+
+// ─── Helpers ────────────────────────────────────────────────────────────────────
 
 // Formatea rango de fechas legible en español
 const dateFormatter = new Intl.DateTimeFormat('es-CU', {
@@ -52,23 +48,25 @@ function formatDateRange(startsAt?: string, endsAt?: string): string | undefined
   return parts.join(' ')
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function PromotionsPage({ params }: Props) {
   const { slug } = await params
-  const business = await resolveBusinessBySlug(slug)
 
-  // Guarda de módulo — respeta overrides por tenant
+  // — tenant
+  const business = await resolveBusinessBySlug(slug)
+  if (!business) notFound()
   const promoModule = resolvePageModule(business, 'promotions')
   if (!promoModule.enabled) notFound()
 
-  // Traemos todas — activas e inactivas — para mostrar el estado visual completo
-  const allPromos = await getPromotions()
-  const today = new Date()
+  // — datos
+  const allPromos = await getPromotions(business.id)
 
   const enriched = allPromos.map((promo) => {
-    const status: PromoStatus = getPromotionStatus(promo, today)
+    const status: PromotionStatus = getPromotionStatus(promo)
     const dateRange = formatDateRange(promo.startsAt, promo.endsAt)
-    const orderHref = business?.whatsapp
-      ? getWhatsAppUrl(`Hola ${business.name}, quisiera aprovechar la oferta: ${promo.title}.`, business.whatsapp)
+    const orderHref = business.contact?.whatsapp
+      ? getWhatsAppUrl(`Hola ${business.name}, quisiera aprovechar la oferta: ${promo.title}.`, business.contact.whatsapp)
       : undefined
     return { promo, status, dateRange, orderHref }
   })
@@ -77,7 +75,7 @@ export default async function PromotionsPage({ params }: Props) {
 
   return (
     <>
-      {/* ── Encabezado ─────────────────────────────────────────────── */}
+      {/* ── Encabezado ── */}
       <Section bg="secondary" size="md">
         <div className="max-w-2xl mx-auto text-center">
           <h1
@@ -94,7 +92,7 @@ export default async function PromotionsPage({ params }: Props) {
         </div>
       </Section>
 
-      {/* ── Listado ────────────────────────────────────────────────── */}
+      {/* ── Listado ── */}
       {enriched.length === 0 ? (
         <Section bg="default" size="lg">
           <p className="text-center" style={{ color: 'var(--color-text-subtle)' }}>
@@ -118,14 +116,14 @@ export default async function PromotionsPage({ params }: Props) {
         </Section>
       )}
 
-      {/* ── CTA WhatsApp ───────────────────────────────────────────── */}
-      {business?.whatsapp && promoModule.cta && (
+      {/* ── CTA WhatsApp ── */}
+      {business.contact?.whatsapp && promoModule.cta && (
         <CtaWhatsappSection
           title={promoModule.cta.title}
           subtitle={promoModule.cta.subtitle}
           buttonLabel={promoModule.cta.buttonLabel}
           message={promoModule.cta.message}
-          phoneNumber={business.whatsapp}
+          phoneNumber={business.contact.whatsapp}
           bg="secondary"
           size="md"
         />
