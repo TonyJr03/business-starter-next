@@ -18,8 +18,9 @@ Documenta cómo fluye la información en este proyecto: desde Supabase hasta las
    - [Hook useAdminForm](#64-hook-useadminform)
 7. [Flujo completo — página pública](#7-flujo-completo--página-pública)
 8. [Flujo completo — panel de admin (CRUD)](#8-flujo-completo--panel-de-admin-crud)
-9. [Tablas Supabase por dominio](#9-tablas-supabase-por-dominio)
-10. [Convenciones generales](#10-convenciones-generales)
+9. [Por qué el admin no usa `services/`](#9-por-qué-el-admin-no-usa-services)
+10. [Tablas Supabase por dominio](#10-tablas-supabase-por-dominio)
+11. [Convenciones generales](#11-convenciones-generales)
 
 ---
 
@@ -99,9 +100,9 @@ Documenta cómo fluye la información en este proyecto: desde Supabase hasta las
 
 Los tipos de dominio usan **camelCase** (`imageUrl`, `sortOrder`, `isActive`) que corresponden directamente a los campos snake_case de la base de datos (`image_url`, `sort_order`, `is_active`). La conversión ocurre exclusivamente en los mappers.
 
-### Tipos de forma local en los forms de admin
+### Tipos en los forms de admin
 
-Los `*EditForm.tsx` declaran sus propias interfaces locales (ej. `interface ProductData`) que representan el subconjunto de campos que el formulario necesita mostrar/editar. Estas interfaces no se exportan al barrel de tipos, son locales al componente.
+Todos los `*EditForm.tsx` y `*NewForm.tsx` reciben el tipo de dominio directamente (ej. `product: Product`, `item: FaqItem`). No existen interfaces locales en los formularios — los tipos de dominio de `@/types` son la fuente de verdad.
 
 ---
 
@@ -127,9 +128,11 @@ AboutRow → AboutContent
 ```
 BlogPostRow → BlogPost
   published_at  →  publishedAt
-  is_published  →  (dropped, el servicio filtra en query)
+  is_published  →  isPublished
   null          →  undefined
 ```
+
+> El servicio público filtra `is_published = true` **en la query**, no en el mapper. El admin lista **todos** los posts incluyendo borradores.
 
 #### `business.mapper.ts`
 ```
@@ -151,7 +154,9 @@ ProductRow     → Product    (money_amount+money_currency → Money{amount,curr
 #### `faq.mapper.ts`
 ```
 FaqItemRow → FaqItem
-  (solo expone id, question, answer, category — sort_order/is_active se descartan)
+  sort_order  →  sortOrder
+  is_active   →  isActive
+  null        →  undefined
 ```
 
 #### `gallery.mapper.ts`
@@ -483,7 +488,11 @@ app/negocios/[slug]/(admin)/admin/faq/[faqId]/page.tsx  (Server Component)
   │
   ├─ 4. if (!row) notFound()
   │
-  └─ 5. return <FaqEditForm slug={slug} item={mapRowToLocalShape(row)} />
+  ├─ 5. const item = rowToFaqItem(row as FaqItemRow)
+  │       └─ lib/persistence/faq.mapper.ts
+  │            └─ snake_case → camelCase, null → undefined
+  │
+  └─ 6. return <FaqEditForm slug={slug} item={item} />
 ```
 
 ### Escritura (action → mutation → DB)
@@ -527,7 +536,23 @@ updateFaqItemAction(slug, id, prevState, formData)  [Server Action]
 
 ---
 
-## 9. Tablas Supabase por dominio
+## 9. Por qué el admin no usa `services/`
+
+Los servicios en `services/` tienen tres características que los hacen incompatibles con el panel de administración:
+
+| Característica | Servicios públicos | Admin pages |
+|---|---|---|
+| Cliente Supabase | Anónimo, creado sin sesión de request | Autenticado con la sesión activa del request |
+| Filtros de estado | `.eq('is_active', true)` / `.eq('is_published', true)` | Sin filtros — se listan **todos** los registros |
+| Caché | `React.cache()` — deduplica por request | Sin caché — siempre datos frescos |
+
+Un admin que edite una categoría inactiva o un post en borrador nunca lo encontraría a través de los servicios. Además, el `React.cache()` podría retornar datos stale después de una edición.
+
+El panel usa directamente `ctx.supabase` (el cliente autenticado del `AdminContext`) con el `businessId` resuelto del contexto. Este cliente **es** la capa de acceso a datos del admin — no es necesaria otra abstracción mientras las queries no se repitan entre múltiples páginas.
+
+---
+
+## 10. Tablas Supabase por dominio
 
 | Tabla | Dominio | Mapper | Servicio público | Mutation admin |
 |---|---|---|---|---|
@@ -544,7 +569,7 @@ updateFaqItemAction(slug, id, prevState, formData)  [Server Action]
 
 ---
 
-## 10. Convenciones generales
+## 11. Convenciones generales
 
 ### Nombres
 
@@ -555,6 +580,22 @@ updateFaqItemAction(slug, id, prevState, formData)  [Server Action]
 - **Funciones de servicio:** `getXxx(...)`, `resolveXxx(...)`, `listXxx(...)`.
 - **Funciones de mutation:** `createXxx`, `updateXxx`, `deleteXxx`.
 - **Server Actions:** `createXxxAction`, `updateXxxAction`, `deleteXxxAction`.
+
+### Secciones en archivos
+
+Todos los archivos se dividen con comentarios de sección siguiendo el patrón:
+```
+// ─── Nombre de sección ──────────────────────────────────────────────────────
+```
+(el relleno de guiones llega hasta ~80 caracteres)
+
+| Tipo de archivo | Secciones |  
+|---|---|
+| `*EditForm.tsx` / `*NewForm.tsx` | `// ─── Helpers` (si hay helpers), `// ─── Formulario` |
+| `actions.ts` | `// ─── Helpers`, `// ─── Create`, `// ─── Update`, `// ─── Delete` (solo las que aplican) |
+| `page.tsx` (edit / detail) | `// ─── Página` |
+| `page.tsx` (list, con helpers) | `// ─── Helpers`, `// ─── Página` |
+| `page.tsx` (list, sin helpers) | `// ─── Página` |
 
 ### Reglas de aislamiento multi-tenant
 
