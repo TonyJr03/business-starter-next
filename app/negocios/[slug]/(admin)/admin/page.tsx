@@ -50,10 +50,10 @@ const quickLinks = [
     path: 'promotions',
   },
   {
-    id: 'settings',
+    id: 'business',
     title: 'Ajustes',
     description: 'Configura el nombre, contacto, ubicación y horarios.',
-    path: 'settings',
+    path: 'business',
   },
 ]
 

@@ -4,6 +4,10 @@ import { getAdminContext } from '@/lib/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
+import { rowToGalleryPhoto } from '@/lib/persistence'
+import type { GalleryPhotoRow } from '@/lib/persistence'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; albumId: string }>, searchParams: Promise<{ created?: string; updated?: string; deleted?: string }> }
 
@@ -30,7 +34,7 @@ export default async function PhotosListPage({ params, searchParams }: Props) {
     .eq('album_id', albumId)
     .order('sort_order', { ascending: true })
 
-  const photos = rows ?? []
+  const photos = (rows ?? []).map(r => rowToGalleryPhoto(r as GalleryPhotoRow))
 
   return (
     <div className="space-y-5">
@@ -81,10 +85,7 @@ export default async function PhotosListPage({ params, searchParams }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {photos.map((photo: {
-                id: string; image_url: string; alt: string
-                caption: string | null; sort_order: number; is_active: boolean
-              }) => (
+              {photos.map((photo) => (
                 <tr key={photo.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="font-medium text-zinc-900 dark:text-zinc-100">{photo.alt}</div>
@@ -92,14 +93,14 @@ export default async function PhotosListPage({ params, searchParams }: Props) {
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
-                      photo.is_active
+                      photo.isActive
                         ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20'
                         : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
                     }`}>
-                      {photo.is_active ? 'Activa' : 'Inactiva'}
+                      {photo.isActive ? 'Activa' : 'Inactiva'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 hidden md:table-cell">{photo.sort_order}</td>
+                  <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 hidden md:table-cell">{photo.sortOrder}</td>
                   <td className="px-4 py-3 text-right">
                     <Link href={`/negocios/${slug}/admin/gallery/${albumId}/photos/${photo.id}`}
                       className="text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">

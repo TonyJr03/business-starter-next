@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { rowToCatalog } from '@/lib/persistence'
+import type { CatalogRow } from '@/lib/persistence'
 import { CatalogPageEditForm } from './CatalogPageEditForm'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; catalogId: string }> }
 
@@ -36,17 +40,7 @@ export default async function EditCatalogPage({ params }: Props) {
           </Link>
         </div>
       </div>
-      <CatalogPageEditForm
-        slug={slug}
-        catalog={{
-          id:          row.id,
-          slug:        row.slug,
-          name:        row.name,
-          description: row.description ?? '',
-          sortOrder:   row.sort_order,
-          isActive:    row.is_active,
-        }}
-      />
+      <CatalogPageEditForm slug={slug} catalog={rowToCatalog(row as CatalogRow)} />
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { ProductNewForm } from './ProductNewForm'
 
+// ─── Página ──────────────────────────────────────────────────────────────────
+
 interface Props { params: Promise<{ slug: string; catalogId: string; categoryId: string }> }
 
 export default async function NewProductPage({ params }: Props) {

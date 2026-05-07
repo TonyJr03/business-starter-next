@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { rowToGalleryAlbum } from '@/lib/persistence'
+import type { GalleryAlbumRow } from '@/lib/persistence'
 import { AlbumEditForm } from './AlbumEditForm'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; albumId: string }> }
 
@@ -36,17 +40,7 @@ export default async function EditAlbumPage({ params }: Props) {
           </Link>
         </div>
       </div>
-      <AlbumEditForm
-        slug={slug}
-        album={{
-          id:          row.id,
-          slug:        row.slug,
-          name:        row.name,
-          description: row.description ?? '',
-          sortOrder:   row.sort_order,
-          isActive:    row.is_active,
-        }}
-      />
+      <AlbumEditForm slug={slug} album={rowToGalleryAlbum(row as GalleryAlbumRow)} />
     </div>
   )
 }

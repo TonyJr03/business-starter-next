@@ -7,17 +7,11 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updatePhotoAction, deletePhotoAction } from '../actions'
+import type { GalleryPhoto } from '@/types'
 
-interface PhotoData {
-  id: string
-  imageUrl: string
-  alt: string
-  caption: string
-  sortOrder: number
-  isActive: boolean
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string; albumId: string; photo: PhotoData }
+interface Props { slug: string; albumId: string; photo: GalleryPhoto }
 
 export function PhotoEditForm({ slug, albumId, photo }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(
@@ -61,12 +55,12 @@ export function PhotoEditForm({ slug, albumId, photo }: Props) {
               Pie de foto <span className="text-zinc-400 font-normal">(opcional)</span>
             </label>
             <input type="text" id="caption" name="caption" maxLength={500}
-              defaultValue={photo.caption} className={fieldInputCls()} />
+              defaultValue={photo.caption ?? ''} className={fieldInputCls()} />
           </div>
 
           <div className="space-y-1.5">
             <label htmlFor="sortOrder" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Orden</label>
-            <input type="number" id="sortOrder" name="sortOrder" defaultValue={photo.sortOrder} min={0}
+            <input type="number" id="sortOrder" name="sortOrder" defaultValue={photo.sortOrder ?? 0} min={0}
               className="w-28 rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 

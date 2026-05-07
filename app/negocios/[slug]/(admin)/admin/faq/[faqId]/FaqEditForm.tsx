@@ -7,17 +7,11 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updateFaqItemAction, deleteFaqItemAction } from '../actions'
+import type { FaqItem } from '@/types'
 
-interface FaqData {
-  id: string
-  question: string
-  answer: string
-  category: string
-  sortOrder: number
-  isActive: boolean
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string; item: FaqData }
+interface Props { slug: string; item: FaqItem }
 
 export function FaqEditForm({ slug, item }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(

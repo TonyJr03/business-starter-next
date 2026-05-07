@@ -65,7 +65,7 @@ export function AdminNav({ slug, businessName, userEmail, logoutAction }: AdminN
         {navLink(`/negocios/${slug}/admin/promotions`, 'Promociones', Percent)}
 
         {sectionLabel('Configuración')}
-        {navLink(`/negocios/${slug}/admin/settings`, 'Ajustes', Settings)}
+        {navLink(`/negocios/${slug}/admin/business`, 'Ajustes', Settings)}
       </nav>
 
       {/* User + logout */}

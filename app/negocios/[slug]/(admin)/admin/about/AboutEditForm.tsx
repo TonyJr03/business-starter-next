@@ -8,6 +8,8 @@ import { useAdminForm } from '@/components/admin/useAdminForm'
 import { updateAboutAction } from './actions'
 import type { AboutContent } from '@/types'
 
+// ─── Formulario ──────────────────────────────────────────────────────────────
+
 interface Props { slug: string, about: AboutContent | null }
 
 export function AboutEditForm({ slug, about }: Props) {

@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { FaqNewForm } from './FaqNewForm'
 
+// ─── Página ──────────────────────────────────────────────────────────────────
+
 interface Props { params: Promise<{ slug: string }> }
 
 export default async function NewFaqItemPage({ params }: Props) {

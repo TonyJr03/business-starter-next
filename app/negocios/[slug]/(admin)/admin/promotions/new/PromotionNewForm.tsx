@@ -7,6 +7,8 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { createPromotionAction } from '../actions'
 
+// ─── Formulario ──────────────────────────────────────────────────────────────
+
 interface Props { slug: string }
 
 export function PromotionNewForm({ slug }: Props) {

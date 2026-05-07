@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { rowToProduct } from '@/lib/persistence'
+import type { ProductRow } from '@/lib/persistence'
 import { ProductEditForm } from './ProductEditForm'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; catalogId: string; categoryId: string; productId: string }> }
 
@@ -14,7 +18,7 @@ export default async function EditProductPage({ params }: Props) {
 
   const { data: row } = await ctx.supabase
     .from('catalog_products')
-    .select('id, slug, name, description, money_amount, money_currency, is_available, is_featured, badge, sort_order, category_id')
+    .select('id, slug, name, description, money, is_available, is_featured, badge, sort_order, category_id')
     .eq('id', productId)
     .eq('category_id', categoryId)
     .single()
@@ -34,18 +38,7 @@ export default async function EditProductPage({ params }: Props) {
         slug={slug}
         catalogId={catalogId}
         categoryId={categoryId}
-        product={{
-          id:            row.id,
-          slug:          row.slug,
-          name:          row.name,
-          description:   row.description ?? '',
-          moneyAmount:   row.money_amount,
-          moneyCurrency: row.money_currency,
-          isAvailable:   row.is_available,
-          isFeatured:    row.is_featured,
-          badge:         row.badge,
-          sortOrder:     row.sort_order,
-        }}
+        product={rowToProduct(row as ProductRow)}
       />
     </div>
   )

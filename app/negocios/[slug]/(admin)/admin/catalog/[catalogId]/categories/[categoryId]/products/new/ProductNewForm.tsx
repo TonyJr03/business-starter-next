@@ -7,6 +7,8 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { createProductAction } from '../actions'
 
+// ─── Formulario ──────────────────────────────────────────────────────────────
+
 interface Props { slug: string; catalogId: string; categoryId: string }
 
 export function ProductNewForm({ slug, catalogId, categoryId }: Props) {

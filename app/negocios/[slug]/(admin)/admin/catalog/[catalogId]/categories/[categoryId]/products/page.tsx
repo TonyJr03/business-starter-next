@@ -4,6 +4,10 @@ import { getAdminContext } from '@/lib/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
+import { rowToProduct } from '@/lib/persistence'
+import type { ProductRow } from '@/lib/persistence'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; catalogId: string; categoryId: string }>, searchParams: Promise<{ created?: string; updated?: string; deleted?: string }> }
 
@@ -28,12 +32,12 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
 
   const { data: rows, error: queryError } = await ctx.supabase
     .from('catalog_products')
-    .select('id, slug, name, money_amount, money_currency, is_available, is_featured, badge, sort_order')
+    .select('id, slug, name, money, is_available, is_featured, badge, sort_order')
     .eq('category_id', categoryId)
     .order('sort_order', { ascending: true })
     .order('name',       { ascending: true })
 
-  const products = rows ?? []
+  const products = (rows ?? []).map(r => rowToProduct(r as ProductRow))
 
   return (
     <div className="space-y-5">
@@ -91,11 +95,7 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {products.map((product: {
-                id: string; slug: string; name: string
-                money_amount: number; money_currency: string
-                is_available: boolean; is_featured: boolean; badge: string | null; sort_order: number
-              }) => (
+              {products.map((product) => (
                 <tr key={product.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="font-medium text-zinc-900 dark:text-zinc-100">{product.name}</div>
@@ -106,19 +106,19 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
                     )}
                   </td>
                   <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300 hidden sm:table-cell">
-                    {product.money_amount.toFixed(2)} {product.money_currency}
+                    {product.money.amount.toFixed(2)} {product.money.currency}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
-                      product.is_available
+                      product.isAvailable
                         ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20'
                         : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
                     }`}>
-                      {product.is_available ? 'Sí' : 'No'}
+                      {product.isAvailable ? 'Sí' : 'No'}
                     </span>
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
-                    {product.is_featured ? (
+                    {product.isFeatured ? (
                       <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">⭐ Destacado</span>
                     ) : (
                       <span className="text-xs text-zinc-400 dark:text-zinc-500">—</span>

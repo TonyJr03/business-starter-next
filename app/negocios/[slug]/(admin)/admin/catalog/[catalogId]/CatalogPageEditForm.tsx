@@ -7,17 +7,11 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updateCatalogPageAction, deleteCatalogPageAction } from '../actions'
+import type { Catalog } from '@/types'
 
-interface CatalogData {
-  id: string
-  slug: string
-  name: string
-  description: string
-  sortOrder: number
-  isActive: boolean
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string; catalog: CatalogData }
+interface Props { slug: string; catalog: Catalog }
 
 export function CatalogPageEditForm({ slug, catalog }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(

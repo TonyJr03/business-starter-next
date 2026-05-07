@@ -1,19 +1,13 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { rowToPromotion } from '@/lib/persistence'
+import type { PromotionRow } from '@/lib/persistence'
 import { PromotionEditForm } from './PromotionEditForm'
 
-interface Props {
-  params: Promise<{ slug: string; promotionId: string }>
-}
+// ─── Página ──────────────────────────────────────────────────────────────────
 
-/** Convierte un TIMESTAMPTZ de Supabase al formato datetime-local (YYYY-MM-DDTHH:mm) */
-function toDatetimeLocal(iso: string | null): string {
-  if (!iso) return ''
-  const d = new Date(iso)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
+interface Props { params: Promise<{ slug: string; promotionId: string }> }
 
 export default async function EditPromotionPage({ params }: Props) {
   const { slug, promotionId } = await params
@@ -24,14 +18,12 @@ export default async function EditPromotionPage({ params }: Props) {
 
   const { data: row } = await ctx.supabase
     .from('promotions')
-    .select('id, title, description, status, discount_label, starts_at, ends_at, rules, sort_order')
+    .select('id, title, description, status, discount_label, starts_at, ends_at, rules, sort_order, business_id, image_url, created_at, updated_at')
     .eq('id', promotionId)
     .eq('business_id', ctx.businessId)
     .single()
 
   if (!row) notFound()
-
-  const firstRule = Array.isArray(row.rules) && row.rules.length > 0 ? row.rules[0] : null
 
   return (
     <div className="space-y-6 max-w-xl">
@@ -45,19 +37,7 @@ export default async function EditPromotionPage({ params }: Props) {
 
       <PromotionEditForm
         slug={slug}
-        promotion={{
-          id:              row.id,
-          title:           row.title,
-          description:     row.description ?? '',
-          status:          row.status,
-          discountLabel:   row.discount_label ?? '',
-          startsAt:        toDatetimeLocal(row.starts_at),
-          endsAt:          toDatetimeLocal(row.ends_at),
-          sortOrder:       row.sort_order,
-          ruleType:        firstRule?.type        ?? '',
-          ruleValue:       firstRule?.value       ?? '',
-          ruleDescription: firstRule?.description ?? '',
-        }}
+        promotion={rowToPromotion(row as PromotionRow)}
       />
     </div>
   )

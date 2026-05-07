@@ -15,9 +15,6 @@ import type { AdminActionState } from '@/lib/admin'
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function extractRaw(formData: FormData) {
-  const ruleType  = String(formData.get('ruleType')  ?? '')
-  const ruleValue = String(formData.get('ruleValue') ?? '')
-
   return {
     title:           String(formData.get('title')           ?? ''),
     description:     String(formData.get('description')     ?? '') || undefined,
@@ -26,8 +23,8 @@ function extractRaw(formData: FormData) {
     startsAt:        String(formData.get('startsAt')        ?? '') || undefined,
     endsAt:          String(formData.get('endsAt')          ?? '') || undefined,
     sortOrder:       String(formData.get('sortOrder')       ?? '0'),
-    ruleType:        ruleType  || undefined,
-    ruleValue:       ruleValue || undefined,
+    ruleType:        String(formData.get('ruleType')        ?? '') || undefined,
+    ruleValue:       String(formData.get('ruleValue')       ?? '') || undefined,
     ruleDescription: String(formData.get('ruleDescription') ?? '') || undefined,
   }
 }

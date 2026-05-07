@@ -4,8 +4,10 @@ import { getAdminContext } from '@/lib/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
+import { rowToPromotion } from '@/lib/persistence'
+import type { PromotionRow } from '@/lib/persistence'
 
-interface Props { params: Promise<{ slug: string }>, searchParams: Promise<Record<string, string | undefined>> }
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const STATUS_LABEL: Record<string, string> = {
   active:   'Activa',
@@ -21,10 +23,14 @@ const STATUS_COLOR: Record<string, string> = {
   expired:  'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
 }
 
-function formatDate(iso: string | null) {
+function formatDate(iso: string | null | undefined) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
 }
+
+// ─── Página ──────────────────────────────────────────────────────────────────
+
+interface Props { params: Promise<{ slug: string }>, searchParams: Promise<{ created?: string; updated?: string; deleted?: string }> }
 
 export default async function PromotionsPage({ params, searchParams }: Props) {
   const { slug } = await params
@@ -41,15 +47,7 @@ export default async function PromotionsPage({ params, searchParams }: Props) {
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false })
 
-  const promotions = (rows ?? []) as {
-    id: string
-    title: string
-    status: string
-    discount_label: string | null
-    starts_at: string | null
-    ends_at: string | null
-    sort_order: number
-  }[]
+  const promotions = (rows ?? []).map(r => rowToPromotion(r as PromotionRow))
 
   return (
     <div className="space-y-5">
@@ -87,7 +85,7 @@ export default async function PromotionsPage({ params, searchParams }: Props) {
             }
           />
         ) : (
-          <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+          <table className="w-full text-sm">
             <thead className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Título</th>
@@ -109,15 +107,15 @@ export default async function PromotionsPage({ params, searchParams }: Props) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 hidden md:table-cell">
-                    {p.discount_label ?? '—'}
+                    {p.discountLabel ?? '—'}
                   </td>
                   <td className="px-4 py-3 text-zinc-400 dark:text-zinc-500 hidden lg:table-cell text-xs tabular-nums">
-                    {formatDate(p.starts_at)} → {formatDate(p.ends_at)}
+                    {formatDate(p.startsAt)} → {formatDate(p.endsAt)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/negocios/${slug}/admin/promotions/${p.id}`}
-                      className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                      className="text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                     >
                       Editar
                     </Link>

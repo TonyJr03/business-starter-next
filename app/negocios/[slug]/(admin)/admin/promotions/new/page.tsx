@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { PromotionNewForm } from './PromotionNewForm'
 
-interface Props {
-  params: Promise<{ slug: string }>
-}
+// ─── Página ──────────────────────────────────────────────────────────────────
+
+interface Props { params: Promise<{ slug: string }> }
 
 export default async function NewPromotionPage({ params }: Props) {
   const { slug } = await params

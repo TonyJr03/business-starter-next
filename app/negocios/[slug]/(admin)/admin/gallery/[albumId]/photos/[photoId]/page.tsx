@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { rowToGalleryPhoto } from '@/lib/persistence'
+import type { GalleryPhotoRow } from '@/lib/persistence'
 import { PhotoEditForm } from './PhotoEditForm'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; albumId: string; photoId: string }> }
 
@@ -33,14 +37,7 @@ export default async function EditPhotoPage({ params }: Props) {
       <PhotoEditForm
         slug={slug}
         albumId={albumId}
-        photo={{
-          id:        row.id,
-          imageUrl:  row.image_url,
-          alt:       row.alt,
-          caption:   row.caption   ?? '',
-          sortOrder: row.sort_order,
-          isActive:  row.is_active,
-        }}
+        photo={rowToGalleryPhoto(row as GalleryPhotoRow)}
       />
     </div>
   )

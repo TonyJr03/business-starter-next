@@ -7,17 +7,11 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updateCategoryAction, deleteCategoryAction } from '../actions'
+import type { Category } from '@/types'
 
-interface CategoryData {
-  id: string
-  slug: string
-  name: string
-  description: string
-  sortOrder: number
-  isActive: boolean
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string; catalogId: string; category: CategoryData }
+interface Props { slug: string; catalogId: string; category: Category }
 
 export function CategoryEditForm({ slug, catalogId, category }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(

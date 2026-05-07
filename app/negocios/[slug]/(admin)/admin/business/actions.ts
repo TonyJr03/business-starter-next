@@ -4,23 +4,16 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import {
   getAdminContext,
-  settingsUpdateSchema,
-  updateSettings,
+  businessUpdateSchema,
+  updateBusiness,
 } from '@/lib/admin'
 import type { AdminActionState } from '@/lib/admin'
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────────────────
+
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
 
-// ─── Update ──────────────────────────────────────────────────────────────────
-
-export async function updateSettingsAction(
-  slug: string,
-  _prevState: AdminActionState,
-  formData: FormData,
-): Promise<AdminActionState> {
-  const ctxResult = await getAdminContext(slug)
-  if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
-
+function extractRaw(formData: FormData) {
   const hours = DAYS.map((day, i) => ({
     day,
     open:     String(formData.get(`hours_open_${i}`)   ?? '09:00'),
@@ -28,7 +21,7 @@ export async function updateSettingsAction(
     isClosed: formData.get(`hours_closed_${i}`) === 'on',
   }))
 
-  const raw = {
+  return {
     name:             String(formData.get('name')             ?? ''),
     shortDescription: String(formData.get('shortDescription') ?? '') || undefined,
     whatsapp:         String(formData.get('whatsapp')         ?? '') || undefined,
@@ -44,8 +37,21 @@ export async function updateSettingsAction(
     socialYoutube:    String(formData.get('socialYoutube')    ?? '') || undefined,
     hours,
   }
+}
 
-  const parsed = settingsUpdateSchema.safeParse(raw)
+// ─── Update ─────────────────────────────────────────────────────────────────────────────
+
+export async function updateBusinessAction(
+  slug: string,
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const ctxResult = await getAdminContext(slug)
+  if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
+
+  const raw = extractRaw(formData)
+
+  const parsed = businessUpdateSchema.safeParse(raw)
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors
     const firstField = Object.keys(errors)[0] as string
@@ -56,9 +62,9 @@ export async function updateSettingsAction(
     }
   }
 
-  const result = await updateSettings(ctxResult.ctx, parsed.data)
+  const result = await updateBusiness(ctxResult.ctx, parsed.data)
   if (!result.ok) return { ok: false, error: result.error }
 
   revalidatePath(`/negocios/${slug}`, 'layout')
-  redirect(`/negocios/${slug}/admin/settings?saved=1`)
+  redirect(`/negocios/${slug}/admin/business?saved=1`)
 }

@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { rowToFaqItem } from '@/lib/persistence'
+import type { FaqItemRow } from '@/lib/persistence'
 import { FaqEditForm } from './FaqEditForm'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; faqId: string }> }
 
@@ -30,17 +34,7 @@ export default async function EditFaqItemPage({ params }: Props) {
         </Link>
         <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Editar pregunta</h1>
       </div>
-      <FaqEditForm
-        slug={slug}
-        item={{
-          id:        row.id,
-          question:  row.question,
-          answer:    row.answer,
-          category:  row.category ?? '',
-          sortOrder: row.sort_order,
-          isActive:  row.is_active,
-        }}
-      />
+      <FaqEditForm slug={slug} item={rowToFaqItem(row as FaqItemRow)} />
     </div>
   )
 }

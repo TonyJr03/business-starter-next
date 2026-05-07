@@ -7,6 +7,8 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { createPhotoAction } from '../actions'
 
+// ─── Formulario ──────────────────────────────────────────────────────────────
+
 interface Props { slug: string; albumId: string }
 
 export function PhotoNewForm({ slug, albumId }: Props) {

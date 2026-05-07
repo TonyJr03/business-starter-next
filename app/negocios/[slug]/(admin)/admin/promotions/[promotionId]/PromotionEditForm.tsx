@@ -7,22 +7,20 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updatePromotionAction, deletePromotionAction } from '../actions'
+import type { Promotion } from '@/types'
 
-interface PromotionData {
-  id: string
-  title: string
-  description: string
-  status: string
-  discountLabel: string
-  startsAt: string
-  endsAt: string
-  sortOrder: number
-  ruleType: string
-  ruleValue: number | string
-  ruleDescription: string
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function toDatetimeLocal(iso: string | null | undefined): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-interface Props { slug: string; promotion: PromotionData }
+// ─── Formulario ──────────────────────────────────────────────────────────────
+
+interface Props { slug: string; promotion: Promotion }
 
 export function PromotionEditForm({ slug, promotion }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(
@@ -55,8 +53,8 @@ export function PromotionEditForm({ slug, promotion }: Props) {
               Descripción <span className="text-zinc-400 font-normal">(opcional)</span>
             </label>
             <textarea id="description" name="description" rows={3} maxLength={1000}
-              defaultValue={promotion.description}
-              className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors resize-none" />
+              defaultValue={promotion.description ?? ''}
+              className={fieldInputCls()} />
           </div>
 
           <div className="space-y-1.5">
@@ -77,7 +75,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
               Etiqueta de descuento <span className="text-zinc-400 font-normal">(opcional)</span>
             </label>
             <input type="text" id="discountLabel" name="discountLabel" maxLength={50}
-              defaultValue={promotion.discountLabel} placeholder="ej. 20% OFF, 2×1, Gratis envío"
+              defaultValue={promotion.discountLabel ?? ''} placeholder="ej. 20% OFF, 2×1, Gratis envío"
               className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 
@@ -87,7 +85,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
                 Inicio <span className="text-zinc-400 font-normal">(opcional)</span>
               </label>
               <input type="datetime-local" id="startsAt" name="startsAt"
-                defaultValue={promotion.startsAt} className={fieldInputCls(!!fieldError('startsAt'))} />
+                defaultValue={toDatetimeLocal(promotion.startsAt)} className={fieldInputCls(!!fieldError('startsAt'))} />
               {fieldError('startsAt') && (
                 <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('startsAt')}</p>
               )}
@@ -97,7 +95,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
                 Fin <span className="text-zinc-400 font-normal">(opcional)</span>
               </label>
               <input type="datetime-local" id="endsAt" name="endsAt"
-                defaultValue={promotion.endsAt} className={fieldInputCls(!!fieldError('endsAt'))} />
+                defaultValue={toDatetimeLocal(promotion.endsAt)} className={fieldInputCls(!!fieldError('endsAt'))} />
               {fieldError('endsAt') && (
                 <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('endsAt')}</p>
               )}
@@ -114,7 +112,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
                 <label htmlFor="ruleType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Tipo
                 </label>
-                <select id="ruleType" name="ruleType" defaultValue={promotion.ruleType}
+                <select id="ruleType" name="ruleType" defaultValue={promotion.rules?.[0]?.type ?? ''}
                   className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors">
                   <option value="">Sin regla</option>
                   <option value="percentage">Porcentaje</option>
@@ -129,7 +127,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
                   Valor
                 </label>
                 <input type="number" id="ruleValue" name="ruleValue" min={0} step={0.01}
-                  defaultValue={String(promotion.ruleValue)}
+                  defaultValue={String(promotion.rules?.[0]?.value ?? '')}
                   className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
               </div>
             </div>
@@ -139,7 +137,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
                 Descripción de la regla
               </label>
               <input type="text" id="ruleDescription" name="ruleDescription" maxLength={300}
-                defaultValue={promotion.ruleDescription}
+                defaultValue={promotion.rules?.[0]?.description ?? ''}
                 placeholder="ej. Aplica a cafés a partir de las 15:00"
                 className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
             </div>
@@ -149,7 +147,7 @@ export function PromotionEditForm({ slug, promotion }: Props) {
             <label htmlFor="sortOrder" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Orden
             </label>
-            <input type="number" id="sortOrder" name="sortOrder" defaultValue={promotion.sortOrder} min={0}
+            <input type="number" id="sortOrder" name="sortOrder" defaultValue={promotion.sortOrder ?? 0} min={0}
               className="w-28 rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 

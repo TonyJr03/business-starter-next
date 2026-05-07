@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { BlogNewForm } from './BlogNewForm'
 
+// ─── Página ──────────────────────────────────────────────────────────────────
+
 interface Props { params: Promise<{ slug: string }> }
 
 export default async function NewBlogPostPage({ params }: Props) {

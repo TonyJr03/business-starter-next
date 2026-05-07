@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { AlbumNewForm } from './AlbumNewForm'
 
+// ─── Página ──────────────────────────────────────────────────────────────────
+
 interface Props { params: Promise<{ slug: string }> }
 
 export default async function NewAlbumPage({ params }: Props) {

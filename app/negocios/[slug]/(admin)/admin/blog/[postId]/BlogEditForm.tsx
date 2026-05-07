@@ -7,20 +7,11 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updatePostAction, deletePostAction } from '../actions'
+import type { BlogPost } from '@/types'
 
-interface PostData {
-  id: string
-  slug: string
-  title: string
-  summary: string
-  body: string[]
-  publishedAt: string
-  author: string
-  tags: string[]
-  isPublished: boolean
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string; post: PostData }
+interface Props { slug: string; post: BlogPost }
 
 export function BlogEditForm({ slug, post }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(

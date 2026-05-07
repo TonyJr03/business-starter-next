@@ -4,6 +4,10 @@ import { getAdminContext } from '@/lib/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
+import { rowToFaqItem } from '@/lib/persistence'
+import type { FaqItemRow } from '@/lib/persistence'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string }>, searchParams: Promise<{ created?: string; updated?: string; deleted?: string }> }
 
@@ -22,7 +26,7 @@ export default async function FaqListPage({ params, searchParams }: Props) {
     .order('sort_order', { ascending: true })
     .order('question',   { ascending: true })
 
-  const items = rows ?? []
+  const items = (rows ?? []).map(r => rowToFaqItem(r as FaqItemRow))
 
   return (
     <div className="space-y-5">
@@ -66,10 +70,7 @@ export default async function FaqListPage({ params, searchParams }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {items.map((item: {
-                id: string; question: string; answer: string
-                category: string | null; sort_order: number; is_active: boolean
-              }) => (
+              {items.map((item) => (
                 <tr key={item.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100 max-w-xs truncate">
                     {item.question}
@@ -83,11 +84,11 @@ export default async function FaqListPage({ params, searchParams }: Props) {
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
-                      item.is_active
+                      item.isActive
                         ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20'
                         : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
                     }`}>
-                      {item.is_active ? 'Activa' : 'Inactiva'}
+                      {item.isActive ? 'Activa' : 'Inactiva'}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">

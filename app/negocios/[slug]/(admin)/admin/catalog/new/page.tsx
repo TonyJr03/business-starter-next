@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { CatalogPageNewForm } from './CatalogPageNewForm'
 
+// ─── Página ──────────────────────────────────────────────────────────────────
+
 interface Props { params: Promise<{ slug: string }> }
 
 export default async function NewCatalogPage({ params }: Props) {

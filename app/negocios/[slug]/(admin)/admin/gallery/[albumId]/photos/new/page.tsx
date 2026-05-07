@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { PhotoNewForm } from './PhotoNewForm'
 
+// ─── Página ──────────────────────────────────────────────────────────────────
+
 interface Props { params: Promise<{ slug: string; albumId: string }> }
 
 export default async function NewPhotoPage({ params }: Props) {

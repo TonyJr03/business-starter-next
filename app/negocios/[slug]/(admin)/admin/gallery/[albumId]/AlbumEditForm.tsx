@@ -7,17 +7,11 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updateAlbumAction, deleteAlbumAction } from '../actions'
+import type { GalleryAlbum } from '@/types'
 
-interface AlbumData {
-  id: string
-  slug: string
-  name: string
-  description: string
-  sortOrder: number
-  isActive: boolean
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string; album: AlbumData }
+interface Props { slug: string; album: GalleryAlbum }
 
 export function AlbumEditForm({ slug, album }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(

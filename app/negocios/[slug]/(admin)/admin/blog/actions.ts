@@ -15,18 +15,13 @@ import type { AdminActionState } from '@/lib/admin'
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function extractRaw(formData: FormData) {
-  const body = String(formData.get('body') ?? '')
-    .split('\n').map((l) => l.trim()).filter(Boolean)
-  const tags = String(formData.get('tags') ?? '')
-    .split(',').map((t) => t.trim()).filter(Boolean)
-
   return {
     title:       String(formData.get('title')       ?? ''),
     summary:     String(formData.get('summary')     ?? ''),
-    body,
+    body:        String(formData.get('body') ?? '').split('\n').map((l) => l.trim()).filter(Boolean),
     publishedAt: String(formData.get('publishedAt') ?? ''),
     author:      String(formData.get('author')      ?? '').trim() || undefined,
-    tags:        tags.length > 0 ? tags : undefined,
+    tags:        String(formData.get('tags')  ?? '').split(',').map((t) => t.trim()).filter(Boolean),
     isPublished: formData.get('isPublished') === 'on',
   }
 }

@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { rowToBlogPost } from '@/lib/persistence'
+import type { BlogPostRow } from '@/lib/persistence'
 import { BlogEditForm } from './BlogEditForm'
+
+// ─── Página ──────────────────────────────────────────────────────────────────
 
 interface Props { params: Promise<{ slug: string; postId: string }> }
 
@@ -30,20 +34,7 @@ export default async function EditBlogPostPage({ params }: Props) {
         </Link>
         <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Editar artículo</h1>
       </div>
-      <BlogEditForm
-        slug={slug}
-        post={{
-          id:          row.id,
-          slug:        row.slug,
-          title:       row.title,
-          summary:     row.summary,
-          body:        (row.body as string[]) ?? [],
-          publishedAt: row.published_at,
-          author:      row.author  ?? '',
-          tags:        (row.tags   as string[]) ?? [],
-          isPublished: row.is_published,
-        }}
-      />
+      <BlogEditForm slug={slug} post={rowToBlogPost(row as BlogPostRow)} />
     </div>
   )
 }

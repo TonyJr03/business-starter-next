@@ -7,21 +7,11 @@ import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
 import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { updateProductAction, deleteProductAction } from '../actions'
+import type { Product } from '@/types'
 
-interface ProductData {
-  id: string
-  slug: string
-  name: string
-  description: string
-  moneyAmount: number
-  moneyCurrency: string
-  isAvailable: boolean
-  isFeatured: boolean
-  badge: string | null
-  sortOrder: number
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string; catalogId: string; categoryId: string; product: ProductData }
+interface Props { slug: string; catalogId: string; categoryId: string; product: Product }
 
 export function ProductEditForm({ slug, catalogId, categoryId, product }: Props) {
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(
@@ -69,7 +59,7 @@ export function ProductEditForm({ slug, catalogId, categoryId, product }: Props)
                 Precio <span className="text-red-500">*</span>
               </label>
               <input type="number" id="moneyAmount" name="moneyAmount"
-                defaultValue={product.moneyAmount} min={0} step={0.01}
+                defaultValue={product.money.amount} min={0} step={0.01}
                 className={fieldInputCls(!!fieldError('moneyAmount'))} />
               {fieldError('moneyAmount') && (
                 <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('moneyAmount')}</p>
@@ -78,7 +68,7 @@ export function ProductEditForm({ slug, catalogId, categoryId, product }: Props)
             <div className="space-y-1.5">
               <label htmlFor="moneyCurrency" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Moneda</label>
               <input type="text" id="moneyCurrency" name="moneyCurrency"
-                defaultValue={product.moneyCurrency} maxLength={3} className={fieldInputCls()} />
+                defaultValue={product.money.currency} maxLength={3} className={fieldInputCls()} />
             </div>
           </div>
 
@@ -97,7 +87,7 @@ export function ProductEditForm({ slug, catalogId, categoryId, product }: Props)
 
           <div className="space-y-1.5">
             <label htmlFor="sortOrder" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Orden</label>
-            <input type="number" id="sortOrder" name="sortOrder" defaultValue={product.sortOrder} min={0}
+            <input type="number" id="sortOrder" name="sortOrder" defaultValue={product.sortOrder ?? 0} min={0}
               className="w-28 rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 

@@ -4,33 +4,23 @@ import { AdminAlert } from '@/components/admin/AdminAlert'
 import { SubmitButton } from '@/components/ui/SubmitButton'
 import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
-import { updateSettingsAction } from './actions'
-import type { DayHours } from '@/types'
+import { updateBusinessAction } from './actions'
+import type { BusinessSettings } from '@/types'
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
 
-interface Defaults {
-  name: string
-  shortDescription: string
-  whatsapp: string
-  phone: string
-  email: string
-  address: string
-  city: string
-  country: string
-  socialInstagram: string
-  socialFacebook: string
-  socialTelegram: string
-  socialTwitter: string
-  socialYoutube: string
-  hours: DayHours[] | null
-}
+// ─── Formulario ──────────────────────────────────────────────────────────────
 
-interface Props { slug: string, defaults: Defaults }
+interface Props { slug: string, businessSettings: BusinessSettings }
 
-export function SettingsEditForm({ slug, defaults }: Props) {
+export function BusinessEditForm({ slug, businessSettings }: Props) {
+  const contact  = businessSettings.contact  ?? {}
+  const location = businessSettings.location ?? {}
+  const social   = businessSettings.social   ?? {}
   const { state: updateState, formAction: updateFormAction, fieldError } = useAdminForm(
-    updateSettingsAction.bind(null, slug),
+    updateBusinessAction.bind(null, slug),
   )
 
   return (
@@ -50,7 +40,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
             Nombre del negocio <span className="text-red-500">*</span>
           </label>
           <input type="text" id="name" name="name" required maxLength={200}
-            defaultValue={defaults.name} autoFocus className={fieldInputCls(!!fieldError('name'))} />
+            defaultValue={businessSettings.name} autoFocus className={fieldInputCls(!!fieldError('name'))} />
           {fieldError('name') && (
             <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('name')}</p>
           )}
@@ -61,7 +51,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
             Descripción corta <span className="text-zinc-400 font-normal">(opcional)</span>
           </label>
           <textarea id="shortDescription" name="shortDescription" rows={2} maxLength={300}
-            defaultValue={defaults.shortDescription}
+            defaultValue={businessSettings.shortDescription}
             className={fieldInputCls(!!fieldError('shortDescription'))} />
           {fieldError('shortDescription') && (
             <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('shortDescription')}</p>
@@ -82,7 +72,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
               WhatsApp
             </label>
             <input type="text" id="whatsapp" name="whatsapp" maxLength={30}
-              defaultValue={defaults.whatsapp} placeholder="+53 5 000 0000"
+              defaultValue={contact.whatsapp ?? ''} placeholder="+53 5 000 0000"
               className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 
@@ -91,7 +81,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
               Teléfono
             </label>
             <input type="text" id="phone" name="phone" maxLength={30}
-              defaultValue={defaults.phone} placeholder="+53 7 000 0000"
+              defaultValue={contact.phone ?? ''} placeholder="+53 7 000 0000"
               className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 
@@ -102,7 +92,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
             Email
           </label>
           <input type="email" id="email" name="email" maxLength={200}
-            defaultValue={defaults.email} placeholder="contacto@negocio.com"
+            defaultValue={contact.email ?? ''} placeholder="contacto@negocio.com"
             className={fieldInputCls(!!fieldError('email'))} />
           {fieldError('email') && (
             <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('email')}</p>
@@ -121,7 +111,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
             Dirección
           </label>
           <input type="text" id="address" name="address" maxLength={300}
-            defaultValue={defaults.address} placeholder="Calle Obispo 123"
+            defaultValue={location.address ?? ''} placeholder="Calle Obispo 123"
             className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
         </div>
 
@@ -132,7 +122,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
               Ciudad
             </label>
             <input type="text" id="city" name="city" maxLength={100}
-              defaultValue={defaults.city} placeholder="La Habana"
+              defaultValue={location.city ?? ''} placeholder="La Habana"
               className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 
@@ -141,7 +131,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
               País
             </label>
             <input type="text" id="country" name="country" maxLength={100}
-              defaultValue={defaults.country} placeholder="Cuba"
+              defaultValue={location.country ?? ''} placeholder="Cuba"
               className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />
           </div>
 
@@ -159,11 +149,11 @@ export function SettingsEditForm({ slug, defaults }: Props) {
 
         {(
           [
-            { id: 'socialInstagram', name: 'socialInstagram', label: 'Instagram', defaultValue: defaults.socialInstagram, placeholder: '@cafe_la_esquina' },
-            { id: 'socialFacebook',  name: 'socialFacebook',  label: 'Facebook',  defaultValue: defaults.socialFacebook,  placeholder: 'facebook.com/cafe' },
-            { id: 'socialTelegram',  name: 'socialTelegram',  label: 'Telegram',  defaultValue: defaults.socialTelegram,  placeholder: '@cafe_la_esquina' },
-            { id: 'socialTwitter',   name: 'socialTwitter',   label: 'Twitter / X', defaultValue: defaults.socialTwitter, placeholder: '@cafe_la_esquina' },
-            { id: 'socialYoutube',   name: 'socialYoutube',   label: 'YouTube',   defaultValue: defaults.socialYoutube,   placeholder: 'youtube.com/@cafe' },
+            { id: 'socialInstagram', name: 'socialInstagram', label: 'Instagram', defaultValue: social.instagram ?? '', placeholder: '@cafe_la_esquina' },
+            { id: 'socialFacebook',  name: 'socialFacebook',  label: 'Facebook',  defaultValue: social.facebook  ?? '', placeholder: 'facebook.com/cafe' },
+            { id: 'socialTelegram',  name: 'socialTelegram',  label: 'Telegram',  defaultValue: social.telegram  ?? '', placeholder: '@cafe_la_esquina' },
+            { id: 'socialTwitter',   name: 'socialTwitter',   label: 'Twitter / X', defaultValue: social.twitter ?? '', placeholder: '@cafe_la_esquina' },
+            { id: 'socialYoutube',   name: 'socialYoutube',   label: 'YouTube',   defaultValue: social.youtube   ?? '', placeholder: 'youtube.com/@cafe' },
           ] as const
         ).map((field) => (
           <div key={field.id} className="flex items-center gap-3">
@@ -193,7 +183,7 @@ export function SettingsEditForm({ slug, defaults }: Props) {
           </div>
 
           {DAYS.map((day, i) => {
-            const saved    = defaults.hours?.[i]
+            const saved    = businessSettings.hours?.[i] ?? null
             const open     = saved?.open     ?? '09:00'
             const close    = saved?.close    ?? '18:00'
             const isClosed = saved?.isClosed ?? false
