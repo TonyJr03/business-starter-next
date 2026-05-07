@@ -5,6 +5,7 @@ import { resolveBusinessBySlug, getAboutContent } from '@/services'
 import { resolvePageModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
+import { FeatureIcon } from '@/components/ui/FeatureIcon'
 import { OpeningHoursSection } from '@/components/sections/OpeningHoursSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
@@ -143,7 +144,7 @@ export default async function AboutPage({ params }: Props) {
                         style={{ backgroundColor: 'var(--color-secondary)' }}
                         aria-hidden="true"
                       >
-                        <DifferentiatorIcon icon={item.icon} />
+                        <FeatureIcon icon={item.icon} />
                       </div>
                       <h3
                         className="font-semibold text-base"
@@ -325,61 +326,6 @@ function IconShare() {
       style={{ color: 'var(--color-primary)' }} aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
         d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-    </svg>
-  )
-}
-
-// ─── Icono de diferenciador ───────────────────────────────────────────────────
-// Mapea el string 'icon' del dato a un SVG reconocible.
-// Si el icon no está mapeado, muestra un check genérico como fallback.
-
-function DifferentiatorIcon({ icon }: { icon?: string }) {
-  const style = { color: 'var(--color-primary)' }
-
-  if (icon === 'coffee') {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" className="size-5" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor" style={style} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" />
-      </svg>
-    )
-  }
-  if (icon === 'heart') {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" className="size-5" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor" style={style} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-      </svg>
-    )
-  }
-  if (icon === 'map-pin') {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" className="size-5" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor" style={style} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    )
-  }
-  if (icon === 'star') {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" className="size-5" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor" style={style} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-      </svg>
-    )
-  }
-  // Fallback: check genérico
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="size-5" fill="none"
-      viewBox="0 0 24 24" stroke="currentColor" style={style} aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-        d="M5 13l4 4L19 7" />
     </svg>
   )
 }

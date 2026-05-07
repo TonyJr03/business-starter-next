@@ -34,9 +34,19 @@
  */
 
 import { businessGlobalConfig } from '@/config/business-config';
-import type { BusinessModulesConfig, SectionModuleEntry } from '@/types';
+import type { BusinessModulesConfig } from '@/types';
 import type { PageModuleId, PageModuleConfig } from '@/types';
+import type { SectionModuleId, SectionModuleConfig } from '@/types';
+import type { FeatureModuleId } from '@/types';
 import type { BusinessSettings, BusinessModulesOverride } from '@/types';
+
+// ─── Tipo de sección resuelta ─────────────────────────────────────────────────
+
+/**
+ * Entrada de sección con el id reinyectado — resultado de resolveActiveSections.
+ * Permite al SectionRenderer discriminar por `id` sin necesidad del discriminated union.
+ */
+export type ResolvedSectionEntry = { id: SectionModuleId } & SectionModuleConfig;
 
 // ─── Merge interno ────────────────────────────────────────────────────────────
 
@@ -62,20 +72,22 @@ function mergeModules(
     pages = mergedPages;
   }
 
-  // ── sections: merge enabled + order por id ──────────────────────────────────
-  // Las props visuales son config global — no se tocan.
+  // ── sections: merge enabled + order por clave ─────────────────────────────
   let sections = base.sections;
   if (override.sections) {
     const sectionOverrides = override.sections;
-    sections = base.sections.map((entry) => {
-      const sectionOverride = sectionOverrides[entry.id];
-      if (!sectionOverride) return entry;
-      return {
-        ...entry,
-        ...(sectionOverride.enabled !== undefined && { enabled: sectionOverride.enabled }),
-        ...(sectionOverride.order   !== undefined && { order:   sectionOverride.order }),
-      };
-    });
+    const mergedSections = { ...base.sections };
+    for (const key of Object.keys(sectionOverrides) as SectionModuleId[]) {
+      const sectionOverride = sectionOverrides[key];
+      if (sectionOverride !== undefined) {
+        mergedSections[key] = {
+          ...base.sections[key],
+          ...(sectionOverride.enabled !== undefined && { enabled: sectionOverride.enabled }),
+          ...(sectionOverride.order   !== undefined && { order:   sectionOverride.order }),
+        };
+      }
+    }
+    sections = mergedSections;
   }
 
   // ── features: merge shallow por clave ───────────────────────────────────────
@@ -117,18 +129,47 @@ export function resolveModules(
 /**
  * Devuelve las secciones de la home activas, ordenadas por `order` ascendente.
  *
- * Encapsula el filter + sort para que los callers no repitan esta lógica
- * y para que el comportamiento pueda cambiar con overrides por tenant en S4.
+ * Filtra por `enabled` y verifica la dependencia declarada en `dependsOn`:
+ * - PageModuleId      → el page-module homólogo debe estar enabled
+ * - FeatureModuleId   → el feature-module debe estar enabled
+ * - 'business.hours'     → business.hours debe tener datos
+ * - 'business.location'  → business.location debe existir
+ * - 'business.whatsapp'  → business.contact.whatsapp debe existir
  *
- * @param business - Settings del tenant resuelto. Reservado para S4.
+ * @param business - Settings del tenant resuelto. null → fallback global.
  */
 export function resolveActiveSections(
   business: BusinessSettings | null,
-): SectionModuleEntry[] {
-  const { sections } = resolveModules(business);
-  return sections
-    .filter((s) => s.enabled)
+): ResolvedSectionEntry[] {
+  const modules = resolveModules(business);
+
+  return (Object.entries(modules.sections) as [SectionModuleId, SectionModuleConfig][])
+    .filter(([, config]) => {
+      if (!config.enabled) return false;
+      if (!config.dependsOn) return true;
+      const dep = config.dependsOn;
+      if (dep === 'business.hours')    return !!business?.hours?.length;
+      if (dep === 'business.location') return !!business?.location;
+      if (dep === 'business.whatsapp') return !!business?.contact?.whatsapp;
+      if (dep in modules.pages)    return modules.pages[dep as PageModuleId].enabled;
+      if (dep in modules.features) return modules.features[dep as FeatureModuleId].enabled;
+      return false;
+    })
+    .map(([id, config]) => ({ id, ...config }))
     .sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Devuelve la configuración de un section-module específico.
+ *
+ * @param business - Settings del tenant resuelto.
+ * @param id       - Identificador del section-module.
+ */
+export function resolveSectionModule(
+  business: BusinessSettings | null,
+  id: SectionModuleId,
+): SectionModuleConfig {
+  return resolveModules(business).sections[id];
 }
 
 /**

@@ -4,7 +4,17 @@
  * Sección hero configurable, desacoplada del dominio.
  */
 import { Button } from '@/components/ui/Button'
-import type { HeroSectionProps } from '@/types'
+
+interface HeroSectionProps {
+  title: string;
+  tagline?: string;
+  subtitle?: string;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  align?: 'center' | 'left';
+  bg?: 'secondary' | 'primary' | 'surface' | 'default';
+  size?: 'sm' | 'md' | 'lg';
+}
 
 const bgStyles: Record<string, string> = {
   secondary: 'var(--color-secondary)',

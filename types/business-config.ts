@@ -1,4 +1,4 @@
-import type { SectionModuleEntry } from './section-modules';
+import type { SectionModulesConfig } from './section-modules';
 import type { PageModulesConfig } from './page-modules';
 import type { FeatureModulesConfig } from './feature-modules';
 import type { BusinessBranding } from './branding';
@@ -8,11 +8,8 @@ import type { BusinessBranding } from './branding';
 export interface BusinessModulesConfig {
   /** Módulos de página activables — cada uno con su ruta, label y config. */
   pages: PageModulesConfig;
-  /**
-   * Secciones de la página de inicio:
-   * orden, visibilidad y props visuales de cada sección.
-   */
-  sections: SectionModuleEntry[];
+  /** Secciones de la página de inicio, indexadas por SectionModuleId. Orden, visibilidad y props visuales de cada sección. */
+  sections: SectionModulesConfig;
   /** Feature modules funcionales — cada feature tiene su propio `{ enabled }`. */
   features: FeatureModulesConfig;
 }

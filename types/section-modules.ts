@@ -1,80 +1,80 @@
-import type { WhatsappCtaSectionProps } from './feature-modules';
+import type { PageModuleId } from './page-modules';
+import type { FeatureModuleId } from './feature-modules';
 
-// ─── Base ────────────────────────────────────────────────────────────────────
-
-interface SectionBase {
-  /** Si esta sección se renderiza en la Home. */
-  enabled: boolean;
-  /** Orden de renderizado ascendente (1 = arriba del todo). */
-  order: number;
-}
-
-// ─── Per-section props ────────────────────────────────────────────────────────
-
-export interface HeroSectionProps {
-  title: string;
-  tagline?: string;
-  subtitle?: string;
-  primaryCta?: { label: string; href: string };
-  secondaryCta?: { label: string; href: string };
-  align?: 'center' | 'left';
-  bg?: 'secondary' | 'primary' | 'surface' | 'default';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-/** Solo props visuales — los ítems de características se inyectan en tiempo de render desde data/. */
-export interface HighlightsSectionProps {
-  title?: string;
-  subtitle?: string;
-  columns?: 2 | 3 | 4;
-  bg?: 'default' | 'surface' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-/** Reservada — componente aún no implementado. */
-export interface PromotionsSectionProps {
-  title?: string;
-  subtitle?: string;
-  bg?: 'default' | 'surface' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-/** Reservada — componente aún no implementado. */
-export interface TestimonialsSectionProps {
-  title?: string;
-  subtitle?: string;
-  bg?: 'default' | 'surface' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-/** Reservada — componente aún no implementado. */
-export interface LocationSectionProps {
-  title?: string;
-  bg?: 'default' | 'surface' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-/** Solo props visuales — el array openingHours se inyecta desde businessConfig en tiempo de render. */
-export interface HoursSectionProps {
-  title?: string;
-  bg?: 'default' | 'surface' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-// ─── Discriminated union ──────────────────────────────────────────────────────
+// ─── Dependencia ──────────────────────────────────────────────────────────────
 
 /**
- * Entrada de módulo de sección: identidad, visibilidad, orden y props visuales.
- * El campo `id` es el discriminante — TypeScript estrecha `props` automáticamente.
+ * Condición que debe estar satisfecha para que un section-module derivado
+ * pueda renderizarse. Los section-modules independientes no tienen este campo.
+ *
+ * - PageModuleId      → el page-module homólogo debe estar enabled
+ * - FeatureModuleId   → el feature-module debe estar enabled
+ * - 'business.hours'     → business.hours debe tener al menos un día
+ * - 'business.location'  → business.location debe existir
+ * - 'business.whatsapp'  → business.contact.whatsapp debe existir
  */
-export type SectionModuleEntry =
-  | (SectionBase & { id: 'hero';         props: HeroSectionProps })
-  | (SectionBase & { id: 'highlights';   props: HighlightsSectionProps })
-  | (SectionBase & { id: 'promotions';   props: PromotionsSectionProps })
-  | (SectionBase & { id: 'testimonials'; props: TestimonialsSectionProps })
-  | (SectionBase & { id: 'whatsapp_cta'; props: WhatsappCtaSectionProps })
-  | (SectionBase & { id: 'location';     props: LocationSectionProps })
-  | (SectionBase & { id: 'hours';        props: HoursSectionProps });
+export type SectionDependency =
+  | PageModuleId
+  | FeatureModuleId
+  | 'business.hours'
+  | 'business.location'
+  | 'business.whatsapp';
 
-/** Unión de todos los IDs de sección válidos — derivada del tipo, nunca duplicada. */
-export type SectionModuleId = SectionModuleEntry['id'];
+// ─── IDs de section-modules ───────────────────────────────────────────────────
+
+/**
+ * Unión de todos los identificadores de section-modules activables.
+ * - hero: queda fuera — es UI de layout fijo, no un módulo configurable.
+ * - testimonials: queda fuera — no planificado en este ciclo.
+ */
+export type SectionModuleId =
+  | 'highlights'
+  | 'promotions'
+  | 'hours'
+  | 'location'
+  | 'whatsapp_cta';
+
+// ─── Configuración por section-module ─────────────────────────────────────────
+
+/**
+ * Configuración compartida por cada section-module.
+ * Paralelo directo a PageModuleConfig: un solo tipo para todos los módulos.
+ *
+ * Las props visuales específicas de cada sección (columns en highlights, etc.)
+ * están incluidas aquí como opcionales — el mismo tradeoff pragmático que
+ * featuredTitle/emptyMessage en PageModuleConfig.
+ */
+export interface SectionModuleConfig {
+  /** Si este section-module está activo. */
+  enabled: boolean;
+  /** Orden de renderizado ascendente (1 = primero). */
+  order: number;
+  /**
+   * Dependencia que debe satisfacerse para renderizar este módulo.
+   * Ausente en section-modules independientes (highlights).
+   * Presente en derivados — el resolver lo verifica antes de activarlos.
+   */
+  dependsOn?: SectionDependency;
+  /** Título de la sección (opcional). */
+  title?: string;
+  /** Texto descriptivo bajo el título (opcional). */
+  subtitle?: string;
+  /** Fondo visual de la sección. */
+  bg?: 'default' | 'surface' | 'secondary' | 'primary';
+  /** Tamaño/espaciado de la sección. */
+  size?: 'sm' | 'md' | 'lg';
+  /** Número de columnas de la grilla (usado por highlights). */
+  columns?: 2 | 3 | 4;
+  /** Texto del botón CTA (usado por whatsapp_cta). */
+  buttonLabel?: string;
+  /** Mensaje pre-cargado (usado por whatsapp_cta). */
+  message?: string;
+}
+
+// ─── Mapa completo ────────────────────────────────────────────────────────────
+
+/**
+ * Registro de cada section-module, indexado por SectionModuleId.
+ * Type-safe: añadir un ID a la unión fuerza una entrada correspondiente aquí.
+ */
+export type SectionModulesConfig = Record<SectionModuleId, SectionModuleConfig>;

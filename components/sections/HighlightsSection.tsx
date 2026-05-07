@@ -8,9 +8,10 @@
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { HighlightsSectionProps, ContentFeature } from '@/types'
+import { FeatureIcon } from '@/components/ui/FeatureIcon'
+import type { SectionModuleConfig, ContentFeature } from '@/types'
 
-interface HighlightsSectionRenderProps extends HighlightsSectionProps {
+interface HighlightsSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'subtitle' | 'columns' | 'bg' | 'size'> {
   items: ContentFeature[]
 }
 
@@ -43,9 +44,13 @@ export function HighlightsSection({
             style={{ boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.1))' }}
           >
             {item.icon && (
-              <span className="text-3xl leading-none" aria-hidden="true">
-                {item.icon}
-              </span>
+              <div
+                className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+                style={{ backgroundColor: 'var(--color-secondary)' }}
+                aria-hidden="true"
+              >
+                <FeatureIcon icon={item.icon} />
+              </div>
             )}
             <h3
               className="text-base font-semibold"

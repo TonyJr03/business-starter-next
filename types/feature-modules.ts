@@ -30,12 +30,9 @@ export type FeatureModulesConfig = Record<FeatureModuleId, FeatureModuleConfig>;
  * Este tipo vive en feature-modules porque el componente es una funcionalidad
  * transversal: se usa tanto como sección del home (vía SectionRenderer)
  * como bloque reutilizable dentro de páginas (catalog, about, faq, promotions).
- *
- * `section-modules.ts` lo re-exporta para mantener compatibilidad
- * con `SectionModuleEntry { id: 'whatsapp_cta', props: WhatsappCtaSectionProps }`.
  */
 export interface WhatsappCtaSectionProps {
-  title: string;
+  title?: string;
   subtitle?: string;
   buttonLabel?: string;
   /** Número de WhatsApp del negocio en formato E.164. Si se omite, el componente no se renderiza. */

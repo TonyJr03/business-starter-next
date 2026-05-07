@@ -16,7 +16,7 @@
  * ════════════════════════════════════════════════════════════════════════════
  */
 
-import type { BusinessGlobalConfig, BusinessBranding, FeatureModulesConfig, SectionModuleEntry, PageModulesConfig } from '@/types';
+import type { BusinessGlobalConfig, PageModulesConfig, SectionModulesConfig, FeatureModulesConfig, BusinessBranding } from '@/types';
 
 // ─── Page modules ────────────────────────────────────────────────────────────
 
@@ -98,89 +98,54 @@ const pageModules: PageModulesConfig = {
 };
 
 // ─── Section modules ────────────────────────────────────────────────────────
-// Props visuales genéricas. El tenant personaliza los textos desde el admin.
+// Props visuales genéricas. El tenant personaliza enabled/order desde el admin.
 
-const sectionModules: SectionModuleEntry[] = [
-  {
-    id: 'hero',
+const sectionModules: SectionModulesConfig = {
+  highlights: {
     enabled: true,
     order: 1,
-    props: {
-      tagline: '',
-      title: '',
-      subtitle: '',
-      primaryCta: { label: 'Ver catálogo', href: '/catalog' },
-      secondaryCta: { label: 'Contáctanos', href: '/contact' },
-      bg: 'secondary',
-      size: 'lg',
-    },
+    dependsOn: 'about',
+    title: '¿Por qué elegirnos?',
+    columns: 3,
+    bg: 'surface',
+    size: 'md',
   },
-  {
-    id: 'highlights',
-    enabled: false,
+  promotions: {
+    enabled: true,
     order: 2,
-    props: {
-      title: '¿Por qué elegirnos?',
-      subtitle: '',
-      columns: 3,
-      bg: 'surface',
-      size: 'md',
-    },
+    dependsOn: 'promotions',
+    title: 'Ofertas especiales',
+    bg: 'default',
+    size: 'md',
   },
-  {
-    id: 'promotions',
-    enabled: false,
+  hours: {
+    enabled: true,
     order: 3,
-    props: {
-      title: 'Ofertas especiales',
-      bg: 'default',
-      size: 'md',
-    },
+    dependsOn: 'business.hours',
+    title: 'Horarios',
+    bg: 'default',
+    size: 'md',
   },
-  {
-    id: 'testimonials',
-    enabled: false,
+  whatsapp_cta: {
+    enabled: true,
     order: 4,
-    props: {
-      title: 'Lo que dicen nuestros clientes',
-      bg: 'surface',
-      size: 'md',
-    },
+    dependsOn: 'business.whatsapp',
+    title: '¿Listo para ordenar?',
+    subtitle: 'Escríbenos directamente por WhatsApp y te atendemos al momento.',
+    buttonLabel: 'Escribir ahora',
+    message: 'Hola, me gustaría hacer una consulta.',
+    bg: 'secondary',
+    size: 'md',
   },
-  {
-    id: 'hours',
+  location: {
     enabled: true,
     order: 5,
-    props: {
-      title: 'Horarios',
-      bg: 'default',
-      size: 'md',
-    },
+    dependsOn: 'business.location',
+    title: 'Dónde encontrarnos',
+    bg: 'surface',
+    size: 'md',
   },
-  {
-    id: 'whatsapp_cta',
-    enabled: true,
-    order: 6,
-    props: {
-      title: '¿Listo para ordenar?',
-      subtitle: 'Escríbenos directamente por WhatsApp y te atendemos al momento.',
-      buttonLabel: 'Escribir ahora',
-      message: 'Hola, me gustaría hacer una consulta.',
-      bg: 'secondary',
-      size: 'md',
-    },
-  },
-  {
-    id: 'location',
-    enabled: false,
-    order: 7,
-    props: {
-      title: 'Dónde encontrarnos',
-      bg: 'surface',
-      size: 'md',
-    },
-  },
-];
+};
 
 // ── Feature modules ───────────────────────────────────────────────────────────
 

@@ -2,14 +2,17 @@
  * OpeningHoursSection — Server Component
  *
  * Tabla de horarios de atención del negocio.
+ * Nombre alineado al id de config ('hours').
  *
- * Los horarios se pasan como prop — el renderer los inyecta desde globalConfig.hours.
+ * Los horarios se pasan como prop — el renderer los inyecta desde
+ * business.hours (campo JSONB de la tabla businesses).
+ * No requiere fetch adicional: los datos vienen con el propio business.
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { HoursSectionProps, DayHours } from '@/types'
+import type { SectionModuleConfig, DayHours } from '@/types'
 
-interface OpeningHoursSectionRenderProps extends HoursSectionProps {
+interface OpeningHoursSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'bg' | 'size'> {
   hours: DayHours[]
 }
 
