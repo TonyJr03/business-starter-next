@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getFaqItems } from '@/services'
-import { resolvePageModule } from '@/lib/modules/resolver'
+import { resolvePageModule, resolveSectionModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { FaqSection } from '@/components/sections/FaqSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
@@ -37,6 +37,7 @@ export default async function FaqPage({ params }: Props) {
   if (!business) notFound()
   const faqModule = resolvePageModule(business, 'faq')
   if (!faqModule.enabled) notFound()
+  const whatsappCta = resolveSectionModule(business, 'whatsapp_cta')
 
   // — datos
   const items = await getFaqItems(business.id)
@@ -74,15 +75,12 @@ export default async function FaqPage({ params }: Props) {
       )}
 
       {/* ── CTA WhatsApp ── */}
-      {business.contact?.whatsapp && faqModule.cta && (
+      {whatsappCta.enabled && business.contact?.whatsapp && (
         <CtaWhatsappSection
-          title={faqModule.cta.title}
-          subtitle={faqModule.cta.subtitle}
-          message={faqModule.cta.message}
-          buttonLabel={faqModule.cta.buttonLabel}
+          {...whatsappCta}
+          title="¿Tienes más preguntas?"
+          message="Hola, tengo una consulta que no encontré en las preguntas frecuentes."
           phoneNumber={business.contact.whatsapp}
-          bg="surface"
-          size="md"
         />
       )}
     </>

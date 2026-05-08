@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getGalleryAlbums, getGalleryPhotos, getPhotosByAlbum } from '@/services'
-import { resolvePageModule } from '@/lib/modules/resolver'
+import { resolvePageModule, resolveSectionModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { GalleryGrid } from '@/components/sections/GalleryGrid'
@@ -41,6 +41,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
   if (!business) notFound()
   const galleryModule = resolvePageModule(business, 'gallery')
   if (!galleryModule.enabled) notFound()
+  const whatsappCta = resolveSectionModule(business, 'whatsapp_cta')
 
   // — datos
   const albums = await getGalleryAlbums(business.id)
@@ -51,7 +52,6 @@ export default async function GalleryPage({ params, searchParams }: Props) {
     : await getGalleryPhotos(business.id)
 
   const basePath = `/negocios/${slug}/gallery`
-  const ctaConfig = galleryModule.cta
 
   return (
     <>
@@ -102,14 +102,12 @@ export default async function GalleryPage({ params, searchParams }: Props) {
       )}
 
       {/* ── CTA WhatsApp ── */}
-      {ctaConfig && (
+      {whatsappCta.enabled && (
         <CtaWhatsappSection
-          title={ctaConfig.title}
-          subtitle={ctaConfig.subtitle}
-          buttonLabel={ctaConfig.buttonLabel}
-          message={ctaConfig.message}
+          {...whatsappCta}
+          title="¿Te gustó lo que viste?"
+          message="Hola, vi la galería y me gustaría obtener más información."
           phoneNumber={business.contact?.whatsapp}
-          bg="surface"
         />
       )}
     </>

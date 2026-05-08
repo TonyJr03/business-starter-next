@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getCatalogBySlug, getCategoriesByCatalog, getProducts } from '@/services'
-import { resolvePageModule } from '@/lib/modules/resolver'
+import { resolvePageModule, resolveSectionModule } from '@/lib/modules/resolver'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { CategoryNav } from '@/components/sections/CategoryNav'
@@ -40,6 +40,7 @@ export default async function CatalogPage({ params }: Props) {
   if (!business) notFound()
   const catalogModule = resolvePageModule(business, 'catalog')
   if (!catalogModule.enabled) notFound()
+  const whatsappCta = resolveSectionModule(business, 'whatsapp_cta')
 
   // — datos
   const catalog = await getCatalogBySlug(business.id, catalogSlug)
@@ -154,15 +155,12 @@ export default async function CatalogPage({ params }: Props) {
       ))}
 
       {/* ── CTA WhatsApp ── */}
-      {business?.contact?.whatsapp && catalogModule.cta && (
+      {whatsappCta.enabled && business?.contact?.whatsapp && (
         <CtaWhatsappSection
-          title={catalogModule.cta.title}
-          subtitle={catalogModule.cta.subtitle}
-          buttonLabel={catalogModule.cta.buttonLabel}
-          message={catalogModule.cta.message}
+          {...whatsappCta}
+          title="¿Listo para hacer tu pedido?"
+          message="Hola, me gustaría hacer un pedido del catálogo."
           phoneNumber={business.contact.whatsapp}
-          bg="secondary"
-          size="md"
         />
       )}
     </>

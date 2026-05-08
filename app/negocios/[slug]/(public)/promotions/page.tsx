@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getPromotions, getPromotionStatus } from '@/services'
-import { resolvePageModule } from '@/lib/modules/resolver'
+import { resolvePageModule, resolveSectionModule } from '@/lib/modules/resolver'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { PromotionCard } from '@/components/sections/PromotionCard'
@@ -58,6 +58,7 @@ export default async function PromotionsPage({ params }: Props) {
   if (!business) notFound()
   const promoModule = resolvePageModule(business, 'promotions')
   if (!promoModule.enabled) notFound()
+  const whatsappCta = resolveSectionModule(business, 'whatsapp_cta')
 
   // — datos
   const allPromos = await getPromotions(business.id)
@@ -117,15 +118,12 @@ export default async function PromotionsPage({ params }: Props) {
       )}
 
       {/* ── CTA WhatsApp ── */}
-      {business.contact?.whatsapp && promoModule.cta && (
+      {whatsappCta.enabled && business.contact?.whatsapp && (
         <CtaWhatsappSection
-          title={promoModule.cta.title}
-          subtitle={promoModule.cta.subtitle}
-          buttonLabel={promoModule.cta.buttonLabel}
-          message={promoModule.cta.message}
+          {...whatsappCta}
+          title="¿Te interesa alguna de estas ofertas?"
+          message="Hola, vi sus promociones y me gustaría aprovechar una."
           phoneNumber={business.contact.whatsapp}
-          bg="secondary"
-          size="md"
         />
       )}
     </>

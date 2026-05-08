@@ -2,7 +2,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getAboutContent } from '@/services'
-import { resolvePageModule } from '@/lib/modules/resolver'
+import { resolvePageModule, resolveSectionModule } from '@/lib/modules/resolver'
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { FeatureIcon } from '@/components/ui/FeatureIcon'
@@ -40,6 +40,7 @@ export default async function AboutPage({ params }: Props) {
   if (!business) notFound()
   const aboutModule = resolvePageModule(business, 'about')
   if (!aboutModule.enabled) notFound()
+  const whatsappCta = resolveSectionModule(business, 'whatsapp_cta')
 
   // — datos
   const aboutContent = await getAboutContent(business.id)
@@ -267,15 +268,12 @@ export default async function AboutPage({ params }: Props) {
       )}
 
       {/* ── CTA WhatsApp ── */}
-      {business.contact?.whatsapp && aboutModule.cta && (
+      {whatsappCta.enabled && business.contact?.whatsapp && (
         <CtaWhatsappSection
-          title={aboutModule.cta.title}
-          subtitle={aboutModule.cta.subtitle}
-          buttonLabel={aboutModule.cta.buttonLabel}
-          message={aboutModule.cta.message}
+          {...whatsappCta}
+          title="¿Hablamos?"
+          message="Hola, me gustaría obtener más información sobre el negocio."
           phoneNumber={business.contact.whatsapp}
-          bg="secondary"
-          size="md"
         />
       )}
     </>

@@ -28,12 +28,6 @@ const pageModules: PageModulesConfig = {
     title:        'Nuestro Catálogo',
     subtitle:     'Todo lo que tenemos para ofrecerte hoy.',
     featuredTitle: 'Destacados',
-    cta: {
-      title:       '¿Ves algo que te gusta?',
-      subtitle:    'Escríbenos por WhatsApp y te atendemos de inmediato.',
-      buttonLabel: 'Hacer un pedido',
-      message:     'Hola, quisiera hacer un pedido.',
-    },
   },
   promotions: {
     enabled:      true,
@@ -41,12 +35,6 @@ const pageModules: PageModulesConfig = {
     navLabel:     'Promociones',
     title:        'Ofertas y Promociones',
     emptyMessage: 'Pronto tendremos novedades. ¡Vuelve a visitarnos!',
-    cta: {
-      title:       '¿Tienes alguna consulta?',
-      subtitle:    'Escríbenos por WhatsApp y te informamos sobre cualquier oferta.',
-      buttonLabel: 'Consultar por WhatsApp',
-      message:     'Hola, quisiera información sobre sus ofertas.',
-    },
   },
   about: {
     enabled:  true,
@@ -54,12 +42,6 @@ const pageModules: PageModulesConfig = {
     navLabel: 'Nosotros',
     title:    'Sobre Nosotros',
     subtitle: 'Conoce la historia y los valores detrás de nuestro negocio.',
-    cta: {
-      title:       '¿Tienes alguna pregunta?',
-      subtitle:    'Escríbenos directamente y te respondemos de inmediato.',
-      buttonLabel: 'Escribir por WhatsApp',
-      message:     'Hola, quisiera más información sobre el negocio.',
-    },
   },
   contact: {
     enabled:  true,
@@ -74,12 +56,6 @@ const pageModules: PageModulesConfig = {
     navLabel: 'FAQ',
     title:    'Preguntas Frecuentes',
     subtitle: 'Todo lo que necesitas saber antes de visitarnos.',
-    cta: {
-      title:       '¿No encontraste lo que buscabas?',
-      subtitle:    'Escríbenos directamente y te respondemos enseguida.',
-      buttonLabel: 'Preguntar por WhatsApp',
-      message:     'Hola, tengo una pregunta que no encontré en el FAQ.',
-    },
   },
   gallery: {
     enabled:  true,
