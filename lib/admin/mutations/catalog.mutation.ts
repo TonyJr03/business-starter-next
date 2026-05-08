@@ -9,6 +9,7 @@ import type { Catalog, Category, Product } from '@/types'
 export const catalogPageCreateSchema = z.object({
   name:        z.string().min(1, 'El nombre es obligatorio').max(200),
   description: z.string().max(500).optional(),
+  imageUrl:    z.string().max(1000).optional(),
   sortOrder:   z.coerce.number().int().min(0).default(0),
   isActive:    z.boolean().default(true),
 })
@@ -33,6 +34,7 @@ export type CategoryUpdateInput = z.infer<typeof categoryUpdateSchema>
 export const productCreateSchema = z.object({
   name:          z.string().min(1, 'El nombre es obligatorio').max(200),
   description:   z.string().max(1000).optional(),
+  imageUrl:      z.string().max(1000).optional(),
   categoryId:    z.string().uuid('Selecciona una categoría válida'),
   moneyAmount:   z.coerce.number().min(0, 'El precio no puede ser negativo'),
   moneyCurrency: z.string().length(3).default('CUP'),
@@ -60,6 +62,7 @@ export async function createCatalogPage(
       slug:        toSlug(input.name),
       name:        input.name,
       description: input.description ?? null,
+      image_url:   input.imageUrl    ?? null,
       sort_order:  input.sortOrder,
       is_active:   input.isActive,
     })
@@ -132,7 +135,7 @@ export async function createProduct(
       is_available:   input.isAvailable,
       is_featured:    input.isFeatured,
       badge:          input.badge ?? null,
-      image_url:      null,
+      image_url:      input.imageUrl ?? null,
       sort_order:     input.sortOrder,
     })
     .select()
@@ -158,6 +161,7 @@ export async function updateCatalogPage(
   const patch: Record<string, unknown> = {}
   if (input.name        !== undefined) patch.name        = input.name
   if (input.description !== undefined) patch.description = input.description
+  if (input.imageUrl    !== undefined) patch.image_url   = input.imageUrl ?? null
   if (input.sortOrder   !== undefined) patch.sort_order  = input.sortOrder
   if (input.isActive    !== undefined) patch.is_active   = input.isActive
 
@@ -235,6 +239,7 @@ export async function updateProduct(
   if (input.isAvailable   !== undefined) patch.is_available = input.isAvailable
   if (input.isFeatured    !== undefined) patch.is_featured    = input.isFeatured
   if (input.badge         !== undefined) patch.badge          = input.badge ?? null
+  if (input.imageUrl      !== undefined) patch.image_url      = input.imageUrl ?? null
   if (input.sortOrder     !== undefined) patch.sort_order     = input.sortOrder
 
   const { data, error } = await ctx.supabase

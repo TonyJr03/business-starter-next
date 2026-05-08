@@ -18,6 +18,7 @@ function extractRaw(formData: FormData) {
   return {
     title:           String(formData.get('title')           ?? ''),
     description:     String(formData.get('description')     ?? '') || undefined,
+    imageUrl:        String(formData.get('imageUrl')        ?? '') || undefined,
     status:          String(formData.get('status')          ?? 'active'),
     discountLabel:   String(formData.get('discountLabel')   ?? '') || undefined,
     startsAt:        String(formData.get('startsAt')        ?? '') || undefined,

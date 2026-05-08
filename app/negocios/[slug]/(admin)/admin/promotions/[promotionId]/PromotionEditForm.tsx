@@ -58,6 +58,15 @@ export function PromotionEditForm({ slug, promotion }: Props) {
           </div>
 
           <div className="space-y-1.5">
+            <label htmlFor="imageUrl" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              URL de imagen <span className="text-zinc-400 font-normal">(opcional)</span>
+            </label>
+            <input type="url" id="imageUrl" name="imageUrl" maxLength={1000}
+              defaultValue={promotion.imageUrl ?? ''} placeholder="https://..."
+              className={fieldInputCls()} />
+          </div>
+
+          <div className="space-y-1.5">
             <label htmlFor="status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Estado
             </label>

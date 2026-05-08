@@ -45,6 +45,14 @@ export function CatalogPageNewForm({ slug }: Props) {
         </div>
 
         <div className="space-y-1.5">
+          <label htmlFor="imageUrl" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            URL de imagen <span className="text-zinc-400 font-normal">(opcional)</span>
+          </label>
+          <input type="url" id="imageUrl" name="imageUrl" maxLength={1000}
+            placeholder="https://..." className={fieldInputCls()} />
+        </div>
+
+        <div className="space-y-1.5">
           <label htmlFor="sortOrder" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Orden</label>
           <input type="number" id="sortOrder" name="sortOrder" defaultValue={0} min={0}
             className="w-28 rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-colors" />

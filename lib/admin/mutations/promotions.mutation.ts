@@ -8,6 +8,7 @@ import type { Promotion } from '@/types'
 const promotionBaseSchema = z.object({
   title:         z.string().min(1, 'El título es obligatorio').max(200),
   description:   z.string().max(1000).optional(),
+  imageUrl:      z.string().max(1000).optional(),
   status:        z.enum(['upcoming', 'active', 'expired', 'paused']).default('active'),
   discountLabel: z.string().max(50).optional(),
   startsAt:      z.string().optional(),
@@ -62,7 +63,7 @@ export async function createPromotion(
       description:    input.description ?? null,
       status:         input.status,
       discount_label: input.discountLabel ?? null,
-      image_url:      null,
+      image_url:      input.imageUrl ?? null,
       starts_at:      input.startsAt ?? null,
       ends_at:        input.endsAt ?? null,
       rules:          buildRules(input),
@@ -88,6 +89,7 @@ export async function updatePromotion(
   const patch: Record<string, unknown> = {}
   if (input.title         !== undefined) patch.title          = input.title
   if (input.description   !== undefined) patch.description    = input.description
+  if (input.imageUrl      !== undefined) patch.image_url      = input.imageUrl ?? null
   if (input.status        !== undefined) patch.status         = input.status
   if (input.discountLabel !== undefined) patch.discount_label = input.discountLabel ?? null
   if (input.startsAt      !== undefined) patch.starts_at      = input.startsAt ?? null

@@ -18,6 +18,7 @@ function extractRaw(formData: FormData, categoryId: string) {
   return {
     name:          String(formData.get('name')          ?? ''),
     description:   String(formData.get('description')   ?? '') || undefined,
+    imageUrl:      String(formData.get('imageUrl')      ?? '') || undefined,
     categoryId,
     moneyAmount:   String(formData.get('moneyAmount')   ?? '0'),
     moneyCurrency: String(formData.get('moneyCurrency') ?? 'CUP'),
