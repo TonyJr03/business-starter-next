@@ -126,8 +126,8 @@ const sectionModules: SectionModulesConfig = {
 // ── Feature modules ───────────────────────────────────────────────────────────
 
 const featureModules: FeatureModulesConfig = {
-  cart:             { enabled: false },
-  whatsappOrdering: { enabled: false },
+  cart:             { enabled: true },
+  whatsappOrdering: { enabled: true },
 };
 
 // ── Branding ──────────────────────────────────────────────────────────────────

@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { resolveBusinessBySlug, getCatalogBySlug, getCategoriesByCatalog, getProducts } from '@/services'
-import { resolvePageModule, resolveSectionModule } from '@/lib/modules/resolver'
+import { resolvePageModule, resolveSectionModule, resolveFeatureModule } from '@/lib/modules/resolver'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 import { Section } from '@/components/ui/Section'
 import { CategoryNav } from '@/components/sections/CategoryNav'
 import { ProductCard } from '@/components/sections/ProductCard'
+import { AddToCartButton } from '@/components/cart/AddToCartButton'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -41,6 +42,8 @@ export default async function CatalogPage({ params }: Props) {
   const catalogModule = resolvePageModule(business, 'catalog')
   if (!catalogModule.enabled) notFound()
   const whatsappCta = resolveSectionModule(business, 'whatsapp_cta')
+  const cartFeature = resolveFeatureModule(business, 'cart')
+  const whatsappOrdering = resolveFeatureModule(business, 'whatsappOrdering')
 
   // — datos
   const catalog = await getCatalogBySlug(business.id, catalogSlug)
@@ -61,6 +64,7 @@ export default async function CatalogPage({ params }: Props) {
   }))
 
   function productOrderUrl(productName: string): string | undefined {
+    if (!whatsappOrdering.enabled) return undefined
     if (!business?.contact?.whatsapp) return undefined
     return getWhatsAppUrl(`Hola ${business.name}, quisiera pedir: ${productName}.`, business.contact.whatsapp)
   }
@@ -101,7 +105,8 @@ export default async function CatalogPage({ params }: Props) {
               <li key={product.id}>
                 <ProductCard
                   product={product}
-                  orderHref={productOrderUrl(product.name)}
+                  orderHref={cartFeature.enabled ? undefined : productOrderUrl(product.name)}
+                  actionSlot={cartFeature.enabled ? <AddToCartButton product={product} /> : undefined}
                   priority={i === 0}
                 />
               </li>
@@ -145,7 +150,8 @@ export default async function CatalogPage({ params }: Props) {
                 <li key={product.id}>
                   <ProductCard
                     product={product}
-                    orderHref={productOrderUrl(product.name)}
+                    orderHref={cartFeature.enabled ? undefined : productOrderUrl(product.name)}
+                    actionSlot={cartFeature.enabled ? <AddToCartButton product={product} /> : undefined}
                   />
                 </li>
               ))}

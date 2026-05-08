@@ -37,7 +37,7 @@ import { businessGlobalConfig } from '@/config/business-config';
 import type { BusinessModulesConfig } from '@/types';
 import type { PageModuleId, PageModuleConfig } from '@/types';
 import type { SectionModuleId, SectionModuleConfig } from '@/types';
-import type { FeatureModuleId } from '@/types';
+import type { FeatureModuleId, FeatureModuleConfig } from '@/types';
 import type { BusinessSettings, BusinessModulesOverride } from '@/types';
 
 // ─── Tipo de sección resuelta ─────────────────────────────────────────────────
@@ -127,6 +127,45 @@ export function resolveModules(
 }
 
 /**
+ * Devuelve la configuración de un módulo de página específico.
+ *
+ * @param business - Settings del tenant resuelto (reservado para S4).
+ * @param pageId   - Identificador del módulo de página.
+ */
+export function resolvePageModule(
+  business: BusinessSettings | null,
+  pageId: PageModuleId,
+): PageModuleConfig {
+  return resolveModules(business).pages[pageId];
+}
+
+/**
+ * Devuelve la configuración de un section-module específico.
+ *
+ * @param business - Settings del tenant resuelto.
+ * @param id       - Identificador del section-module.
+ */
+export function resolveSectionModule(
+  business: BusinessSettings | null,
+  id: SectionModuleId,
+): SectionModuleConfig {
+  return resolveModules(business).sections[id];
+}
+
+/**
+ * Devuelve la configuración de un feature module específico.
+ *
+ * @param business - Settings del tenant resuelto.
+ * @param id       - Identificador del feature module.
+ */
+export function resolveFeatureModule(
+  business: BusinessSettings | null,
+  id: FeatureModuleId,
+): FeatureModuleConfig {
+  return resolveModules(business).features[id];
+}
+
+/**
  * Devuelve las secciones de la home activas, ordenadas por `order` ascendente.
  *
  * Filtra por `enabled` y verifica la dependencia declarada en `dependsOn`:
@@ -157,38 +196,4 @@ export function resolveActiveSections(
     })
     .map(([id, config]) => ({ id, ...config }))
     .sort((a, b) => a.order - b.order);
-}
-
-/**
- * Devuelve la configuración de un section-module específico.
- *
- * @param business - Settings del tenant resuelto.
- * @param id       - Identificador del section-module.
- */
-export function resolveSectionModule(
-  business: BusinessSettings | null,
-  id: SectionModuleId,
-): SectionModuleConfig {
-  return resolveModules(business).sections[id];
-}
-
-/**
- * Devuelve la configuración de un módulo de página específico.
- *
- * Uso actual (S3): equivalente a `businessGlobalConfig.modules.pages[pageId]`.
- * En S4: retornará la config mergeada con overrides de DB.
- *
- * Patrón recomendado en pages para S4:
- *
- *   const pageModule = resolvePageModule(business, 'catalog')
- *   if (!pageModule.enabled) notFound()
- *
- * @param business - Settings del tenant resuelto (reservado para S4).
- * @param pageId   - Identificador del módulo de página.
- */
-export function resolvePageModule(
-  business: BusinessSettings | null,
-  pageId: PageModuleId,
-): PageModuleConfig {
-  return resolveModules(business).pages[pageId];
 }

@@ -21,3 +21,4 @@ export * from './page-modules/faq';
 export * from './page-modules/gallery';
 export * from './page-modules/blog';
 export * from './page-modules/promotion';
+export * from './feature-modules/cart';

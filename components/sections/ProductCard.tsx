@@ -9,6 +9,7 @@
  * y el slot de acción quedará vacío.
  */
 import Image from 'next/image'
+import type { ReactNode } from 'react'
 import type { Product } from '@/types'
 
 const badgeLabels: Record<string, string> = {
@@ -20,11 +21,16 @@ const badgeLabels: Record<string, string> = {
 interface ProductCardProps {
   product: Product
   orderHref?: string
+  /**
+   * Slot de acción personalizado (ej. <AddToCartButton>).
+   * Toma precedencia sobre `orderHref` si ambos se pasan.
+   */
+  actionSlot?: ReactNode
   /** Pasar true al primer producto visible para evitar LCP lazy-load. */
   priority?: boolean
 }
 
-export function ProductCard({ product, orderHref, priority = false }: ProductCardProps) {
+export function ProductCard({ product, orderHref, actionSlot, priority = false }: ProductCardProps) {
   const { name, description, money, badge, isAvailable, isFeatured, imageUrl } = product
 
   // Ausencia de isAvailable → disponible (regla de dominio)
@@ -135,7 +141,7 @@ export function ProductCard({ product, orderHref, priority = false }: ProductCar
             {displayPrice}
           </span>
 
-          {orderHref && available && (
+          {actionSlot ?? (orderHref && available && (
             <a
               href={orderHref}
               target="_blank"
@@ -156,7 +162,7 @@ export function ProductCard({ product, orderHref, priority = false }: ProductCar
               </svg>
               Pedir
             </a>
-          )}
+          ))}
         </div>
 
       </div>
