@@ -32,7 +32,7 @@ import { OpeningHoursSection } from './OpeningHoursSection'
 import { LocationSection } from './LocationSection'
 import { CtaWhatsappSection } from '@/components/features/CtaWhatsappSection'
 
-import type { ResolvedSectionEntry } from '@/lib/modules/resolver'
+import type { ResolvedSectionEntry } from '@/types'
 import type { ContentFeature, DayHours, BusinessLocation, Promotion } from '@/types'
 
 interface SectionRendererProps {

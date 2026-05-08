@@ -78,3 +78,12 @@ export interface SectionModuleConfig {
  * Type-safe: añadir un ID a la unión fuerza una entrada correspondiente aquí.
  */
 export type SectionModulesConfig = Record<SectionModuleId, SectionModuleConfig>;
+
+// ─── Tipo de sección resuelta ─────────────────────────────────────────────────
+
+/**
+ * Entrada de sección con el id reinyectado — resultado de resolveActiveSections.
+ * Permite al SectionRenderer discriminar por `id` sin necesidad de un discriminated union.
+ * El id se reinyecta porque SectionModulesConfig es un Record: al iterar se pierde la key.
+ */
+export type ResolvedSectionEntry = { id: SectionModuleId } & SectionModuleConfig;

@@ -36,17 +36,10 @@
 import { businessGlobalConfig } from '@/config/business-config';
 import type { BusinessModulesConfig } from '@/types';
 import type { PageModuleId, PageModuleConfig } from '@/types';
-import type { SectionModuleId, SectionModuleConfig } from '@/types';
+import type { SectionModuleId, SectionModuleConfig, ResolvedSectionEntry } from '@/types';
 import type { FeatureModuleId, FeatureModuleConfig } from '@/types';
 import type { BusinessSettings, BusinessModulesOverride } from '@/types';
 
-// ─── Tipo de sección resuelta ─────────────────────────────────────────────────
-
-/**
- * Entrada de sección con el id reinyectado — resultado de resolveActiveSections.
- * Permite al SectionRenderer discriminar por `id` sin necesidad del discriminated union.
- */
-export type ResolvedSectionEntry = { id: SectionModuleId } & SectionModuleConfig;
 
 // ─── Merge interno ────────────────────────────────────────────────────────────
 
@@ -90,19 +83,18 @@ function mergeModules(
     sections = mergedSections;
   }
 
-  // ── features: merge shallow por clave ───────────────────────────────────────
+  // ── features: merge shallow por clave ───────────────────────────────────────────
   let features = base.features;
   if (override.features) {
-    features = { ...base.features };
-    for (const [key, val] of Object.entries(override.features)) {
-      if (val !== undefined) {
-        const featureKey = key as keyof typeof base.features;
-        features = {
-          ...features,
-          [featureKey]: { ...base.features[featureKey], ...val },
-        };
+    const featureOverrides = override.features;
+    const mergedFeatures = { ...base.features };
+    for (const key of Object.keys(featureOverrides) as FeatureModuleId[]) {
+      const featureOverride = featureOverrides[key];
+      if (featureOverride !== undefined) {
+        mergedFeatures[key] = { ...base.features[key], ...featureOverride };
       }
     }
+    features = mergedFeatures;
   }
 
   return { pages, sections, features };
