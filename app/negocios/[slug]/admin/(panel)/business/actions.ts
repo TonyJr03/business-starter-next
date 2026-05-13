@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import {
   getAdminContext,
-  businessUpdateSchema,
+  businessAdminSchema,
   updateBusiness,
 } from '@/lib/admin'
 import type { AdminActionState } from '@/lib/admin'
@@ -51,7 +51,7 @@ export async function updateBusinessAction(
 
   const raw = extractRaw(formData)
 
-  const parsed = businessUpdateSchema.safeParse(raw)
+  const parsed = businessAdminSchema.safeParse(raw)
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors
     const firstField = Object.keys(errors)[0] as string

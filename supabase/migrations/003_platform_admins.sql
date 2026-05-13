@@ -24,3 +24,20 @@ CREATE POLICY "platform_admins_select_self"
 
 -- Insert/Delete: solo service_role (migraciones, CLI, funciones Edge)
 -- No hay política para authenticated → los usuarios no pueden auto-asignarse el rol
+
+-- =============================================================================
+-- Política INSERT en businesses para superadmins
+-- Los platform_admins pueden crear nuevos negocios desde el panel superadmin.
+-- UPDATE: cualquier authenticated user puede actualizar (se tightens en Step 10).
+-- =============================================================================
+
+CREATE POLICY "businesses_insert_superadmin"
+  ON businesses FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM platform_admins
+      WHERE user_id = auth.uid()
+    )
+  );
+

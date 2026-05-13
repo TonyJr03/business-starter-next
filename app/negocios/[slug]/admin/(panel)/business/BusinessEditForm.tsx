@@ -36,17 +36,6 @@ export function BusinessEditForm({ slug, businessSettings }: Props) {
         </h2>
 
         <div className="space-y-1.5">
-          <label htmlFor="name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Nombre del negocio <span className="text-red-500">*</span>
-          </label>
-          <input type="text" id="name" name="name" required maxLength={200}
-            defaultValue={businessSettings.name} autoFocus className={fieldInputCls(!!fieldError('name'))} />
-          {fieldError('name') && (
-            <p className="text-xs text-red-600 dark:text-red-400" role="alert">{fieldError('name')}</p>
-          )}
-        </div>
-
-        <div className="space-y-1.5">
           <label htmlFor="shortDescription" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Descripción corta <span className="text-zinc-400 font-normal">(opcional)</span>
           </label>

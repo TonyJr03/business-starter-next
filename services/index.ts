@@ -6,7 +6,7 @@ export { getPosts, getPostBySlug } from './blog.service';
 export { getAboutContent } from './about.service';
 export { getFaqItems } from './faq.service';
 export { getGalleryAlbums, getGalleryPhotos, getPhotosByAlbum } from './gallery.service';
-export { resolveBusinessBySlug, listActiveBusinesses } from './business.service';
+export { resolveBusinessBySlug, listActiveBusinesses, getAllBusinesses, getBusinessById } from './business.service';
 
 // ─── Helpers de dominio ───────────────────────────────────────────────────────
 
