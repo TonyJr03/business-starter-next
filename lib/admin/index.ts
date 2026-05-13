@@ -104,3 +104,6 @@ export {
 } from './mutations/business.mutation'
 export type { BusinessAdminInput, BusinessSuperAdminInput } from './mutations/business.mutation'
 
+// ─── Módulos del negocio ──────────────────────────────────────────────────────
+export { updateModules } from './mutations/modules.mutation'
+
