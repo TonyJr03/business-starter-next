@@ -262,8 +262,7 @@ export default async function AboutPage({ params }: Props) {
         <OpeningHoursSection
           hours={business.hours!}
           title="Horarios de atención"
-          bg="surface"
-          size="md"
+          layout={{ bg: 'surface', size: 'md' }}
         />
       )}
 
@@ -271,8 +270,8 @@ export default async function AboutPage({ params }: Props) {
       {whatsappCta.enabled && business.contact?.whatsapp && (
         <CtaWhatsappSection
           {...whatsappCta}
-          title="¿Hablamos?"
-          message="Hola, me gustaría obtener más información sobre el negocio."
+          contextTitle="¿Hablamos?"
+          contextMessage="Hola, me gustaría obtener más información sobre el negocio."
           phoneNumber={business.contact.whatsapp}
         />
       )}

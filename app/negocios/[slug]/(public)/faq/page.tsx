@@ -63,12 +63,12 @@ export default async function FaqPage({ params }: Props) {
 
       {/* ── Preguntas ── */}
       {items.length > 0 ? (
-        <FaqSection items={items} bg="default" size="md" />
+        <FaqSection items={items} layout={{ bg: 'default', size: 'md' }} />
       ) : (
         <Section bg="default" size="md">
           <div className="max-w-2xl mx-auto text-center py-8">
             <p className="text-base" style={{ color: 'var(--color-text-muted)' }}>
-              {faqModule.emptyMessage ?? 'Pronto publicaremos las preguntas frecuentes. Mientras tanto, escríbenos directamente.'}
+              {faqModule.emptyMessage}
             </p>
           </div>
         </Section>
@@ -78,8 +78,8 @@ export default async function FaqPage({ params }: Props) {
       {whatsappCta.enabled && business.contact?.whatsapp && (
         <CtaWhatsappSection
           {...whatsappCta}
-          title="¿Tienes más preguntas?"
-          message="Hola, tengo una consulta que no encontré en las preguntas frecuentes."
+          contextTitle="¿Tienes más preguntas?"
+          contextMessage="Hola, tengo una consulta que no encontré en las preguntas frecuentes."
           phoneNumber={business.contact.whatsapp}
         />
       )}

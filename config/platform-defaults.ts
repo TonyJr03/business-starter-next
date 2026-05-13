@@ -28,6 +28,7 @@ const pageModules: PageModulesConfig = {
     title:        'Nuestro Catálogo',
     subtitle:     'Todo lo que tenemos para ofrecerte hoy.',
     featuredTitle: 'Destacados',
+    emptyMessage: 'Sin productos en esta categoría por el momento.',
   },
   promotions: {
     enabled:      true,
@@ -56,6 +57,7 @@ const pageModules: PageModulesConfig = {
     navLabel: 'FAQ',
     title:    'Preguntas Frecuentes',
     subtitle: 'Todo lo que necesitas saber antes de visitarnos.',
+    emptyMessage: 'Pronto publicaremos las preguntas frecuentes. Mientras tanto, escríbenos directamente.',
   },
   gallery: {
     enabled:  true,
@@ -63,6 +65,7 @@ const pageModules: PageModulesConfig = {
     navLabel: 'Galería',
     title:    'Galería',
     subtitle: 'Conoce nuestro espacio y nuestras creaciones.',
+    emptyMessage: 'Pronto subiremos imágenes de nuestro espacio y productos.',
   },
   blog: {
     enabled:  true,
@@ -70,6 +73,7 @@ const pageModules: PageModulesConfig = {
     navLabel: 'Blog',
     title:    'Blog',
     subtitle: 'Noticias, recetas y artículos de interés.',
+    emptyMessage: 'No hay artículos publicados todavía.',
   },
 };
 

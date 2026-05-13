@@ -17,6 +17,15 @@ import type { SectionModuleConfig, SectionLayout } from '@/types'
 interface CtaWhatsappSectionRenderProps
   extends Pick<SectionModuleConfig, 'title' | 'subtitle' | 'buttonLabel' | 'message'> {
   layout?: SectionLayout
+  /**
+   * Título específico del contexto de la página — sobreescribe `title` del config.
+   * Permite que cada página tenga un mensaje contextual manteniendo el config como fallback.
+   */
+  contextTitle?: string;
+  /**
+   * Mensaje WhatsApp específico del contexto — sobreescribe `message` del config.
+   */
+  contextMessage?: string;
   /** Número de WhatsApp en formato E.164. Si se omite, el componente no renderiza. */
   phoneNumber?: string;
 }
@@ -28,9 +37,13 @@ export function CtaWhatsappSection({
   message,
   phoneNumber,
   layout,
+  contextTitle,
+  contextMessage,
 }: CtaWhatsappSectionRenderProps) {
   const { bg = 'secondary', size = 'md' } = layout ?? {}
-  const url = getWhatsAppUrl(message, phoneNumber)
+  const effectiveTitle   = contextTitle   ?? title
+  const effectiveMessage = contextMessage ?? message
+  const url = getWhatsAppUrl(effectiveMessage, phoneNumber)
   if (!url) return null
 
   return (
@@ -60,7 +73,7 @@ export function CtaWhatsappSection({
             className="text-2xl sm:text-3xl font-bold"
             style={{ color: 'var(--color-primary)' }}
           >
-            {title}
+            {effectiveTitle}
           </h2>
           {subtitle && (
             <p

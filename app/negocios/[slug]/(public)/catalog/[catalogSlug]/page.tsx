@@ -142,7 +142,7 @@ export default async function CatalogPage({ params }: Props) {
 
           {products.length === 0 ? (
             <p className="text-sm py-4" style={{ color: 'var(--color-text-subtle)' }}>
-              Sin productos en esta categoría por el momento.
+              {catalogModule.emptyMessage}
             </p>
           ) : (
             <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6">
@@ -164,8 +164,8 @@ export default async function CatalogPage({ params }: Props) {
       {whatsappCta.enabled && business?.contact?.whatsapp && (
         <CtaWhatsappSection
           {...whatsappCta}
-          title="¿Listo para hacer tu pedido?"
-          message="Hola, me gustaría hacer un pedido del catálogo."
+          contextTitle="¿Listo para hacer tu pedido?"
+          contextMessage="Hola, me gustaría hacer un pedido del catálogo."
           phoneNumber={business.contact.whatsapp}
         />
       )}

@@ -81,7 +81,7 @@ export default async function BlogPage({ params }: Props) {
               className="text-center py-12"
               style={{ color: 'var(--color-text-muted)' }}
             >
-              No hay artículos publicados todavía.
+              {blogModule.emptyMessage}
             </p>
           )}
         </div>

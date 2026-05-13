@@ -97,7 +97,7 @@ export default async function PromotionsPage({ params }: Props) {
       {enriched.length === 0 ? (
         <Section bg="default" size="lg">
           <p className="text-center" style={{ color: 'var(--color-text-subtle)' }}>
-            No hay promociones registradas en este momento.
+            {promoModule.emptyMessage}
           </p>
         </Section>
       ) : (
@@ -121,8 +121,8 @@ export default async function PromotionsPage({ params }: Props) {
       {whatsappCta.enabled && business.contact?.whatsapp && (
         <CtaWhatsappSection
           {...whatsappCta}
-          title="¿Te interesa alguna de estas ofertas?"
-          message="Hola, vi sus promociones y me gustaría aprovechar una."
+          contextTitle="¿Te interesa alguna de estas ofertas?"
+          contextMessage="Hola, vi sus promociones y me gustaría aprovechar una."
           phoneNumber={business.contact.whatsapp}
         />
       )}

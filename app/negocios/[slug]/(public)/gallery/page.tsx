@@ -85,7 +85,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
 
       {/* ── 3. Grid de fotos / 4. Estado vacío ──────────────────────── */}
       {photos.length > 0 ? (
-        <GalleryGrid items={photos} columns={3} bg="default" size="md" />
+        <GalleryGrid items={photos} layout={{ bg: 'default', size: 'md', columns: 3 }} />
       ) : (
         <Section bg="default" size="lg">
           <div className="max-w-md mx-auto text-center py-8">
@@ -105,8 +105,8 @@ export default async function GalleryPage({ params, searchParams }: Props) {
       {whatsappCta.enabled && (
         <CtaWhatsappSection
           {...whatsappCta}
-          title="¿Te gustó lo que viste?"
-          message="Hola, vi la galería y me gustaría obtener más información."
+          contextTitle="¿Te gustó lo que viste?"
+          contextMessage="Hola, vi la galería y me gustaría obtener más información."
           phoneNumber={business.contact?.whatsapp}
         />
       )}
