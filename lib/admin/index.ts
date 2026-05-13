@@ -107,3 +107,6 @@ export type { BusinessAdminInput, BusinessSuperAdminInput } from './mutations/bu
 // ─── Módulos del negocio ──────────────────────────────────────────────────────
 export { updateModules } from './mutations/modules.mutation'
 
+// ─── Branding del negocio ─────────────────────────────────────────────────────
+export { updateBranding } from './mutations/branding.mutation'
+
