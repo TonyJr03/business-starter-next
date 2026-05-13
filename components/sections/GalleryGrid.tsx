@@ -7,15 +7,13 @@
 import Image from 'next/image'
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { GalleryPhoto } from '@/types'
+import type { SectionLayout, GalleryPhoto } from '@/types'
 
 interface GalleryGridProps {
   items: GalleryPhoto[]
   title?: string
   subtitle?: string
-  columns?: 2 | 3 | 4
-  bg?: 'default' | 'surface' | 'secondary'
-  size?: 'sm' | 'md' | 'lg'
+  layout?: SectionLayout
 }
 
 const gridColsMap: Record<number, string> = {
@@ -34,10 +32,9 @@ export function GalleryGrid({
   items,
   title,
   subtitle,
-  columns = 3,
-  bg = 'default',
-  size = 'md',
+  layout,
 }: GalleryGridProps) {
+  const { bg = 'default', size = 'md', columns = 3 } = layout ?? {}
   return (
     <Section bg={bg} size={size}>
 

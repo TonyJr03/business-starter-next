@@ -33,12 +33,12 @@
  *   const catalog  = resolvePageModule(business, 'catalog')
  */
 
-import { businessGlobalConfig } from '@/config/business-config';
-import type { BusinessModulesConfig } from '@/types';
+import { platformDefaults } from '@/config/platform-defaults';
+import type { ModulesConfig } from '@/types';
 import type { PageModuleId, PageModuleConfig } from '@/types';
-import type { SectionModuleId, SectionModuleConfig, ResolvedSectionEntry } from '@/types';
+import type { SectionModuleId, SectionModuleEntry, SectionModuleConfig, ResolvedSectionEntry } from '@/types';
 import type { FeatureModuleId, FeatureModuleConfig } from '@/types';
-import type { BusinessSettings, BusinessModulesOverride } from '@/types';
+import type { BusinessSettings, ModulesOverride } from '@/types';
 
 
 // ─── Merge interno ────────────────────────────────────────────────────────────
@@ -48,9 +48,9 @@ import type { BusinessSettings, BusinessModulesOverride } from '@/types';
  * Cada capa es opcional; si no hay override, retorna la base sin copia.
  */
 function mergeModules(
-  base: BusinessModulesConfig,
-  override: BusinessModulesOverride,
-): BusinessModulesConfig {
+  base: ModulesConfig,
+  override: ModulesOverride,
+): ModulesConfig {
   // ── pages: merge shallow por clave ──────────────────────────────────────────
   let pages = base.pages;
   if (override.pages) {
@@ -65,7 +65,7 @@ function mergeModules(
     pages = mergedPages;
   }
 
-  // ── sections: merge enabled + order por clave ─────────────────────────────
+  // ── sections: merge shallow + deep-merge de layout por clave ─────────────────────────────
   let sections = base.sections;
   if (override.sections) {
     const sectionOverrides = override.sections;
@@ -75,8 +75,13 @@ function mergeModules(
       if (sectionOverride !== undefined) {
         mergedSections[key] = {
           ...base.sections[key],
-          ...(sectionOverride.enabled !== undefined && { enabled: sectionOverride.enabled }),
-          ...(sectionOverride.order   !== undefined && { order:   sectionOverride.order }),
+          ...sectionOverride,
+          // dependsOn siempre de la base — el tenant no puede sobreescribirlo
+          dependsOn: base.sections[key].dependsOn,
+          // deep-merge de layout para no perder los campos no sobreescritos
+          layout: sectionOverride.layout
+            ? { ...base.sections[key].layout, ...sectionOverride.layout }
+            : base.sections[key].layout,
         };
       }
     }
@@ -106,16 +111,16 @@ function mergeModules(
  * Devuelve la configuración modular efectiva del tenant.
  *
  * Si el negocio no tiene overrides persistidos (`business.modules` es undefined),
- * retorna `businessGlobalConfig.modules` directamente sin ninguna copia.
+ * retorna `platformDefaults.modules` directamente sin ninguna copia.
  *
  * @param business - Settings del tenant resuelto. null → fallback global completo.
  */
 export function resolveModules(
   business: BusinessSettings | null,
-): BusinessModulesConfig {
+): ModulesConfig {
   const override = business?.modules;
-  if (!override) return businessGlobalConfig.modules;
-  return mergeModules(businessGlobalConfig.modules, override);
+  if (!override) return platformDefaults.modules;
+  return mergeModules(platformDefaults.modules, override);
 }
 
 /**
@@ -174,7 +179,7 @@ export function resolveActiveSections(
 ): ResolvedSectionEntry[] {
   const modules = resolveModules(business);
 
-  return (Object.entries(modules.sections) as [SectionModuleId, SectionModuleConfig][])
+  return (Object.entries(modules.sections) as [SectionModuleId, SectionModuleEntry][])
     .filter(([, config]) => {
       if (!config.enabled) return false;
       if (!config.dependsOn) return true;

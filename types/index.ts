@@ -1,5 +1,5 @@
 // ─── Configuración global del negocio ────────────────────────────────────────
-export * from './business-config';
+export * from './platform-defaults';
 
 // ─── Taxonomía modular — pages · sections · features ─────────────────────────
 export * from './page-modules';

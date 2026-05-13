@@ -12,10 +12,11 @@ import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { PromotionCard } from './PromotionCard'
 import { getPromotionStatus } from '@/services'
-import type { SectionModuleConfig } from '@/types'
+import type { SectionModuleConfig, SectionLayout } from '@/types'
 import type { Promotion } from '@/types'
 
-interface PromotionsSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'subtitle' | 'bg' | 'size'> {
+interface PromotionsSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'subtitle'> {
+  layout?: SectionLayout
   promotions: Promotion[]
 }
 
@@ -23,9 +24,9 @@ export function PromotionsSection({
   title,
   subtitle,
   promotions,
-  bg = 'default',
-  size = 'md',
+  layout,
 }: PromotionsSectionRenderProps) {
+  const { bg = 'default', size = 'md' } = layout ?? {}
   if (!promotions.length) return null
 
   return (

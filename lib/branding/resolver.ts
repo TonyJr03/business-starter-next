@@ -11,15 +11,15 @@
  * hardcoded: businessGlobalConfig.branding siempre está presente.
  */
 
-import { businessGlobalConfig } from '@/config/business-config'
-import type { BusinessBranding, BusinessSettings } from '@/types'
+import { platformDefaults } from '@/config/platform-defaults'
+import type { BrandingConfig, BrandingOverride, BrandingColors, BrandingTypography, BusinessSettings } from '@/types'
 
 // ─── Merge interno ────────────────────────────────────────────────────────────
 
 function mergeBranding(
-  base: BusinessBranding,
-  override?: Partial<BusinessBranding>,
-): { colors: BusinessBranding['colors']; typography: BusinessBranding['typography'] } {
+  base: BrandingConfig,
+  override?: BrandingOverride,
+): { colors: BrandingColors; typography: BrandingTypography } {
   return {
     colors:     { ...base.colors,     ...override?.colors     },
     typography: { ...base.typography, ...override?.typography },
@@ -40,20 +40,20 @@ export function resolveBrandVars(
   business: BusinessSettings | null,
 ): React.CSSProperties {
   const { colors, typography } = mergeBranding(
-    businessGlobalConfig.branding,
+    platformDefaults.branding,
     business?.branding,
   )
 
   return {
-    '--color-primary':           colors?.primary,
-    '--color-secondary':         colors?.secondary,
-    '--color-accent':            colors?.accent,
-    '--color-footer-bg':         colors?.footerBg,
-    '--color-footer-text':       colors?.footerText,
-    '--color-footer-text-muted': colors?.footerTextMuted,
-    '--color-footer-border':     colors?.footerBorder,
-    '--font-heading':            typography?.heading,
-    '--font-body':               typography?.body,
+    '--color-primary':           colors.primary,
+    '--color-secondary':         colors.secondary,
+    '--color-accent':            colors.accent,
+    '--color-footer-bg':         colors.footerBg,
+    '--color-footer-text':       colors.footerText,
+    '--color-footer-text-muted': colors.footerTextMuted,
+    '--color-footer-border':     colors.footerBorder,
+    '--font-heading':            typography.heading,
+    '--font-body':               typography.body,
   } as React.CSSProperties
 }
 
@@ -70,7 +70,6 @@ export function resolveThemeKey(
 ): string {
   return (
     business?.branding?.themeKey ??
-    businessGlobalConfig.branding.themeKey ??
-    'default'
+    platformDefaults.branding.themeKey
   )
 }

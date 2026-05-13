@@ -1,6 +1,6 @@
-import type { BusinessBranding, BusinessSocial, DayHours, BusinessContact, BusinessLocation, BusinessLogo } from '@/types';
+import type { BrandingOverride, BusinessSocial, DayHours, BusinessContact, BusinessLocation, BusinessLogo } from '@/types';
 import type { BusinessSettings, BusinessDirectoryItem } from '@/types';
-import type { BusinessModulesOverride } from '@/types';
+import type { ModulesOverride } from '@/types';
 
 // ─── Settings row ─────────────────────────────────────────────────────────────
 
@@ -15,8 +15,8 @@ export interface BusinessSettingsRow {
   social: BusinessSocial | null;
   hours: DayHours[] | null;
   is_active: boolean;
-  branding: BusinessBranding | null;
-  modules: BusinessModulesOverride | null;
+  branding: BrandingOverride | null;
+  modules: ModulesOverride | null;
   created_at: string;
   updated_at: string;
 }

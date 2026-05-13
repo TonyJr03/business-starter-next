@@ -10,18 +10,19 @@
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { SectionModuleConfig, BusinessLocation } from '@/types'
+import type { SectionModuleConfig, SectionLayout, BusinessLocation } from '@/types'
 
-interface LocationSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'bg' | 'size'> {
+interface LocationSectionRenderProps extends Pick<SectionModuleConfig, 'title'> {
+  layout?: SectionLayout
   location: BusinessLocation
 }
 
 export function LocationSection({
   title,
   location,
-  bg = 'surface',
-  size = 'md',
+  layout,
 }: LocationSectionRenderProps) {
+  const { bg = 'surface', size = 'md' } = layout ?? {}
   const displayAddress = location.address
     ?? [location.street, location.municipality, location.city].filter(Boolean).join(', ')
 

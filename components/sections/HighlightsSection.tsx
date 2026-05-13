@@ -9,9 +9,10 @@
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { FeatureIcon } from '@/components/ui/FeatureIcon'
-import type { SectionModuleConfig, ContentFeature } from '@/types'
+import type { SectionModuleConfig, SectionLayout, ContentFeature } from '@/types'
 
-interface HighlightsSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'subtitle' | 'columns' | 'bg' | 'size'> {
+interface HighlightsSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'subtitle'> {
+  layout?: SectionLayout
   items: ContentFeature[]
 }
 
@@ -25,10 +26,9 @@ export function HighlightsSection({
   title,
   subtitle,
   items,
-  columns = 3,
-  bg = 'surface',
-  size = 'md',
+  layout,
 }: HighlightsSectionRenderProps) {
+  const { bg = 'surface', size = 'md', columns = 3 } = layout ?? {}
   return (
     <Section bg={bg} size={size}>
 

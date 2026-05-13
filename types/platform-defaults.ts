@@ -1,11 +1,11 @@
 import type { SectionModulesConfig } from './section-modules';
 import type { PageModulesConfig } from './page-modules';
 import type { FeatureModulesConfig } from './feature-modules';
-import type { BusinessBranding } from './branding';
+import type { BrandingConfig } from './branding';
 
 // ─── Modules ──────────────────────────────────────────────────────────────────
 
-export interface BusinessModulesConfig {
+export interface ModulesConfig {
   /** Módulos de página activables — cada uno con su ruta, label y config. */
   pages: PageModulesConfig;
   /** Secciones de la página de inicio, indexadas por SectionModuleId. Orden, visibilidad y props visuales de cada sección. */
@@ -17,19 +17,19 @@ export interface BusinessModulesConfig {
 // ─── Root Contract ─────────────────────────────────────────────────────────────
 
 /**
- * Configuración global de plataforma — defaults que aplican a todos los tenants.
+ * Defaults de plataforma — valores base que aplican a todos los tenants.
  *
  * | bloque    | responsabilidad                                               |
  * |-----------|---------------------------------------------------------------|
- * | `branding`| colores y tipografías por defecto (fallback si el tenant      |
- * |           | no tiene branding propio en DB)                               |
+ * | `branding`| branding completo (base para el merge con `BrandingOverride`  |
+ * |           | del tenant almacenado en DB)                                  |
  * | `modules` | módulos de página + secciones home + feature modules.         |
- * |           | El tenant puede sobreescribir partes vía `BusinessModulesOverride` |
+ *           | El tenant sobreescribe partes vía `ModulesOverride`   |
  *
  * Los datos operativos de cada negocio (identity, contact, location,
  * hours, social) viven en la tabla `businesses` de Supabase, no aquí.
  */
-export interface BusinessGlobalConfig {
-  branding: BusinessBranding;
-  modules: BusinessModulesConfig;
+export interface PlatformDefaults {
+  branding: BrandingConfig;
+  modules: ModulesConfig;
 }

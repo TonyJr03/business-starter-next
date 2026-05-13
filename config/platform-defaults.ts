@@ -16,7 +16,7 @@
  * ════════════════════════════════════════════════════════════════════════════
  */
 
-import type { BusinessGlobalConfig, PageModulesConfig, SectionModulesConfig, FeatureModulesConfig, BusinessBranding } from '@/types';
+import type { PlatformDefaults, PageModulesConfig, SectionModulesConfig, FeatureModulesConfig, BrandingConfig } from '@/types';
 
 // ─── Page modules ────────────────────────────────────────────────────────────
 
@@ -74,7 +74,8 @@ const pageModules: PageModulesConfig = {
 };
 
 // ─── Section modules ────────────────────────────────────────────────────────
-// Props visuales genéricas. El tenant personaliza enabled/order desde el admin.
+// Props de contenido y layout base. El tenant puede sobreescribir cualquier campo
+// de SectionModuleConfig (incluido layout) vía ModulesOverride en su fila de Supabase.
 
 const sectionModules: SectionModulesConfig = {
   highlights: {
@@ -82,25 +83,21 @@ const sectionModules: SectionModulesConfig = {
     order: 1,
     dependsOn: 'about',
     title: '¿Por qué elegirnos?',
-    columns: 3,
-    bg: 'surface',
-    size: 'md',
+    layout: { bg: 'surface', size: 'md', columns: 3 },
   },
   promotions: {
     enabled: true,
     order: 2,
     dependsOn: 'promotions',
     title: 'Ofertas especiales',
-    bg: 'default',
-    size: 'md',
+    layout: { bg: 'default', size: 'md' },
   },
   hours: {
     enabled: true,
     order: 3,
     dependsOn: 'business.hours',
     title: 'Horarios',
-    bg: 'default',
-    size: 'md',
+    layout: { bg: 'default', size: 'md' },
   },
   whatsapp_cta: {
     enabled: true,
@@ -110,16 +107,14 @@ const sectionModules: SectionModulesConfig = {
     subtitle: 'Escríbenos directamente por WhatsApp y te atendemos al momento.',
     buttonLabel: 'Escribir ahora',
     message: 'Hola, me gustaría hacer una consulta.',
-    bg: 'secondary',
-    size: 'md',
+    layout: { bg: 'secondary', size: 'md' },
   },
   location: {
     enabled: true,
     order: 5,
     dependsOn: 'business.location',
     title: 'Dónde encontrarnos',
-    bg: 'surface',
-    size: 'md',
+    layout: { bg: 'surface', size: 'md' },
   },
 };
 
@@ -131,9 +126,11 @@ const featureModules: FeatureModulesConfig = {
 };
 
 // ── Branding ──────────────────────────────────────────────────────────────────
-// Fallback visual para tenants sin branding configurado en DB.
+// Base visual de la plataforma. Todos los campos requeridos.
+// El tenant sobreescribe parcialmente vía BrandingOverride (columna branding en la BD).
 
-const branding: BusinessBranding = {
+const branding: BrandingConfig = {
+  themeKey: 'default',
   colors: {
     primary:         '#6F4E37',
     secondary:       '#F5E6D3',
@@ -151,7 +148,7 @@ const branding: BusinessBranding = {
 
 // ─── Config global ────────────────────────────────────────────────────────────
 
-export const businessGlobalConfig: BusinessGlobalConfig = {
+export const platformDefaults: PlatformDefaults = {
   branding,
   modules: {
     pages:    pageModules,

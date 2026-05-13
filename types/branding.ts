@@ -1,39 +1,53 @@
 // ─── Colors ───────────────────────────────────────────────────────────────────
 
+/**
+ * Paleta completa de colores de marca.
+ * Todos los campos requeridos — forman la base de `PlatformBranding`.
+ * El tenant sobreescribe solo los campos que necesita vía `BrandingOverride`.
+ */
 export interface BrandingColors {
   /** Color principal de marca: botones, headings, íconos activos. */
-  primary?: string;
+  primary: string;
   /** Color de fondo de secciones destacadas (hero, encabezados). */
-  secondary?: string;
+  secondary: string;
   /** Color de acento: badges, CTAs secundarios, highlights. */
-  accent?: string;
+  accent: string;
   /** Fondo del footer. */
-  footerBg?: string;
+  footerBg: string;
   /** Texto en negrita del footer. */
-  footerText?: string;
+  footerText: string;
   /** Texto secundario e iconos del footer. */
-  footerTextMuted?: string;
+  footerTextMuted: string;
   /** Línea separadora inferior del footer. */
-  footerBorder?: string;
+  footerBorder: string;
 }
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
+/**
+ * Tipografías del sistema.
+ * Todos los campos requeridos — forman la base de `PlatformBranding`.
+ */
 export interface BrandingTypography {
   /** Fuente para títulos y encabezados. */
-  heading?: string;
+  heading: string;
   /** Fuente para cuerpo de texto. */
-  body?: string;
+  body: string;
 }
 
-// ─── Branding ─────────────────────────────────────────────────────────────────
+// ─── BrandingConfig ──────────────────────────────────────────────────────────
 
-export interface BusinessBranding {
+/**
+ * Branding completo de la plataforma — todos los campos requeridos.
+ * Definido en `config/platform-defaults.ts`. Sirve como base para el merge
+ * con el override parcial del tenant (`BrandingOverride` en `types/overrides.ts`).
+ */
+export interface BrandingConfig {
   /**
    * Clave de tema predefinido. Permite seleccionar un preset visual completo.
-   * Si no se especifica, se aplica el tema 'default'.
+   * Valor de plataforma por defecto: 'default'.
    */
-  themeKey?: string;
-  colors?: BrandingColors;
-  typography?: BrandingTypography;
+  themeKey: string;
+  colors: BrandingColors;
+  typography: BrandingTypography;
 }

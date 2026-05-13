@@ -1,5 +1,4 @@
-import type { BusinessBranding } from './branding';
-import type { BusinessModulesOverride } from './overrides';
+import type { BrandingOverride, ModulesOverride } from './overrides';
 
 // ─── Logo ─────────────────────────────────────────────────────────────────────
 
@@ -86,8 +85,8 @@ export interface BusinessSettings {
   social?: BusinessSocial;
   hours?: DayHours[];
   isActive: boolean;
-  branding?: BusinessBranding;
-  modules?: BusinessModulesOverride;
+  branding?: BrandingOverride;
+  modules?: ModulesOverride;
 }
 
 // ─── Directorio público de negocios ──────────────────────────────────────────

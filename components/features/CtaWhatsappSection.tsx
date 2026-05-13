@@ -12,10 +12,11 @@
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { getWhatsAppUrl } from '@/lib/whatsapp'
-import type { SectionModuleConfig } from '@/types'
+import type { SectionModuleConfig, SectionLayout } from '@/types'
 
 interface CtaWhatsappSectionRenderProps
-  extends Pick<SectionModuleConfig, 'title' | 'subtitle' | 'buttonLabel' | 'message' | 'bg' | 'size'> {
+  extends Pick<SectionModuleConfig, 'title' | 'subtitle' | 'buttonLabel' | 'message'> {
+  layout?: SectionLayout
   /** Número de WhatsApp en formato E.164. Si se omite, el componente no renderiza. */
   phoneNumber?: string;
 }
@@ -26,9 +27,9 @@ export function CtaWhatsappSection({
   buttonLabel = 'Escribir por WhatsApp',
   message,
   phoneNumber,
-  bg = 'secondary',
-  size = 'md',
+  layout,
 }: CtaWhatsappSectionRenderProps) {
+  const { bg = 'secondary', size = 'md' } = layout ?? {}
   const url = getWhatsAppUrl(message, phoneNumber)
   if (!url) return null
 

@@ -7,23 +7,22 @@
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { FaqItem } from '@/types'
+import type { SectionLayout, FaqItem } from '@/types'
 
 interface FaqSectionProps {
   items: FaqItem[]
   title?: string
   subtitle?: string
-  bg?: 'default' | 'surface' | 'secondary'
-  size?: 'sm' | 'md' | 'lg'
+  layout?: SectionLayout
 }
 
 export function FaqSection({
   items,
   title,
   subtitle,
-  bg = 'default',
-  size = 'md',
+  layout,
 }: FaqSectionProps) {
+  const { bg = 'default', size = 'md' } = layout ?? {}
   // Agrupar por categoría; sin categoría → clave ''
   const grouped = items.reduce<Record<string, FaqItem[]>>((acc, item) => {
     const key = item.category ?? ''

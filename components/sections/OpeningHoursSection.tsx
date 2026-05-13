@@ -10,18 +10,19 @@
  */
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { SectionModuleConfig, DayHours } from '@/types'
+import type { SectionModuleConfig, SectionLayout, DayHours } from '@/types'
 
-interface OpeningHoursSectionRenderProps extends Pick<SectionModuleConfig, 'title' | 'bg' | 'size'> {
+interface OpeningHoursSectionRenderProps extends Pick<SectionModuleConfig, 'title'> {
+  layout?: SectionLayout
   hours: DayHours[]
 }
 
 export function OpeningHoursSection({
   hours,
   title = 'Horarios',
-  bg = 'default',
-  size = 'md',
+  layout,
 }: OpeningHoursSectionRenderProps) {
+  const { bg = 'default', size = 'md' } = layout ?? {}
   return (
     <Section bg={bg} size={size}>
       <div className="max-w-lg mx-auto">
