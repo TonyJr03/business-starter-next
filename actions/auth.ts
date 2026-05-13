@@ -3,12 +3,11 @@
 /**
  * Acciones de autenticación
  *
- * Server Actions para login y logout del admin de cada tenant.
+ * Server Actions para login y logout de ambas áreas de administración.
  * Usan Supabase Auth real — no placeholders.
  *
- * Uso:
- *   login  → loginAction.bind(null, slug) para pasarle el slug al useActionState
- *   logout → logoutAction.bind(null, slug) como action de un <form>
+ * Admin:      loginAction / logoutAction       (tenant, requieren slug)
+ * Superadmin: superadminLoginAction / superadminLogoutAction  (plataforma)
  */
 
 import { createSupabaseServerClient } from '@/lib/supabase/server'
@@ -18,18 +17,16 @@ import { redirect } from 'next/navigation'
 
 export type LoginState = { error: string } | null
 
-// ─── Login ────────────────────────────────────────────────────────────────────
+// ─── Admin ────────────────────────────────────────────────────────────────────
 
 /**
  * Autentica al admin del tenant con email y password.
  *
  * Diseñada para usarse con `useActionState`:
  *   const bound = loginAction.bind(null, slug)
- *   const [state, formAction, isPending] = useActionState(bound, null)
+ *   const [state, formAction] = useActionState(bound, null)
  *
- * - Devuelve `{ error }` si las credenciales son inválidas o los campos vacíos.
- * - Redirige a /negocios/[slug]/admin si la autenticación es exitosa.
- *   (redirect() lanza internamente — la función no retorna en ese caso)
+ * Redirige a /negocios/[slug]/admin si la autenticación es exitosa.
  */
 export async function loginAction(
   slug: string,
@@ -50,22 +47,58 @@ export async function loginAction(
     return { error: 'Credenciales inválidas. Verificá tu email y contraseña.' }
   }
 
-  // Fuera del bloque de error — redirect() no debe estar en try/catch
   redirect(`/negocios/${slug}/admin`)
 }
 
-// ─── Logout ───────────────────────────────────────────────────────────────────
-
 /**
- * Invalida la sesión del usuario actual y redirige al login del tenant.
+ * Invalida la sesión y redirige al login del tenant.
  *
- * Diseñada para usarse como action de un <form>:
- *   <form action={logoutAction.bind(null, slug)}>
- *     <button type="submit">Cerrar sesión</button>
- *   </form>
+ * Uso: <form action={logoutAction.bind(null, slug)}>
  */
 export async function logoutAction(slug: string) {
   const supabase = await createSupabaseServerClient()
   await supabase.auth.signOut()
-  redirect(`/negocios/${slug}/login`)
+  redirect(`/negocios/${slug}/admin/login`)
+}
+
+// ─── Superadmin ───────────────────────────────────────────────────────────────
+
+/**
+ * Autentica al superadmin de plataforma.
+ *
+ * Diseñada para usarse con `useActionState` sin slug bound:
+ *   const [state, formAction] = useActionState(superadminLoginAction, null)
+ *
+ * Redirige a /superadmin si la autenticación es exitosa.
+ */
+export async function superadminLoginAction(
+  _prevState: LoginState,
+  formData: FormData
+): Promise<LoginState> {
+  const email = String(formData.get('email') ?? '').trim()
+  const password = String(formData.get('password') ?? '')
+
+  if (!email || !password) {
+    return { error: 'Email y contraseña son obligatorios.' }
+  }
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+  if (error) {
+    return { error: 'Credenciales inválidas. Verificá tu email y contraseña.' }
+  }
+
+  redirect('/superadmin')
+}
+
+/**
+ * Invalida la sesión y redirige al login de plataforma.
+ *
+ * Uso: <form action={superadminLogoutAction}>
+ */
+export async function superadminLogoutAction() {
+  const supabase = await createSupabaseServerClient()
+  await supabase.auth.signOut()
+  redirect('/superadmin/login')
 }

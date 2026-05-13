@@ -7,7 +7,7 @@
  *
  * Responsabilidades:
  * 1. Verifica sesión con getUser() (verificación segura contra el servidor)
- *    → redirige a /negocios/[slug]/login si no hay usuario
+ *    → redirige a /negocios/[slug]/admin/login si no hay usuario
  * 2. Proporciona la estructura visual del área admin
  *
  * Capas de protección:
@@ -35,7 +35,7 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
   // Si no hay sesión válida, redirige al login del tenant.
   const user = await getUser()
   if (!user) {
-    redirect(`/negocios/${slug}/login`)
+    redirect(`/negocios/${slug}/admin/login`)
   }
 
   const business = await resolveBusinessBySlug(slug)

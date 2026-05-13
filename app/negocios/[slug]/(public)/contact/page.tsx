@@ -233,8 +233,7 @@ export default async function ContactPage({ params }: Props) {
         <OpeningHoursSection
           hours={business.hours!}
           title="Horarios de atención"
-          bg="default"
-          size="md"
+          layout={{ bg: 'default', size: 'md' }}
         />
       )}
     </>
