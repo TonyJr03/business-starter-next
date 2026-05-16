@@ -22,7 +22,7 @@ import type { PlatformDefaults, PageModulesConfig, SectionModulesConfig, Feature
 
 const pageModules: PageModulesConfig = {
   catalog: {
-    enabled:      true,
+    enabled:      false,
     path:         '/catalog',
     navLabel:     'Catálogo',
     title:        'Nuestro Catálogo',
@@ -31,28 +31,28 @@ const pageModules: PageModulesConfig = {
     emptyMessage: 'Sin productos en esta categoría por el momento.',
   },
   promotions: {
-    enabled:      true,
+    enabled:      false,
     path:         '/promotions',
     navLabel:     'Promociones',
     title:        'Ofertas y Promociones',
     emptyMessage: 'Pronto tendremos novedades. ¡Vuelve a visitarnos!',
   },
   about: {
-    enabled:  true,
+    enabled:  false,
     path:     '/about',
     navLabel: 'Nosotros',
     title:    'Sobre Nosotros',
     subtitle: 'Conoce la historia y los valores detrás de nuestro negocio.',
   },
   contact: {
-    enabled:  true,
+    enabled:  false,
     path:     '/contact',
     navLabel: 'Contacto',
     title:    'Contáctanos',
     subtitle: 'Estamos disponibles para atenderte. La forma más rápida es por WhatsApp.',
   },
   faq: {
-    enabled:  true,
+    enabled:  false,
     path:     '/faq',
     navLabel: 'FAQ',
     title:    'Preguntas Frecuentes',
@@ -60,7 +60,7 @@ const pageModules: PageModulesConfig = {
     emptyMessage: 'Pronto publicaremos las preguntas frecuentes. Mientras tanto, escríbenos directamente.',
   },
   gallery: {
-    enabled:  true,
+    enabled:  false,
     path:     '/gallery',
     navLabel: 'Galería',
     title:    'Galería',
@@ -68,7 +68,7 @@ const pageModules: PageModulesConfig = {
     emptyMessage: 'Pronto subiremos imágenes de nuestro espacio y productos.',
   },
   blog: {
-    enabled:  true,
+    enabled:  false,
     path:     '/blog',
     navLabel: 'Blog',
     title:    'Blog',
@@ -83,28 +83,28 @@ const pageModules: PageModulesConfig = {
 
 const sectionModules: SectionModulesConfig = {
   highlights: {
-    enabled: true,
+    enabled: false,
     order: 1,
     dependsOn: 'about',
     title: '¿Por qué elegirnos?',
     layout: { bg: 'surface', size: 'md', columns: 3 },
   },
   promotions: {
-    enabled: true,
+    enabled: false,
     order: 2,
     dependsOn: 'promotions',
     title: 'Ofertas especiales',
     layout: { bg: 'default', size: 'md' },
   },
   hours: {
-    enabled: true,
+    enabled: false,
     order: 3,
     dependsOn: 'business.hours',
     title: 'Horarios',
     layout: { bg: 'default', size: 'md' },
   },
   whatsapp_cta: {
-    enabled: true,
+    enabled: false,
     order: 4,
     dependsOn: 'business.whatsapp',
     title: '¿Listo para ordenar?',
@@ -114,7 +114,7 @@ const sectionModules: SectionModulesConfig = {
     layout: { bg: 'secondary', size: 'md' },
   },
   location: {
-    enabled: true,
+    enabled: false,
     order: 5,
     dependsOn: 'business.location',
     title: 'Dónde encontrarnos',
@@ -125,8 +125,8 @@ const sectionModules: SectionModulesConfig = {
 // ── Feature modules ───────────────────────────────────────────────────────────
 
 const featureModules: FeatureModulesConfig = {
-  cart:             { enabled: true },
-  whatsappOrdering: { enabled: true },
+  cart:             { enabled: false },
+  whatsappOrdering: { enabled: false },
 };
 
 // ── Branding ──────────────────────────────────────────────────────────────────

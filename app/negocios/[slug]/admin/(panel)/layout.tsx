@@ -19,6 +19,8 @@
 
 import { redirect, notFound, forbidden } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { resolveBusinessBySlug } from '@/services'
+import { resolveModules } from '@/lib/modules/resolver'
 import { logoutAction } from '@/actions/auth'
 import { AdminNav } from '@/components/admin/AdminNav'
 import type { ReactNode } from 'react'
@@ -41,6 +43,12 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
   }
   const { ctx } = ctxResult
 
+  const business = await resolveBusinessBySlug(slug)
+  const { pages } = resolveModules(business)
+  const enabledPages: Record<string, boolean> = Object.fromEntries(
+    Object.entries(pages).map(([k, v]) => [k, v.enabled])
+  )
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex">
       {/* Sidebar admin */}
@@ -50,6 +58,7 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
           businessName={ctx.businessName}
           userEmail={ctx.userEmail}
           logoutAction={logoutAction.bind(null, slug)}
+          enabledPages={enabledPages}
         />
       </aside>
 

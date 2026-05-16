@@ -23,6 +23,8 @@ interface CartShellProps {
   canOrder: boolean
   whatsapp?: string
   businessName: string
+  /** ID del negocio para aislar el carrito en localStorage. */
+  businessId: string
 }
 
 export function CartShell({
@@ -31,9 +33,10 @@ export function CartShell({
   canOrder,
   whatsapp,
   businessName,
+  businessId,
 }: CartShellProps) {
   return (
-    <CartProvider>
+    <CartProvider storageKey={businessId}>
       {children}
       {cartEnabled && (
         <>

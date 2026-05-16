@@ -8,50 +8,60 @@
 import Link from 'next/link'
 import { forbidden } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
+import { resolveBusinessBySlug } from '@/services'
+import { resolveModules } from '@/lib/modules/resolver'
+import type { PageModuleId } from '@/types'
 
 interface AdminDashboardProps {
   params: Promise<{ slug: string }>
 }
 
-const quickLinks = [
+const quickLinks: { id: string; moduleId: PageModuleId | null; title: string; description: string; path: string }[] = [
   {
     id: 'catalog',
+    moduleId: 'catalog',
     title: 'Catálogo',
     description: 'Gestiona catálogos, categorías y productos.',
     path: 'catalog',
   },
   {
     id: 'about',
+    moduleId: 'about',
     title: 'Nosotros',
     description: 'Historia, misión y diferenciadores del negocio.',
     path: 'about',
   },
   {
     id: 'faq',
+    moduleId: 'faq',
     title: 'FAQ',
     description: 'Preguntas frecuentes de los clientes.',
     path: 'faq',
   },
   {
     id: 'gallery',
+    moduleId: 'gallery',
     title: 'Galería',
     description: 'Álbumes y fotos del negocio.',
     path: 'gallery',
   },
   {
     id: 'blog',
+    moduleId: 'blog',
     title: 'Blog',
     description: 'Artículos y noticias.',
     path: 'blog',
   },
   {
     id: 'promotions',
+    moduleId: 'promotions',
     title: 'Promociones',
     description: 'Crea y administra promociones activas, próximas y pausadas.',
     path: 'promotions',
   },
   {
     id: 'business',
+    moduleId: null,
     title: 'Ajustes',
     description: 'Configura el nombre, contacto, ubicación y horarios.',
     path: 'business',
@@ -64,6 +74,13 @@ export default async function AdminDashboard({ params }: AdminDashboardProps) {
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) forbidden()
   const { ctx } = ctxResult
+
+  // React.cache() — sin query extra (TenantLayout ya la realizó en el mismo request)
+  const business = await resolveBusinessBySlug(slug)
+  const { pages } = resolveModules(business)
+  const visibleLinks = quickLinks.filter(
+    (link) => link.moduleId === null || pages[link.moduleId]?.enabled
+  )
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -84,7 +101,7 @@ export default async function AdminDashboard({ params }: AdminDashboardProps) {
           Secciones
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {quickLinks.map(link => (
+          {visibleLinks.map(link => (
             <Link
               key={link.id}
               href={`/negocios/${slug}/admin/${link.path}`}

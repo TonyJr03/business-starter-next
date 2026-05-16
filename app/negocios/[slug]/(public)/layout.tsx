@@ -39,6 +39,7 @@ export default async function PublicLayout({ params, children }: Props) {
         canOrder={whatsappOrdering.enabled}
         whatsapp={business.contact?.whatsapp}
         businessName={business.name}
+        businessId={business.id}
       >
         <main className="flex-1">
           {children}

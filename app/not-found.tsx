@@ -18,7 +18,7 @@ export default function NotFound() {
 
         <Link
           href="/"
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-block"
+          className="px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-opacity inline-block text-sm font-medium"
         >
           Volver a inicio
         </Link>

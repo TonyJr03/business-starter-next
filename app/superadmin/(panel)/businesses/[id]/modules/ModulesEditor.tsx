@@ -216,8 +216,8 @@ export function ModulesEditor({ businessId, resolved }: Props) {
                   </div>
                 )}
 
-                {/* emptyMessage — promotions, faq, gallery, blog */}
-                {(id === 'promotions' || id === 'faq' || id === 'gallery' || id === 'blog') && (
+                {/* emptyMessage — catalog, promotions, faq, gallery, blog */}
+                {(id === 'catalog' || id === 'promotions' || id === 'faq' || id === 'gallery' || id === 'blog') && (
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400 flex items-center">
                       Mensaje cuando no hay contenido

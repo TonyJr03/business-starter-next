@@ -117,13 +117,14 @@ export async function createBusiness(
       is_active:         input.isActive,
       contact:           contact,
       location:          location,
-      social:            Object.keys(social).length > 0 ? social : null,
+      social:            Object.keys(social).length > 0 ? social : {},
       ...(input.hours !== undefined && { hours: input.hours as unknown as DayHours[] }),
     })
     .select()
     .single()
 
   if (error) {
+    console.error('[createBusiness] Supabase error:', error)
     if (error.code === '23505') {
       return { ok: false, error: 'El slug ya está en uso. Elige otro.', field: 'slug' }
     }
@@ -151,7 +152,7 @@ export async function updateBusinessById(
       is_active:         input.isActive,
       contact:           contact,
       location:          location,
-      social:            Object.keys(social).length > 0 ? social : null,
+      social:            Object.keys(social).length > 0 ? social : {},
       ...(input.hours !== undefined && { hours: input.hours as unknown as DayHours[] }),
     })
     .eq('id', businessId)

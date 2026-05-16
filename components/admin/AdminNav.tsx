@@ -10,9 +10,11 @@ interface AdminNavProps {
   businessName: string
   userEmail: string | undefined
   logoutAction: () => Promise<void>
+  enabledPages: Record<string, boolean>
 }
 
-export function AdminNav({ slug, businessName, userEmail, logoutAction }: AdminNavProps) {
+export function AdminNav({ slug, businessName, userEmail, logoutAction, enabledPages }: AdminNavProps) {
+  const isEnabled = (id: string) => enabledPages[id] !== false
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
 
@@ -54,17 +56,17 @@ export function AdminNav({ slug, businessName, userEmail, logoutAction }: AdminN
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {navLink(`/negocios/${slug}/admin`, 'Dashboard', LayoutDashboard, true)}
 
-        {sectionLabel('Catálogo')}
-        {navLink(`/negocios/${slug}/admin/catalog`, 'Catálogo', BookOpen)}
+        {isEnabled('catalog') && sectionLabel('Catálogo')}
+        {isEnabled('catalog') && navLink(`/negocios/${slug}/admin/catalog`, 'Catálogo', BookOpen)}
 
-        {sectionLabel('Contenido')}
-        {navLink(`/negocios/${slug}/admin/about`, 'Nosotros', Info)}
-        {navLink(`/negocios/${slug}/admin/faq`, 'FAQ', HelpCircle)}
-        {navLink(`/negocios/${slug}/admin/gallery`, 'Galería', Images)}
-        {navLink(`/negocios/${slug}/admin/blog`, 'Blog', FileText)}
+        {(isEnabled('about') || isEnabled('faq') || isEnabled('gallery') || isEnabled('blog')) && sectionLabel('Contenido')}
+        {isEnabled('about') && navLink(`/negocios/${slug}/admin/about`, 'Nosotros', Info)}
+        {isEnabled('faq') && navLink(`/negocios/${slug}/admin/faq`, 'FAQ', HelpCircle)}
+        {isEnabled('gallery') && navLink(`/negocios/${slug}/admin/gallery`, 'Galería', Images)}
+        {isEnabled('blog') && navLink(`/negocios/${slug}/admin/blog`, 'Blog', FileText)}
 
-        {sectionLabel('Marketing')}
-        {navLink(`/negocios/${slug}/admin/promotions`, 'Promociones', Percent)}
+        {isEnabled('promotions') && sectionLabel('Marketing')}
+        {isEnabled('promotions') && navLink(`/negocios/${slug}/admin/promotions`, 'Promociones', Percent)}
 
         {sectionLabel('Configuración')}
         {navLink(`/negocios/${slug}/admin/business`, 'Ajustes', Settings)}
