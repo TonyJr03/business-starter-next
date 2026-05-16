@@ -6,18 +6,19 @@
  * - /superadmin/*
  *
  * Responsabilidades:
- * 1. Verifica sesión y rol superadmin con isSuperAdmin() (verificación segura)
+ * 1. Verifica sesión y rol con getSuperAdminContext() (una sola consulta a DB)
  *    → redirige a /superadmin/login si no hay sesión
- *    → devuelve 404 si la sesión existe pero no tiene rol superadmin
+ *    → notFound() si la sesión existe pero no tiene rol de plataforma
  * 2. Proporciona la estructura visual del área superadmin
  *
  * Capas de protección:
  * - proxy.ts: guard optimista (cookie) — primera línea rápida
  * - Este layout: guard seguro (network) — verifica rol antes del render
+ * - Páginas individuales: getSuperAdminContext() — tercera línea en cada página
  */
 
-import { redirect, notFound } from 'next/navigation'
-import { isAuthenticated, isSuperAdmin } from '@/lib/auth'
+import { redirect, forbidden } from 'next/navigation'
+import { getSuperAdminContext } from '@/lib/admin'
 import { superadminLogoutAction } from '@/actions/auth'
 import { SuperAdminNav } from '@/components/superadmin/SuperAdminNav'
 import type { ReactNode } from 'react'
@@ -27,14 +28,12 @@ interface SuperAdminLayoutProps {
 }
 
 export default async function SuperAdminLayout({ children }: SuperAdminLayoutProps) {
-  // Guard seguro: primero sesión, luego rol
-  if (!(await isAuthenticated())) {
-    redirect('/superadmin/login')
-  }
-
-  if (!(await isSuperAdmin())) {
-    // Sesión válida pero sin rol de plataforma → 404 (no revela la existencia del área)
-    notFound()
+  // Guard seguro: una sola consulta verifica sesión + rol juntos.
+  const ctxResult = await getSuperAdminContext()
+  if (!ctxResult.ok) {
+    if (ctxResult.error === 'No autenticado') redirect('/superadmin/login')
+    // Sesión válida pero sin rol de plataforma → 403 Acceso denegado
+    forbidden()
   }
 
   return (

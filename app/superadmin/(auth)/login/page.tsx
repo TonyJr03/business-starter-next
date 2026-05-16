@@ -6,12 +6,13 @@
  */
 
 import { redirect } from 'next/navigation'
-import { isAuthenticated } from '@/lib/auth'
+import { getSuperAdminContext } from '@/lib/admin'
 import { SuperAdminLoginForm } from './login-form'
 
 export default async function SuperAdminLoginPage() {
-  // Si ya tiene sesión, el layout del área protegida verificará el rol.
-  if (await isAuthenticated()) {
+  // Solo redirige si ya es superadmin confirmado — si tiene sesión pero no
+  // el rol, deja ver el form para que pueda usar otras credenciales.
+  if ((await getSuperAdminContext()).ok) {
     redirect('/superadmin')
   }
 

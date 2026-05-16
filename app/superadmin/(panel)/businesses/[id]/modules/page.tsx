@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, forbidden } from 'next/navigation'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
 import { getBusinessById } from '@/services'
-import { isSuperAdmin } from '@/lib/auth'
+import { getSuperAdminContext } from '@/lib/admin'
 import { resolveModules } from '@/lib/modules/resolver'
 import { ModulesEditor } from './ModulesEditor'
 
@@ -16,8 +16,8 @@ export default async function SuperAdminModulesPage({ params, searchParams }: Pr
   const { id } = await params
   const sp = await searchParams
 
-  const superAdmin = await isSuperAdmin()
-  if (!superAdmin) notFound()
+  const ctxResult = await getSuperAdminContext()
+  if (!ctxResult.ok) forbidden()
 
   const business = await getBusinessById(id)
   if (!business) notFound()

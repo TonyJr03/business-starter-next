@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, forbidden } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
 import { rowToGalleryPhoto } from '@/lib/persistence'
 import type { GalleryPhotoRow } from '@/lib/persistence'
@@ -13,7 +13,7 @@ export default async function EditPhotoPage({ params }: Props) {
   const { slug, albumId, photoId } = await params
 
   const ctxResult = await getAdminContext(slug)
-  if (!ctxResult.ok) notFound()
+  if (!ctxResult.ok) forbidden()
   const { ctx } = ctxResult
 
   const { data: row } = await ctx.supabase

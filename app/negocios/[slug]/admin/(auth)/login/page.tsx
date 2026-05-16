@@ -10,7 +10,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LoginForm } from './login-form'
-import { getUser } from '@/lib/auth'
+import { getAdminContext } from '@/lib/admin'
 import { resolveBusinessBySlug } from '@/services'
 
 interface LoginPageProps {
@@ -20,11 +20,14 @@ interface LoginPageProps {
 export default async function LoginPage({ params }: LoginPageProps) {
   const { slug } = await params
 
-  const user = await getUser()
-  if (user) {
+  // Solo redirige si ya está autenticado Y es admin de este negocio.
+  // Si tiene sesión pero no el rol, deja el form visible para otras credenciales.
+  const ctxResult = await getAdminContext(slug)
+  if (ctxResult.ok) {
     redirect(`/negocios/${slug}/admin`)
   }
 
+  // resolveBusinessBySlug usa React.cache() — sin query extra si getAdminContext ya la llamó.
   const business = await resolveBusinessBySlug(slug)
 
   return (

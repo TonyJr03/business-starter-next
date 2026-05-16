@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTransition } from 'react'
 import {
   LayoutDashboard,
   Building2,
@@ -15,6 +16,7 @@ interface SuperAdminNavProps {
 
 export function SuperAdminNav({ logoutAction }: SuperAdminNavProps) {
   const pathname = usePathname()
+  const [isPending, startTransition] = useTransition()
 
   const isActive = (href: string, exact = false) =>
     exact ? pathname === href : pathname.startsWith(href)
@@ -52,15 +54,15 @@ export function SuperAdminNav({ logoutAction }: SuperAdminNavProps) {
 
       {/* Logout */}
       <div className="border-t border-zinc-800 px-3 py-4">
-        <form action={logoutAction}>
-          <button
-            type="submit"
-            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 hover:text-red-400 transition-colors"
-          >
-            <LogOut className="w-4 h-4 shrink-0" aria-hidden />
-            Cerrar sesión
-          </button>
-        </form>
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={() => startTransition(() => { logoutAction() })}
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 hover:text-red-400 transition-colors disabled:opacity-50"
+        >
+          <LogOut className="w-4 h-4 shrink-0" aria-hidden />
+          {isPending ? 'Cerrando sesión...' : 'Cerrar sesión'}
+        </button>
       </div>
 
     </div>

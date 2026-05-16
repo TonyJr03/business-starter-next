@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { platformDefaults } from '@/config/platform-defaults'
-import { getSuperAdminContext } from '@/lib/admin/superadmin-context'
+import { getSuperAdminContext } from '@/lib/admin'
 import { updateBranding } from '@/lib/admin'
 import type { AdminActionState } from '@/lib/admin'
 import type { BrandingOverride, BrandingColors, BrandingTypography } from '@/types'

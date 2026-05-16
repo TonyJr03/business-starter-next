@@ -2,12 +2,14 @@
 export type {
   AdminContext,
   AdminContextResult,
+  SuperAdminContext,
+  SuperAdminContextResult,
   AdminActionState,
   MutationResult,
   SupabaseServerClient,
 } from './context'
 
-export { getAdminContext } from './context'
+export { getAdminContext, getSuperAdminContext } from './context'
 
 // ─── Catálogo ─────────────────────────────────────────────────────────────────
 export {

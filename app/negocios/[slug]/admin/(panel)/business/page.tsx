@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, forbidden } from 'next/navigation'
 import { getAdminContext } from '@/lib/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
@@ -15,7 +15,7 @@ export default async function BusinessPage({ params, searchParams }: Props) {
   const sp = await searchParams
 
   const ctxResult = await getAdminContext(slug)
-  if (!ctxResult.ok) notFound()
+  if (!ctxResult.ok) forbidden()
   const { ctx } = ctxResult
 
   const { data: row } = await ctx.supabase

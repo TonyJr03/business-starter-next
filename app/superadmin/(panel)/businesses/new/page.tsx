@@ -1,9 +1,14 @@
+import { forbidden } from 'next/navigation'
+import { getSuperAdminContext } from '@/lib/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { BusinessCreateForm } from './BusinessCreateForm'
 
-// ─── Página ──────────────────────────────────────────────────────────────────
+// ─── Página ────────────────────────────────────────────────────────────────
 
-export default function NewBusinessPage() {
+export default async function NewBusinessPage() {
+  const ctxResult = await getSuperAdminContext()
+  if (!ctxResult.ok) forbidden()
+
   return (
     <div className="space-y-6 max-w-xl">
       <AdminPageHeader

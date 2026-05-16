@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Habilita forbidden() y unauthorized() como funciones de interrupción
+    // de autorización (análogas a notFound()). Necesario para app/forbidden.tsx.
+    authInterrupts: true,
+  },
   images: {
     remotePatterns: [
       {

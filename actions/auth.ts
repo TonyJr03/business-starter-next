@@ -11,6 +11,7 @@
  */
 
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { getAdminContext, getSuperAdminContext } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -45,6 +46,15 @@ export async function loginAction(
 
   if (error) {
     return { error: 'Credenciales inválidas. Verificá tu email y contraseña.' }
+  }
+
+  // Verificar membresía antes de redirigir.
+  // Si el usuario autenticó correctamente pero no es admin de este negocio,
+  // cerrar la sesión y mostrar error de autorización (no de credenciales).
+  const ctxResult = await getAdminContext(slug)
+  if (!ctxResult.ok) {
+    await supabase.auth.signOut()
+    return { error: 'Esta cuenta no tiene permisos de administrador para este negocio.' }
   }
 
   redirect(`/negocios/${slug}/admin`)
@@ -87,6 +97,13 @@ export async function superadminLoginAction(
 
   if (error) {
     return { error: 'Credenciales inválidas. Verificá tu email y contraseña.' }
+  }
+
+  // Verificar rol de superadmin antes de redirigir.
+  const ctxResult = await getSuperAdminContext()
+  if (!ctxResult.ok) {
+    await supabase.auth.signOut()
+    return { error: 'Esta cuenta no tiene permisos de superadministrador de plataforma.' }
   }
 
   redirect('/superadmin')

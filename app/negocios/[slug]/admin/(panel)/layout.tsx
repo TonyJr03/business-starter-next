@@ -6,21 +6,21 @@
  * - /negocios/[slug]/admin/*
  *
  * Responsabilidades:
- * 1. Verifica sesión con getUser() (verificación segura contra el servidor)
- *    → redirige a /negocios/[slug]/admin/login si no hay usuario
+ * 1. Verifica sesión + membresía con getAdminContext() (una sola consulta a DB)
+ *    → redirige a /negocios/[slug]/admin/login si no hay sesión
+ *    → notFound() si el usuario no es admin de este negocio
  * 2. Proporciona la estructura visual del área admin
  *
  * Capas de protección:
  * - proxy.ts: guard optimista (cookie) — primera línea rápida
- * - Este layout: guard seguro (red) — segunda línea antes del render
+ * - Este layout: guard seguro (network) — verifica rol antes del render
+ * - Páginas individuales: getAdminContext() — tercera línea en cada página
  */
 
-import { redirect } from 'next/navigation'
-import { getUser } from '@/lib/auth'
+import { redirect, notFound, forbidden } from 'next/navigation'
+import { getAdminContext } from '@/lib/admin'
 import { logoutAction } from '@/actions/auth'
 import { AdminNav } from '@/components/admin/AdminNav'
-import { resolveBusinessBySlug } from '@/services'
-import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 interface AdminLayoutProps {
@@ -31,15 +31,15 @@ interface AdminLayoutProps {
 export default async function AdminLayout({ params, children }: AdminLayoutProps) {
   const { slug } = await params
 
-  // Guard seguro: getUser() verifica el JWT contra el servidor de Supabase Auth.
-  // Si no hay sesión válida, redirige al login del tenant.
-  const user = await getUser()
-  if (!user) {
-    redirect(`/negocios/${slug}/admin/login`)
+  // Guard seguro: una sola consulta verifica sesión + negocio + membresía.
+  const ctxResult = await getAdminContext(slug)
+  if (!ctxResult.ok) {
+    if (ctxResult.error === 'No autenticado') redirect(`/negocios/${slug}/admin/login`)
+    if (ctxResult.error === 'No autorizado') forbidden()
+    // Negocio no encontrado → 404 (el recurso genuinamente no existe)
+    notFound()
   }
-
-  const business = await resolveBusinessBySlug(slug)
-  if (!business) notFound()
+  const { ctx } = ctxResult
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex">
@@ -47,8 +47,8 @@ export default async function AdminLayout({ params, children }: AdminLayoutProps
       <aside className="w-64 shrink-0 bg-zinc-900 flex flex-col sticky top-0 h-screen overflow-hidden">
         <AdminNav
           slug={slug}
-          businessName={business.name}
-          userEmail={user.email}
+          businessName={ctx.businessName}
+          userEmail={ctx.userEmail}
           logoutAction={logoutAction.bind(null, slug)}
         />
       </aside>

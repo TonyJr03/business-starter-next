@@ -6,10 +6,15 @@
  */
 
 import Link from 'next/link'
+import { forbidden } from 'next/navigation'
 import { getAllBusinesses } from '@/services/business.service'
+import { getSuperAdminContext } from '@/lib/admin'
 import { BusinessCard } from '@/components/superadmin/BusinessCard'
 
 export default async function SuperAdminDashboardPage() {
+  const ctxResult = await getSuperAdminContext()
+  if (!ctxResult.ok) forbidden()
+
   const businesses = await getAllBusinesses()
 
   return (

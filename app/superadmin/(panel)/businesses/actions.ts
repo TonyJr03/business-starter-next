@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { getSuperAdminContext } from '@/lib/admin/superadmin-context'
+import { getSuperAdminContext } from '@/lib/admin'
 import {
   businessSuperAdminSchema,
   createBusiness,

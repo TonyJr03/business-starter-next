@@ -2,11 +2,12 @@
  * Dashboard del admin autenticado
  *
  * Ruta: /negocios/[slug]/admin
- * Acceso: protegido por sesión (proxy.ts + admin layout)
+ * Acceso: protegido por sesión + membresía (proxy.ts + admin layout + getAdminContext)
  */
 
 import Link from 'next/link'
-import { getUser } from '@/lib/auth'
+import { forbidden } from 'next/navigation'
+import { getAdminContext } from '@/lib/admin'
 
 interface AdminDashboardProps {
   params: Promise<{ slug: string }>
@@ -59,7 +60,10 @@ const quickLinks = [
 
 export default async function AdminDashboard({ params }: AdminDashboardProps) {
   const { slug } = await params
-  const user = await getUser()
+
+  const ctxResult = await getAdminContext(slug)
+  if (!ctxResult.ok) forbidden()
+  const { ctx } = ctxResult
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -70,7 +74,7 @@ export default async function AdminDashboard({ params }: AdminDashboardProps) {
           Panel de administración
         </h1>
         <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          {user?.email}
+          {ctx.userEmail}
         </p>
       </div>
 
