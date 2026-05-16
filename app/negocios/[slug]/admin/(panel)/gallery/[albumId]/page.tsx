@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToGalleryAlbum } from '@/lib/persistence'
 import type { GalleryAlbumRow } from '@/lib/persistence'
 import { AlbumEditForm } from './AlbumEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deleteAlbumAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -41,6 +43,12 @@ export default async function EditAlbumPage({ params }: Props) {
         </div>
       </div>
       <AlbumEditForm slug={slug} album={rowToGalleryAlbum(row as GalleryAlbumRow)} />
+      <AdminDeleteZone
+        title="Eliminar álbum"
+        description="Esta acción no se puede deshacer. Elimina primero todas las fotos del álbum."
+        label="Eliminar álbum"
+        action={deleteAlbumAction.bind(null, slug, albumId)}
+      />
     </div>
   )
 }

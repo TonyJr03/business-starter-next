@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToCatalog } from '@/lib/persistence'
 import type { CatalogRow } from '@/lib/persistence'
 import { CatalogPageEditForm } from './CatalogPageEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deleteCatalogPageAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -41,6 +43,12 @@ export default async function EditCatalogPage({ params }: Props) {
         </div>
       </div>
       <CatalogPageEditForm slug={slug} catalog={rowToCatalog(row as CatalogRow)} />
+      <AdminDeleteZone
+        title="Eliminar catálogo"
+        description="Esta acción no se puede deshacer. No se puede eliminar si tiene categorías asociadas."
+        label="Eliminar catálogo"
+        action={deleteCatalogPageAction.bind(null, slug, catalogId)}
+      />
     </div>
   )
 }

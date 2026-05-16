@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToGalleryPhoto } from '@/lib/persistence'
 import type { GalleryPhotoRow } from '@/lib/persistence'
 import { PhotoEditForm } from './PhotoEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deletePhotoAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -38,6 +40,12 @@ export default async function EditPhotoPage({ params }: Props) {
         slug={slug}
         albumId={albumId}
         photo={rowToGalleryPhoto(row as GalleryPhotoRow)}
+      />
+      <AdminDeleteZone
+        title="Eliminar foto"
+        description="Esta acción no se puede deshacer."
+        label="Eliminar foto"
+        action={deletePhotoAction.bind(null, slug, albumId, photoId)}
       />
     </div>
   )

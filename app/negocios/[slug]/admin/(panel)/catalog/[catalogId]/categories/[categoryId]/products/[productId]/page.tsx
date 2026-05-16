@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToProduct } from '@/lib/persistence'
 import type { ProductRow } from '@/lib/persistence'
 import { ProductEditForm } from './ProductEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deleteProductAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -39,6 +41,12 @@ export default async function EditProductPage({ params }: Props) {
         catalogId={catalogId}
         categoryId={categoryId}
         product={rowToProduct(row as ProductRow)}
+      />
+      <AdminDeleteZone
+        title="Eliminar producto"
+        description="Esta acción no se puede deshacer."
+        label="Eliminar producto"
+        action={deleteProductAction.bind(null, slug, catalogId, categoryId, productId)}
       />
     </div>
   )

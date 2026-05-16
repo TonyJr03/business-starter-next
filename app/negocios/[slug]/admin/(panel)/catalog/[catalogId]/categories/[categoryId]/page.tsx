@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToCategory } from '@/lib/persistence'
 import type { CategoryRow } from '@/lib/persistence'
 import { CategoryEditForm } from './CategoryEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deleteCategoryAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -41,6 +43,12 @@ export default async function EditCategoryPage({ params }: Props) {
         </div>
       </div>
       <CategoryEditForm slug={slug} catalogId={catalogId} category={rowToCategory(row as CategoryRow)} />
+      <AdminDeleteZone
+        title="Eliminar categoría"
+        description="Esta acción no se puede deshacer. Los productos asociados a esta categoría deben eliminarse primero."
+        label="Eliminar categoría"
+        action={deleteCategoryAction.bind(null, slug, catalogId, categoryId)}
+      />
     </div>
   )
 }

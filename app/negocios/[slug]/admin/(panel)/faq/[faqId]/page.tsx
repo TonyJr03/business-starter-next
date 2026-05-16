@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToFaqItem } from '@/lib/persistence'
 import type { FaqItemRow } from '@/lib/persistence'
 import { FaqEditForm } from './FaqEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deleteFaqItemAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -35,6 +37,12 @@ export default async function EditFaqItemPage({ params }: Props) {
         <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Editar pregunta</h1>
       </div>
       <FaqEditForm slug={slug} item={rowToFaqItem(row as FaqItemRow)} />
+      <AdminDeleteZone
+        title="Eliminar pregunta"
+        description="Esta acción no se puede deshacer."
+        label="Eliminar pregunta"
+        action={deleteFaqItemAction.bind(null, slug, faqId)}
+      />
     </div>
   )
 }

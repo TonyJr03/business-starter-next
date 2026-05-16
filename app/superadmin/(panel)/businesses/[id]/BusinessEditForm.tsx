@@ -1,11 +1,10 @@
 'use client'
 
 import { AdminAlert } from '@/components/admin/AdminAlert'
-import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { SubmitButton } from '@/components/ui/SubmitButton'
 import { fieldInputCls } from '@/components/admin/formUtils'
 import { useAdminForm } from '@/components/admin/useAdminForm'
-import { updateBusinessAction, deleteBusinessAction } from '../actions'
+import { updateBusinessAction } from '../actions'
 import type { BusinessSettings } from '@/types'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -29,7 +28,6 @@ export function BusinessEditForm({ businessId, businessSettings }: Props) {
   )
 
   return (
-    <>
     <form action={formAction} className="space-y-8" noValidate>
       {state && !state.ok && !state.field && (
         <AdminAlert type="error" message={state.error} />
@@ -282,13 +280,5 @@ export function BusinessEditForm({ businessId, businessSettings }: Props) {
         <SubmitButton label="Guardar ajustes" pendingLabel="Guardando..." />
       </div>
     </form>
-
-    <AdminDeleteZone
-      title="Eliminar negocio"
-      description="Esta acción eliminará permanentemente el negocio y todos sus datos. No se puede deshacer."
-      label="Eliminar negocio"
-      action={deleteBusinessAction.bind(null, businessId)}
-    />
-    </>
   )
 }

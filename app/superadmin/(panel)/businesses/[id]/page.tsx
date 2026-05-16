@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { notFound, forbidden } from 'next/navigation'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminAlert } from '@/components/admin/AdminAlert'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
 import { getBusinessById } from '@/services'
 import { getSuperAdminContext } from '@/lib/admin'
+import { deleteBusinessAction } from '../actions'
 import { BusinessEditForm } from './BusinessEditForm'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
@@ -73,6 +75,14 @@ export default async function SuperAdminBusinessPage({ params, searchParams }: P
           </Link>
         </div>
       </div>
+
+      {/* Zona de peligro — siempre al final */}
+      <AdminDeleteZone
+        title="Eliminar negocio"
+        description="Esta acción eliminará permanentemente el negocio y todos sus datos. No se puede deshacer."
+        label="Eliminar negocio"
+        action={deleteBusinessAction.bind(null, id)}
+      />
 
     </div>
   )

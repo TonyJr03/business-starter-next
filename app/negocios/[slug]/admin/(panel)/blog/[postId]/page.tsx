@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToBlogPost } from '@/lib/persistence'
 import type { BlogPostRow } from '@/lib/persistence'
 import { BlogEditForm } from './BlogEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deletePostAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -35,6 +37,12 @@ export default async function EditBlogPostPage({ params }: Props) {
         <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Editar artículo</h1>
       </div>
       <BlogEditForm slug={slug} post={rowToBlogPost(row as BlogPostRow)} />
+      <AdminDeleteZone
+        title="Eliminar artículo"
+        description="Esta acción no se puede deshacer."
+        label="Eliminar artículo"
+        action={deletePostAction.bind(null, slug, postId)}
+      />
     </div>
   )
 }

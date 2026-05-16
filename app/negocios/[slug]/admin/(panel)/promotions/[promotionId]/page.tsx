@@ -4,6 +4,8 @@ import { getAdminContext } from '@/lib/admin'
 import { rowToPromotion } from '@/lib/persistence'
 import type { PromotionRow } from '@/lib/persistence'
 import { PromotionEditForm } from './PromotionEditForm'
+import { AdminDeleteZone } from '@/components/admin/AdminDeleteZone'
+import { deletePromotionAction } from '../actions'
 
 // ─── Página ──────────────────────────────────────────────────────────────────
 
@@ -38,6 +40,12 @@ export default async function EditPromotionPage({ params }: Props) {
       <PromotionEditForm
         slug={slug}
         promotion={rowToPromotion(row as PromotionRow)}
+      />
+      <AdminDeleteZone
+        title="Eliminar promoción"
+        description="Esta acción no se puede deshacer."
+        label="Eliminar promoción"
+        action={deletePromotionAction.bind(null, slug, promotionId)}
       />
     </div>
   )
