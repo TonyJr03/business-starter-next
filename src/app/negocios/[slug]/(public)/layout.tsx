@@ -25,7 +25,7 @@ interface Props {
 export default async function PublicLayout({ params, children }: Props) {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
-  if (!business) notFound()
+  if (!business || !business.isActive) notFound()
   const catalogs = await getCatalogs(business.id)
 
   const cartFeature = resolveFeatureModule(business, 'cart')
