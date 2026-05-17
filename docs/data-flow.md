@@ -26,6 +26,11 @@ Documenta cómo fluye la información en este proyecto: desde Supabase hasta las
 
 ## 1. Visión general
 
+El código de aplicación está organizado dentro de `src/`. Por eso, cuando este
+documento habla de `app/`, `services/`, `lib/`, `components/` o `types/`, se
+refiere a `src/app/`, `src/services/`, `src/lib/`, `src/components/` y
+`src/types/`.
+
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                          SUPABASE (PostgreSQL)                       │
@@ -75,8 +80,8 @@ Documenta cómo fluye la información en este proyecto: desde Supabase hasta las
 
 ## 2. Capa de tipos
 
-**Ubicación:** `types/`  
-**Barrel export:** `types/index.ts` → se importa todo desde `@/types`
+**Ubicación:** `src/types/`  
+**Barrel export:** `src/types/index.ts` → se importa todo desde `@/types`
 
 ### Archivos y exports
 
@@ -108,8 +113,8 @@ Todos los `*EditForm.tsx` y `*NewForm.tsx` reciben el tipo de dominio directamen
 
 ## 3. Capa de persistencia — Mappers
 
-**Ubicación:** `lib/persistence/`  
-**Barrel export:** `lib/persistence/index.ts`
+**Ubicación:** `src/lib/persistence/`  
+**Barrel export:** `src/lib/persistence/index.ts`
 
 Cada mapper define:
 1. Una interfaz `*Row` que refleja exactamente la fila de la tabla en DB (snake_case, nullables).
@@ -180,8 +185,8 @@ PromotionRow → Promotion
 
 ## 4. Capa de servicios — Lectura pública
 
-**Ubicación:** `services/`  
-**Barrel export:** `services/index.ts`
+**Ubicación:** `src/services/`  
+**Barrel export:** `src/services/index.ts`
 
 Los servicios son funciones **async** envueltas en `React.cache()` para deduplicar llamadas dentro del mismo request. Solo hacen lecturas — nunca mutaciones.
 
@@ -246,7 +251,7 @@ isPromotionActive(promotion, now?): boolean
 
 ## 5. Clientes Supabase
 
-### `lib/supabase/server.ts` — para Server Components y Server Actions
+### `src/lib/supabase/server.ts` — para Server Components y Server Actions
 
 ```typescript
 export async function createSupabaseServerClient()
@@ -257,7 +262,7 @@ export async function createSupabaseServerClient()
 - Usado en: servicios, mutations, `getAdminContext`.
 - El `try/catch` en `setAll` es seguro: Next.js no permite escribir cookies durante el render de Server Components, pero el middleware se encarga del refresco de tokens.
 
-### `lib/supabase/client.ts` — para Client Components
+### `src/lib/supabase/client.ts` — para Client Components
 
 ```typescript
 export function getSupabaseBrowserClient(): SupabaseClient
@@ -270,7 +275,7 @@ export function getSupabaseBrowserClient(): SupabaseClient
 
 ## 6. Capa de administración
 
-### 6.1 Contexto de admin — `lib/admin/context.ts`
+### 6.1 Contexto de admin — `src/lib/admin/context.ts`
 
 ```typescript
 interface AdminContext {
@@ -314,7 +319,7 @@ type MutationResult<T> =
 
 ---
 
-### 6.2 Mutations — `lib/admin/mutations/`
+### 6.2 Mutations — `src/lib/admin/mutations/`
 
 Cada archivo de mutation maneja un dominio. Sigue este patrón:
 
@@ -347,7 +352,7 @@ Cada archivo de mutation maneja un dominio. Sigue este patrón:
 
 ### 6.3 Server Actions
 
-**Ubicación:** `app/negocios/[slug]/(admin)/admin/{dominio}/actions.ts`
+**Ubicación:** `src/app/negocios/[slug]/admin/(panel)/{dominio}/actions.ts`
 
 Cada archivo de actions exporta las funciones `'use server'` que los formularios invocan.
 
@@ -397,7 +402,7 @@ Los parámetros extra (`slug`, `id`) se preenllazan con `.bind(null, slug, id)` 
 
 ### 6.4 Hook `useAdminForm`
 
-**Ubicación:** `components/admin/useAdminForm.ts`
+**Ubicación:** `src/components/admin/useAdminForm.ts`
 
 ```typescript
 function useAdminForm(action: BoundAction): {
@@ -436,7 +441,7 @@ Ejemplo con la página del blog:
 ```
 URL: /negocios/cafe-la-esquina/blog
 
-app/negocios/[slug]/(public)/blog/page.tsx  (Server Component)
+src/app/negocios/[slug]/(public)/blog/page.tsx  (Server Component)
   │
   ├─ 1. const business = await resolveBusinessBySlug('cafe-la-esquina')
   │       └─ services/business.service.ts
@@ -470,7 +475,7 @@ app/negocios/[slug]/(public)/blog/page.tsx  (Server Component)
 ```
 URL: /negocios/cafe-la-esquina/admin/faq/abc123
 
-app/negocios/[slug]/(admin)/admin/faq/[faqId]/page.tsx  (Server Component)
+src/app/negocios/[slug]/admin/(panel)/faq/[faqId]/page.tsx  (Server Component)
   │
   ├─ 1. const ctxResult = await getAdminContext(slug)
   │       ├─ getUser() → sesión activa?

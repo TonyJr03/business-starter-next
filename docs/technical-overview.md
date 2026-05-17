@@ -72,7 +72,7 @@ El operador de la plataforma controla todo desde el **panel superadmin**: crea n
 | Estilos           | Tailwind CSS v4                              |
 | Fuentes           | Geist Sans / Geist Mono (Next.js fonts)      |
 | Imágenes          | `next/image` (Supabase Storage + picsum)     |
-| Middleware        | `proxy.ts` (guard optimista de sesión)       |
+| Proxy             | `src/proxy.ts` (guard optimista de sesión)   |
 
 ---
 
@@ -96,8 +96,12 @@ El operador de la plataforma controla todo desde el **panel superadmin**: crea n
 
 ## 4. Estructura de rutas (App Router)
 
+El código de aplicación vive bajo `src/`. Los archivos de configuración de Next,
+Supabase, ESLint, PostCSS, TypeScript y `public/` se mantienen en la raíz del
+repositorio.
+
 ```
-app/
+src/app/
 ├── layout.tsx                        # Root layout: HTML, fuentes, metadata base
 ├── globals.css                       # Estilos globales + Tailwind
 ├── forbidden.tsx                     # Página 403 (authInterrupts: true)
@@ -303,7 +307,7 @@ type FeatureModuleId = 'cart' | 'whatsappOrdering'
 
 ### Resolver de módulos
 
-**`lib/modules/resolver.ts`** — punto de entrada único para obtener la configuración efectiva de un tenant:
+**`src/lib/modules/resolver.ts`** — punto de entrada único para obtener la configuración efectiva de un tenant:
 
 ```typescript
 // Merge: platformDefaults.modules + business.modules (overrides de DB)
@@ -394,8 +398,8 @@ typography: {
 
 ## 8. Capa de tipos
 
-**Ubicación:** `types/`  
-**Barrel:** `types/index.ts` → se importa todo desde `@/types`
+**Ubicación:** `src/types/`  
+**Barrel:** `src/types/index.ts` → se importa todo desde `@/types`
 
 ### Mapa de archivos
 
@@ -421,8 +425,8 @@ typography: {
 
 ## 9. Capa de persistencia (mappers)
 
-**Ubicación:** `lib/persistence/`  
-**Barrel:** `lib/persistence/index.ts`
+**Ubicación:** `src/lib/persistence/`  
+**Barrel:** `src/lib/persistence/index.ts`
 
 Los mappers son la **única capa que conoce el esquema de DB**: nombres de columnas en snake_case, tipos nullable, columnas exactas.
 
@@ -464,8 +468,8 @@ function rowToBusinessSettings(row: BusinessSettingsRow): BusinessSettings
 
 ## 10. Capa de servicios (lectura pública)
 
-**Ubicación:** `services/`  
-**Barrel:** `services/index.ts`
+**Ubicación:** `src/services/`  
+**Barrel:** `src/services/index.ts`
 
 Los servicios son funciones de **solo lectura** envueltas con `React.cache()` para memoización por request. Solo se usan en Server Components de rutas públicas. **Nunca se usan en Server Actions de admin.**
 
@@ -515,8 +519,8 @@ getPostBySlug(businessId, slug): Promise<BlogPost | undefined>
 
 | Cliente | Archivo | Uso |
 |---------|---------|-----|
-| Server (SSR) | `lib/supabase/server.ts` | Server Components, Server Actions, Route Handlers |
-| Browser | `lib/supabase/client.ts` | Client Components (solo auth en browser) |
+| Server (SSR) | `src/lib/supabase/server.ts` | Server Components, Server Actions, Route Handlers |
+| Browser | `src/lib/supabase/client.ts` | Client Components (solo auth en browser) |
 
 El cliente server usa `@supabase/ssr` para propagar las cookies de sesión del request entrante al cliente Supabase.
 
@@ -527,9 +531,9 @@ El cliente server usa `@supabase/ssr` para propagar las cookies de sesión del r
 ### Jerarquía de layouts
 
 ```
-app/layout.tsx                    (HTML, fuentes, metadata plataforma)
-  └── app/negocios/[slug]/layout.tsx   (resuelve negocio, aplica branding CSS vars)
-        └── app/negocios/[slug]/(public)/layout.tsx  (Header + CartShell + Footer)
+src/app/layout.tsx                    (HTML, fuentes, metadata plataforma)
+  └── src/app/negocios/[slug]/layout.tsx   (resuelve negocio, aplica branding CSS vars)
+        └── src/app/negocios/[slug]/(public)/layout.tsx  (Header + CartShell + Footer)
               └── page.tsx / catalog/page.tsx / ...
 ```
 
@@ -542,7 +546,7 @@ app/layout.tsx                    (HTML, fuentes, metadata plataforma)
 
 ### SectionRenderer
 
-**`components/sections/SectionRenderer.tsx`** — decide qué componente renderizar según el `section.id`:
+**`src/components/sections/SectionRenderer.tsx`** — decide qué componente renderizar según el `section.id`:
 
 | `section.id` | Componente |
 |---|---|
@@ -589,7 +593,7 @@ El catálogo soporta dos modos según el número de catálogos activos:
 
 ### Capas de seguridad (en orden)
 
-1. **`proxy.ts`** (middleware) — guard optimista: lee la cookie de sesión sin red. Si no hay sesión, redirige a `/login` inmediatamente.
+1. **`src/proxy.ts`** — guard optimista: lee la cookie de sesión sin red. Si no hay sesión, redirige a `/login` inmediatamente.
 2. **`(panel)/layout.tsx`** — guard seguro: llama a `getAdminContext(slug)` que verifica sesión + membresía en DB. Redirige o muestra forbidden según el error.
 3. **Cada página** — llama a `getAdminContext(slug)` nuevamente para la tercera línea de defensa.
 
@@ -761,7 +765,7 @@ Usuario → logoutAction(slug) / superadminLogoutAction()
   → redirect('/negocios/[slug]/admin/login') / redirect('/superadmin/login')
 ```
 
-### `proxy.ts` (middleware)
+### `src/proxy.ts`
 
 Intercepta todas las rutas protegidas antes del render:
 
@@ -818,13 +822,13 @@ components/cart/
 
 ### Ruta: `/`
 
-**`app/(platform)/page.tsx`** — Server Component:
+**`src/app/(platform)/page.tsx`** — Server Component:
 1. Llama a `listActiveBusinesses()` → `BusinessDirectoryItem[]` (solo negocios con `is_active = true`).
 2. Renderiza una grilla de `BusinessCard` con nombre, descripción, ciudad y enlace al sitio del negocio.
 
 ### Layout de plataforma
 
-**`app/(platform)/layout.tsx`** — envuelve el directorio con `PlatformHeader` y `PlatformFooter` (componentes genéricos de la plataforma, sin branding de tenant).
+**`src/app/(platform)/layout.tsx`** — envuelve el directorio con `PlatformHeader` y `PlatformFooter` (componentes genéricos de la plataforma, sin branding de tenant).
 
 ---
 
@@ -835,7 +839,7 @@ components/cart/
 ```
 Request: GET /negocios/cafe-la-esquina/catalog
 
-1. proxy.ts          — ruta pública, pasa sin guardia
+1. src/proxy.ts      — ruta pública, pasa sin guardia
 2. TenantLayout      — resolveBusinessBySlug('cafe-la-esquina') → BusinessSettings
                      — resolveBrandVars(business) → CSS vars
                      — inyecta style + data-theme
