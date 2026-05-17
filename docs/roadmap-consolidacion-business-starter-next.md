@@ -56,6 +56,8 @@ Esta fase no agrega funcionalidades nuevas. Su propósito es validar el estado a
 
 Una base técnica verificada, con errores iniciales identificados y sin comenzar todavía cambios de arquitectura sensible.
 
+Estado: Completada
+
 ---
 
 # Fase 1 — Reglas de publicación pública
@@ -94,6 +96,8 @@ solo dentro del árbol público.
 ## Resultado esperado
 
 Un negocio inactivo no se ve públicamente, pero puede seguir siendo configurado desde el admin o superadmin.
+
+Estado: Completada
 
 ---
 
@@ -134,6 +138,8 @@ Los services públicos deben estar orientados a visitantes. Las lecturas complet
 
 La UI pública nunca renderiza contenido desactivado, no disponible, pausado, vencido o no publicado.
 
+Estado: Siguiente fase
+
 ---
 
 # Fase 3 — Endurecimiento de RLS para lectura pública
@@ -167,6 +173,8 @@ La UI no es una barrera de seguridad. La protección real debe estar en PostgreS
 
 Aunque alguien use directamente la API anónima de Supabase, no podrá leer negocios inactivos ni contenido no publicado.
 
+Estado: Pendiente
+
 ---
 
 # Fase 4 — Integridad multi-tenant en mutations
@@ -199,6 +207,8 @@ Toda mutation que reciba un ID padre debe verificar que ese recurso padre perten
 ## Resultado esperado
 
 Un admin no puede manipular IDs para conectar, modificar o insertar contenido relacionado con otro tenant.
+
+Estado: Pendiente
 
 ---
 
@@ -242,6 +252,8 @@ contenido vacío
 ## Resultado esperado
 
 El superadmin puede crear, preparar y publicar un negocio solo cuando esté completo.
+
+Estado: Pendiente
 
 ---
 
@@ -292,6 +304,8 @@ businesses/{businessId}/blog/...
 
 Un admin puede subir imágenes reales sin pegar URLs manualmente.
 
+Estado: Pendiente
+
 ---
 
 # Fase 7 — Consolidación de módulos admin y contenido real
@@ -325,6 +339,8 @@ Hacer que cada módulo importante sea usable para cargar contenido real.
 
 El sistema no solo funciona técnicamente, sino que permite cargar contenido real de manera entendible.
 
+Estado: Pendiente
+
 ---
 
 # Fase 8 — Branding real por negocio
@@ -351,6 +367,8 @@ Permitir que cada negocio tenga identidad visual básica sin romper la consisten
 ## Resultado esperado
 
 Cada negocio puede verse propio sin introducir sobreingeniería visual.
+
+Estado: Pendiente
 
 ---
 
@@ -395,6 +413,8 @@ Comprobar que el sistema resiste casos reales y manipulaciones básicas.
 
 Confianza razonable en el aislamiento multi-tenant antes de subir contenido real.
 
+Estado: Pendiente
+
 ---
 
 # Fase 10 — Documentación operativa
@@ -426,6 +446,8 @@ docs/real-business-checklist.md
 ## Resultado esperado
 
 Codex, el equipo futuro y el propio desarrollador pueden entender el sistema sin romper patrones.
+
+Estado: Pendiente
 
 ---
 
@@ -460,6 +482,8 @@ npm run build
 
 Primera versión funcional lista para uso real con un negocio cargado manualmente.
 
+Estado: Pendiente
+
 ---
 
 # Orden recomendado de ejecución
@@ -484,3 +508,9 @@ Primera versión funcional lista para uso real con un negocio cargado manualment
 # Criterio de finalización
 
 La consolidación estará completa cuando se pueda crear, configurar, cargar, revisar y publicar un negocio real, con contenido e imágenes reales, manteniendo seguridad multi-tenant, RLS coherente y una experiencia usable para administradores no técnicos.
+
+## Estado actual del roadmap
+
+- Fase 0 — Completada
+- Fase 1 — Completada
+- Fase 2 — Pendiente / siguiente fase
