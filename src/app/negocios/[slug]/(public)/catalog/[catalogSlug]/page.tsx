@@ -126,49 +126,57 @@ export default async function CatalogPage({ params }: Props) {
       )}
 
       {/* ── Catálogo ── */}
-      {productsByCategory.map(({ category, products }) => (
-        <Section key={category.id} bg="default" size="md" id={category.slug}>
-          <div className="flex items-center gap-4 mb-2">
-            <h2
-              className="text-2xl font-bold whitespace-nowrap"
-              style={{ color: 'var(--color-primary)' }}
-            >
-              {category.name}
-            </h2>
-            <div
-              className="flex-1 h-px"
-              style={{ backgroundColor: 'var(--color-border)' }}
-            />
-          </div>
-
-          {category.description && (
-            <p
-              className="text-sm mb-8"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
-              {category.description}
-            </p>
-          )}
-
-          {products.length === 0 ? (
-            <p className="text-sm py-4" style={{ color: 'var(--color-text-subtle)' }}>
-              {catalogModule.emptyMessage}
-            </p>
-          ) : (
-            <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6">
-              {products.map((product) => (
-                <li key={product.id}>
-                  <ProductCard
-                    product={product}
-                    orderHref={cartFeature.enabled ? undefined : productOrderUrl(product.name)}
-                    actionSlot={cartFeature.enabled ? <AddToCartButton product={product} /> : undefined}
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
+      {productsByCategory.length === 0 ? (
+        <Section bg="default" size="md">
+          <p className="text-sm py-4 text-center" style={{ color: 'var(--color-text-subtle)' }}>
+            {catalogModule.emptyMessage}
+          </p>
         </Section>
-      ))}
+      ) : (
+        productsByCategory.map(({ category, products }) => (
+          <Section key={category.id} bg="default" size="md" id={category.slug}>
+            <div className="flex items-center gap-4 mb-2">
+              <h2
+                className="text-2xl font-bold whitespace-nowrap"
+                style={{ color: 'var(--color-primary)' }}
+              >
+                {category.name}
+              </h2>
+              <div
+                className="flex-1 h-px"
+                style={{ backgroundColor: 'var(--color-border)' }}
+              />
+            </div>
+
+            {category.description && (
+              <p
+                className="text-sm mb-8"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                {category.description}
+              </p>
+            )}
+
+            {products.length === 0 ? (
+              <p className="text-sm py-4" style={{ color: 'var(--color-text-subtle)' }}>
+                {catalogModule.emptyMessage}
+              </p>
+            ) : (
+              <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6">
+                {products.map((product) => (
+                  <li key={product.id}>
+                    <ProductCard
+                      product={product}
+                      orderHref={cartFeature.enabled ? undefined : productOrderUrl(product.name)}
+                      actionSlot={cartFeature.enabled ? <AddToCartButton product={product} /> : undefined}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Section>
+        ))
+      )}
 
       {/* ── CTA WhatsApp ── */}
       {whatsappCta.enabled && business?.contact?.whatsapp && (

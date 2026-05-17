@@ -33,6 +33,10 @@ async function fetchGalleryAlbumsFromDB(businessId: string): Promise<GalleryAlbu
 
 async function fetchGalleryPhotosFromDB(businessId: string): Promise<GalleryPhoto[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return [];
+
+  const albumIds = (await getGalleryAlbums(businessId)).map((album) => album.id);
+  if (albumIds.length === 0) return [];
+
   const db = await createSupabaseServerClient();
 
   const { data, error } = await db
@@ -40,6 +44,7 @@ async function fetchGalleryPhotosFromDB(businessId: string): Promise<GalleryPhot
     .select('*')
     .eq('business_id', businessId)
     .eq('is_active', true)
+    .in('album_id', albumIds)
     .order('sort_order');
 
   if (error) {

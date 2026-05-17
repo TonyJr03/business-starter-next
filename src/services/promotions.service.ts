@@ -13,6 +13,7 @@ async function fetchPromotionsFromDB(businessId: string): Promise<Promotion[]> {
     .from('promotions')
     .select('*')
     .eq('business_id', businessId)
+    .eq('status', 'active')
     .order('sort_order');
 
   if (error) {
@@ -24,7 +25,9 @@ async function fetchPromotionsFromDB(businessId: string): Promise<Promotion[]> {
 
   if (!data || data.length === 0) return [];
 
-  return (data as PromotionRow[]).map(rowToPromotion);
+  return (data as PromotionRow[])
+    .map(rowToPromotion)
+    .filter(isPromotionActive);
 }
 
 // ─── Derived ──────────────────────────────────────────────────────────────────
@@ -35,8 +38,7 @@ async function fetchPromotionById(businessId: string, id: string): Promise<Promo
 }
 
 async function fetchActivePromotions(businessId: string): Promise<Promotion[]> {
-  const all = await getPromotions(businessId);
-  return all.filter((p) => getPromotionStatus(p) === 'active');
+  return getPromotions(businessId);
 }
 
 // ─── API pública ──────────────────────────────────────────────────────────────
@@ -48,7 +50,12 @@ export const getActivePromotions = cache(fetchActivePromotions);
 // ─── Helpers de dominio ───────────────────────────────────────────────────────
 
 export function getPromotionStatus(promotion: Promotion): PromotionStatus {
-  if (promotion.status === 'paused') return 'paused';
+  const status = promotion.status as string;
+
+  if (status === 'paused') return 'paused';
+  if (status === 'expired') return 'expired';
+  if (status === 'upcoming') return 'upcoming';
+  if (status !== 'active') return 'expired';
 
   const now = new Date();
   if (promotion.endsAt && new Date(promotion.endsAt) < now) return 'expired';
