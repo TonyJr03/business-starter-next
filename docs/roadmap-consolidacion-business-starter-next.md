@@ -109,21 +109,14 @@ Asegurar que los servicios usados por el sitio público solo devuelvan contenido
 
 ## Decisión arquitectónica
 
-Los services públicos deben estar orientados a visitantes. Las lecturas completas, incluyendo contenido inactivo, pausado, vencido o no publicado, deben quedar reservadas al panel admin o a consultas internas protegidas.
+`src/services` es la capa de lectura pública para contenido. Las funciones existentes deben mantener sus nombres y devolver solo contenido publicable. `business.service.ts` queda como excepción neutral/plataforma porque resuelve datos base del tenant y también participa en flujos admin/superadmin. Las lecturas completas, incluyendo contenido inactivo, pausado, vencido o no publicado, deben quedar reservadas al panel admin o a consultas internas protegidas.
 
 ## Tareas
 
-1. Crear o ajustar funciones públicas específicas:
-   - `getPublicCatalogs`
-   - `getPublicCategories`
-   - `getPublicProducts`
-   - `getPublicActivePromotions`
-   - `getPublicGalleryAlbums`
-   - `getPublicGalleryPhotos`
-   - `getPublicFaqItems`
-   - `getPublicPosts`
-2. Ajustar rutas públicas para usar solo funciones públicas.
-3. Definir filtros mínimos de publicación:
+1. Reformar los contratos existentes en `src/services` sin crear una familia paralela de funciones públicas nuevas.
+2. Mantener los nombres actuales de las funciones públicas de contenido.
+3. Asegurar que los services de contenido devuelvan solo datos publicables para visitantes.
+4. Definir filtros mínimos de publicación:
    - `catalog_pages.is_active = true`
    - `catalog_categories.is_active = true`
    - `catalog_products.is_available = true`
@@ -132,13 +125,14 @@ Los services públicos deben estar orientados a visitantes. Las lecturas complet
    - `gallery_albums.is_active = true`
    - `gallery_photos.is_active = true`
    - `blog.is_published = true`
-4. Mantener fetch directo protegido en páginas admin cuando haga falta mostrar todo el contenido.
+5. Mantener `business.service.ts` como excepción neutral/plataforma.
+6. Mantener fetch directo protegido en páginas admin cuando haga falta mostrar todo el contenido.
 
 ## Resultado esperado
 
 La UI pública nunca renderiza contenido desactivado, no disponible, pausado, vencido o no publicado.
 
-Estado: Siguiente fase
+Estado: Completada
 
 ---
 
@@ -173,7 +167,7 @@ La UI no es una barrera de seguridad. La protección real debe estar en PostgreS
 
 Aunque alguien use directamente la API anónima de Supabase, no podrá leer negocios inactivos ni contenido no publicado.
 
-Estado: Pendiente
+Estado: Pendiente / siguiente fase
 
 ---
 
@@ -513,4 +507,6 @@ La consolidación estará completa cuando se pueda crear, configurar, cargar, re
 
 - Fase 0 — Completada
 - Fase 1 — Completada
-- Fase 2 — Pendiente / siguiente fase
+- Fase 2 — Completada
+- Fase 3 — Pendiente / siguiente fase
+- Fases 4 a 11 — Pendientes
