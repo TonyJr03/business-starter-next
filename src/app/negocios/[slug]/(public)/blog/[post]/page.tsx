@@ -16,10 +16,18 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, post: postSlug } = await params
   const business = await resolveBusinessBySlug(slug)
-  const blogPost = await getPostBySlug(business?.id ?? '', postSlug)
+
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+  if (!resolvePageModule(business, 'blog').enabled) {
+    return { robots: { index: false, follow: false } }
+  }
+
+  const blogPost = await getPostBySlug(business.id, postSlug)
 
   if (!blogPost) {
-    return { title: 'Artículo no encontrado' }
+    return { title: 'Artículo no encontrado', robots: { index: false, follow: false } }
   }
 
   return {

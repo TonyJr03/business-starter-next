@@ -39,7 +39,9 @@ export async function generateMetadata({ params }: TenantLayoutProps): Promise<M
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
-  if (!business) return {}
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
 
   return {
     title: {

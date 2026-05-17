@@ -20,13 +20,23 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, catalogSlug } = await params
   const business = await resolveBusinessBySlug(slug)
-  const catalog = await getCatalogBySlug(business?.id ?? '', catalogSlug)
 
-  const catalogName = catalog?.name ?? 'Catálogo'
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+  if (!resolvePageModule(business, 'catalog').enabled) {
+    return { robots: { index: false, follow: false } }
+  }
+
+  const catalog = await getCatalogBySlug(business.id, catalogSlug)
+  
+  if (!catalog) {
+    return { title: 'Catálogo no encontrado', robots: { index: false, follow: false } }
+  }
 
   return {
-    title: catalogName,
-    description: catalog?.description ?? `Explora ${catalogName} de ${business?.name ?? ''}.`,
+    title: catalog.name,
+    description: catalog.description ?? `Explora ${catalog.name} de ${business.name}.`,
     openGraph: { url: `/negocios/${slug}/catalog/${catalogSlug}` },
   }
 }

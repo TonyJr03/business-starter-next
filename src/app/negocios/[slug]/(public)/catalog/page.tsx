@@ -18,9 +18,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+  if (!resolvePageModule(business, 'catalog').enabled) {
+    return { robots: { index: false, follow: false } }
+  }
+
   return {
     title: 'Catálogo',
-    description: `Explora los catálogos de ${business?.name ?? ''}.`,
+    description: `Explora los catálogos de ${business.name}.`,
     openGraph: { url: `/negocios/${slug}/catalog` },
   }
 }

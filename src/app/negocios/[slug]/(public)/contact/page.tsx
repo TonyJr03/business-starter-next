@@ -19,9 +19,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+  if (!resolvePageModule(business, 'contact').enabled) {
+    return { robots: { index: false, follow: false } }
+  }
+
   return {
     title: 'Contacto',
-    description: `Contáctanos por WhatsApp o visítanos en ${business?.name ?? ''}.`,
+    description: `Contáctanos por WhatsApp o visítanos en ${business.name}.`,
     openGraph: {
       url: `/negocios/${slug}/contact`,
     },

@@ -21,9 +21,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+  if (!resolvePageModule(business, 'gallery').enabled) {
+    return { robots: { index: false, follow: false } }
+  }
+
   return {
     title: 'Galería',
-    description: `Conoce el espacio, los productos y el equipo de ${business?.name ?? ''} a través de nuestra galería de imágenes.`,
+    description: `Conoce el espacio, los productos y el equipo de ${business.name} a través de nuestra galería de imágenes.`,
     openGraph: {
       url: `/negocios/${slug}/gallery`,
     },

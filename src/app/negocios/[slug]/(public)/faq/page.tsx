@@ -18,9 +18,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+  if (!resolvePageModule(business, 'faq').enabled) {
+    return { robots: { index: false, follow: false } }
+  }
+
   return {
     title: 'Preguntas Frecuentes',
-    description: `Resolvemos tus dudas sobre ${business?.name ?? ''}: pedidos, horarios, catálogos y más.`,
+    description: `Resolvemos tus dudas sobre ${business.name}: pedidos, horarios, catálogos y más.`,
     openGraph: {
       url: `/negocios/${slug}/faq`,
     },

@@ -21,9 +21,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+  if (!resolvePageModule(business, 'about').enabled) {
+    return { robots: { index: false, follow: false } }
+  }
+
   return {
     title: 'Sobre Nosotros',
-    description: `Conoce la historia, misión y valores detrás de ${business?.name ?? ''}.`,
+    description: `Conoce la historia, misión y valores detrás de ${business.name}.`,
     openGraph: {
       url: `/negocios/${slug}/about`,
     },

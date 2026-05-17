@@ -16,9 +16,13 @@ export async function generateMetadata({ params }: TenantHomeProps): Promise<Met
   const { slug } = await params
   const business = await resolveBusinessBySlug(slug)
 
+  if (!business || !business.isActive) {
+    return { robots: { index: false, follow: false } }
+  }
+
   return {
-    title: { absolute: business?.name ?? '' },
-    description: business?.shortDescription,
+    title: { absolute: business.name },
+    description: business.shortDescription,
     openGraph: {
       url: `/negocios/${slug}`,
     },
