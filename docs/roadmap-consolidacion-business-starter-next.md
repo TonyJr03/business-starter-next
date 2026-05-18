@@ -167,7 +167,7 @@ La UI no es una barrera de seguridad. La protección real debe estar en PostgreS
 
 Aunque alguien use directamente la API anónima de Supabase, no podrá leer negocios inactivos ni contenido no publicado.
 
-Estado: Pendiente / siguiente fase
+Estado: Completada
 
 ---
 
@@ -202,7 +202,7 @@ Toda mutation que reciba un ID padre debe verificar que ese recurso padre perten
 
 Un admin no puede manipular IDs para conectar, modificar o insertar contenido relacionado con otro tenant.
 
-Estado: Pendiente
+Estado: Pendiente / siguiente fase
 
 ---
 
@@ -508,5 +508,6 @@ La consolidación estará completa cuando se pueda crear, configurar, cargar, re
 - Fase 0 — Completada
 - Fase 1 — Completada
 - Fase 2 — Completada
-- Fase 3 — Pendiente / siguiente fase
-- Fases 4 a 11 — Pendientes
+- Fase 3 — Completada
+- Fase 4 — Pendiente / siguiente fase
+- Fases 5 a 11 — Pendientes
