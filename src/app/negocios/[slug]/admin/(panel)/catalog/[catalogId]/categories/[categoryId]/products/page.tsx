@@ -19,16 +19,23 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
   if (!ctxResult.ok) forbidden()
   const { ctx } = ctxResult
 
+  const { data: catalog } = await ctx.supabase
+    .from('catalog_pages')
+    .select('id, name')
+    .eq('id', catalogId)
+    .eq('business_id', ctx.businessId)
+    .single()
+
+  if (!catalog) notFound()
+
   const { data: category } = await ctx.supabase
     .from('catalog_categories')
-    .select('id, name, catalog_pages!inner(id, name, business_id)')
+    .select('id, name')
     .eq('id', categoryId)
     .eq('catalog_id', catalogId)
     .single()
 
   if (!category) notFound()
-
-  const catalogName = (category.catalog_pages as unknown as { id: string; name: string; business_id: string } | null)?.name ?? ''
 
   const { data: rows, error: queryError } = await ctx.supabase
     .from('catalog_products')
@@ -58,7 +65,7 @@ export default async function ProductsListPage({ params, searchParams }: Props) 
       <div className="text-xs text-zinc-400 dark:text-zinc-500">
         <Link href={`/negocios/${slug}/admin/catalog`} className="hover:text-zinc-600 dark:hover:text-zinc-300">Catálogos</Link>
         {' › '}
-        <Link href={`/negocios/${slug}/admin/catalog/${catalogId}`} className="hover:text-zinc-600 dark:hover:text-zinc-300">{catalogName}</Link>
+        <Link href={`/negocios/${slug}/admin/catalog/${catalogId}`} className="hover:text-zinc-600 dark:hover:text-zinc-300">{catalog.name}</Link>
         {' › '}
         <Link href={`/negocios/${slug}/admin/catalog/${catalogId}/categories`} className="hover:text-zinc-600 dark:hover:text-zinc-300">Categorías</Link>
         {' › '}

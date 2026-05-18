@@ -19,7 +19,6 @@ export default async function CategoriesListPage({ params, searchParams }: Props
   if (!ctxResult.ok) forbidden()
   const { ctx } = ctxResult
 
-  // Verify catalog belongs to business
   const { data: catalog } = await ctx.supabase
     .from('catalog_pages')
     .select('id, name')
