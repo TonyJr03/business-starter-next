@@ -167,91 +167,153 @@ La UI no es una barrera de seguridad. La protección real debe estar en PostgreS
 
 Aunque alguien use directamente la API anónima de Supabase, no podrá leer negocios inactivos ni contenido no publicado.
 
+## Cierre de Fase 3
+
+La Fase 3 también absorbió el hardening de integridad padre-hijo que antes estaba previsto como fase independiente:
+
+- RLS SELECT público endurecido mediante `005_harden_public_read_policies.sql`.
+- Integridad padre-hijo protegida con constraints compuestas mediante `006_parent_child_integrity_constraints.sql`.
+- Validaciones críticas en `createCategory`, `createProduct` y `createPhoto`.
+- No se agregó `WITH CHECK` adicional para padre-hijo; queda como deuda técnica opcional futura si se desea una capa RLS redundante.
+
 Estado: Completada
 
 ---
 
-# Fase 4 — Integridad multi-tenant en mutations
+# Fase 4 — Flujo real de creación y edición de negocios desde superadmin
 
 ## Objetivo
 
-Evitar que IDs manipulados desde formularios puedan relacionar datos de distintos negocios.
+Permitir que el superadmin cree, revise y edite negocios reales con un flujo consistente antes de cargar contenido público.
 
-## Regla general
+## Decisión arquitectónica
 
-Toda mutation que reciba un ID padre debe verificar que ese recurso padre pertenece a `ctx.businessId`.
+Un negocio nuevo debe poder nacer como inactivo para preparación interna. La publicación pública se controla por `is_active`.
 
-## Casos a revisar
+## Alcance
 
-- categoría -> catálogo,
-- producto -> categoría,
-- foto -> álbum,
-- promociones con reglas que referencien categorías o productos,
-- cualquier contenido relacionado con un recurso padre.
+- creación real de negocio desde superadmin,
+- edición de datos base del negocio,
+- slug,
+- nombre,
+- estado activo/inactivo,
+- descripción corta,
+- branding básico inicial si aplica,
+- configuración de módulos por negocio,
+- validaciones,
+- errores controlados,
+- revisión de mutations superadmin,
+- permisos superadmin.
 
 ## Tareas
 
-1. Revisar todas las mutations de `src/lib/admin/mutations`.
-2. Agregar validaciones explícitas de pertenencia al negocio.
-3. Agregar constraints de base de datos cuando aplique.
-4. Corregir el guardado de `social` para evitar `null` en columnas `NOT NULL`.
-5. Corregir actualización parcial de precios en productos.
-6. Mantener la convención de retornar `MutationResult<T>`.
+1. Revisar el flujo actual de `/superadmin/businesses/new`.
+2. Confirmar que un negocio nuevo puede crearse como inactivo.
+3. Revisar edición de slug, nombre, descripción corta y estado activo/inactivo.
+4. Revisar configuración de módulos por negocio desde superadmin.
+5. Revisar branding básico inicial si aplica.
+6. Endurecer validaciones y mensajes de error controlados.
+7. Confirmar permisos superadmin y evitar que usuarios sin rol accedan a mutations de plataforma.
+8. Mantener la arquitectura separada entre admin de negocio y superadmin.
 
 ## Resultado esperado
 
-Un admin no puede manipular IDs para conectar, modificar o insertar contenido relacionado con otro tenant.
+El superadmin puede crear y preparar negocios reales de forma segura antes de publicar el sitio público.
 
 Estado: Pendiente / siguiente fase
 
 ---
 
-# Fase 5 — Flujo real de creación de negocio desde superadmin
+# Fase 5 — Configuración inicial del sitio público del negocio
 
 ## Objetivo
 
-Permitir que el superadmin cree un negocio real sin publicarlo accidentalmente.
-
-## Decisión arquitectónica
-
-Un negocio nuevo debe nacer como inactivo.
-
-## Estado inicial recomendado
-
-```txt
-is_active = false
-modules = {}
-branding = {}
-contenido vacío
-```
+Completar los datos base que hacen que un sitio público de negocio sea útil y verificable.
 
 ## Tareas
 
-1. Cambiar el formulario de creación para que `isActive` no venga marcado por defecto.
-2. Cambiar textos de UI para reflejar que el negocio se crea como borrador/inactivo.
-3. Mejorar la pantalla de detalle del negocio en superadmin.
-4. Mostrar estado de preparación:
-   - datos básicos,
-   - contacto,
-   - ubicación,
-   - horarios,
-   - módulos,
-   - branding,
-   - contenido,
-   - imágenes,
-   - estado de publicación.
-5. Mantener por ahora la creación manual de admins de negocio.
-6. Documentar el proceso manual para asignar admins mediante Supabase.
+1. Configurar contacto.
+2. Configurar dirección/ubicación.
+3. Configurar teléfonos.
+4. Configurar WhatsApp.
+5. Configurar redes sociales.
+6. Configurar horarios.
+7. Revisar descripción pública.
+8. Revisar contenido de `about`.
+9. Revisar branding visual básico.
+10. Revisar secciones públicas activables.
 
 ## Resultado esperado
 
-El superadmin puede crear, preparar y publicar un negocio solo cuando esté completo.
+Un negocio puede mostrar información pública básica real sin depender de datos de ejemplo.
 
 Estado: Pendiente
 
 ---
 
-# Fase 6 — Supabase Storage e imágenes
+# Fase 6 — Catálogo real del negocio
+
+## Objetivo
+
+Consolidar la carga y administración de catálogos, categorías y productos o servicios reales.
+
+## Tareas
+
+1. Revisar flujo de catálogos.
+2. Revisar flujo de categorías.
+3. Revisar flujo de productos/servicios.
+4. Revisar disponibilidad.
+5. Revisar destacados.
+6. Revisar precios si aplica.
+7. Mejorar UX admin para carga repetida.
+8. Confirmar empty states, errores y navegación.
+
+## Resultado esperado
+
+Un admin puede cargar un catálogo real de manera cómoda y consistente.
+
+Estado: Pendiente
+
+---
+
+# Fase 7 — Contenido público complementario
+
+## Objetivo
+
+Completar los módulos de contenido que acompañan al catálogo y al perfil público del negocio.
+
+## Alcance
+
+- promociones,
+- galería,
+- blog/noticias,
+- FAQ,
+- about,
+- estados,
+- orden,
+- fechas,
+- empty states,
+- errores.
+
+## Tareas
+
+1. Revisar promociones activas, pausadas, vencidas y futuras.
+2. Revisar carga y orden de galería.
+3. Revisar blog/noticias.
+4. Revisar FAQ.
+5. Revisar about.
+6. Unificar estados, orden, fechas, empty states y errores.
+7. Confirmar que el sitio público solo muestra contenido publicable.
+
+## Resultado esperado
+
+El negocio puede tener contenido público complementario cargado y administrable.
+
+Estado: Pendiente
+
+---
+
+# Fase 8 — Supabase Storage e imágenes reales
 
 ## Objetivo
 
@@ -261,38 +323,17 @@ Implementar un flujo real de subida, gestión y uso de imágenes desde Supabase 
 
 Las imágenes se almacenarán en Supabase Storage con paths aislados por negocio.
 
-## Estructura recomendada
-
-```txt
-businesses/{businessId}/logo/...
-businesses/{businessId}/catalog/...
-businesses/{businessId}/products/...
-businesses/{businessId}/promotions/...
-businesses/{businessId}/gallery/...
-businesses/{businessId}/blog/...
-```
-
 ## Tareas
 
-1. Crear bucket de imágenes.
-2. Definir si el bucket será público o privado. Para esta fase se recomienda público para lectura, con escritura protegida.
-3. Crear policies de Storage:
-   - lectura pública,
-   - escritura solo para admins del negocio,
-   - actualización y borrado solo para admins del negocio.
-4. Crear helpers de servidor:
-   - `uploadBusinessImage`
-   - `deleteBusinessImage`
-5. Crear un componente reutilizable de subida de imagen.
-6. Integrar subida de imágenes progresivamente:
-   - logo,
-   - catálogo,
-   - productos,
-   - promociones,
-   - galería,
-   - about,
-   - blog si aplica.
-7. Validar formato, tamaño, nombre y path.
+1. Crear buckets.
+2. Definir policies de Storage.
+3. Crear helper de upload.
+4. Validar tipo/tamaño.
+5. Integrar logos.
+6. Integrar imágenes de productos.
+7. Integrar imágenes de promociones.
+8. Integrar galería.
+9. Soportar reemplazo/limpieza de imágenes.
 
 ## Resultado esperado
 
@@ -302,179 +343,88 @@ Estado: Pendiente
 
 ---
 
-# Fase 7 — Consolidación de módulos admin y contenido real
+# Fase 9 — Pulido de UX admin y sitio público
 
 ## Objetivo
 
-Hacer que cada módulo importante sea usable para cargar contenido real.
+Hacer que la experiencia de administración y navegación pública sea clara para uso real.
 
-## Módulos a revisar
+## Alcance
 
-- datos del negocio,
-- módulos,
-- branding,
-- catálogo,
-- promociones,
-- about,
-- FAQ,
-- galería,
-- blog,
-- contacto, horarios, ubicación y redes sociales.
+- mensajes claros,
+- loading states,
+- empty states,
+- confirmaciones,
+- navegación admin,
+- consistencia visual,
+- formularios más cómodos,
+- preview público si aplica.
 
 ## Tareas
 
-1. Revisar formularios existentes.
-2. Mejorar empty states.
-3. Asegurar instrucciones claras para administradores no técnicos.
-4. Permitir editar contenido aunque el módulo esté inactivo públicamente.
-5. Crear una checklist de preparación del negocio.
+1. Revisar mensajes de error y éxito.
+2. Revisar estados de carga.
+3. Revisar empty states.
+4. Revisar confirmaciones de acciones destructivas.
+5. Mejorar navegación admin.
+6. Revisar consistencia visual.
+7. Hacer formularios más cómodos para carga repetida.
+8. Evaluar preview público si aplica.
 
 ## Resultado esperado
 
-El sistema no solo funciona técnicamente, sino que permite cargar contenido real de manera entendible.
+Administrar y revisar un negocio real se siente claro, predecible y suficientemente pulido.
 
 Estado: Pendiente
 
 ---
 
-# Fase 8 — Branding real por negocio
+# Fase 10 — Carga completa de negocio real piloto
 
 ## Objetivo
 
-Permitir que cada negocio tenga identidad visual básica sin romper la consistencia del sistema.
+Cargar un negocio real piloto de inicio a fin y validar el flujo completo.
 
 ## Tareas
 
-1. Revisar pantalla actual de branding.
-2. Validar colores hex.
-3. Evitar combinaciones ilegibles.
-4. Permitir resetear a defaults.
-5. Definir campos mínimos:
-   - color primario,
-   - color secundario,
-   - color de acento,
-   - footer,
-   - logo,
-   - `themeKey` si aplica.
-6. Evitar plantillas avanzadas en esta fase.
+1. Crear negocio.
+2. Asignar admin manualmente.
+3. Configurar módulos.
+4. Cargar catálogo.
+5. Cargar promociones.
+6. Cargar imágenes.
+7. Revisar sitio público completo.
+8. Probar negocio activo/inactivo.
+9. Probar permisos.
 
 ## Resultado esperado
 
-Cada negocio puede verse propio sin introducir sobreingeniería visual.
+Existe al menos un negocio real piloto cargado y revisado en la plataforma.
 
 Estado: Pendiente
 
 ---
 
-# Fase 9 — QA multi-tenant y pruebas manuales de seguridad
+# Fase 11 — Preparación para despliegue/producción
 
 ## Objetivo
 
-Comprobar que el sistema resiste casos reales y manipulaciones básicas.
-
-## Matriz mínima de pruebas
-
-### Visitante
-
-- Ve negocio activo.
-- No ve negocio inactivo.
-- No ve contenido inactivo.
-- No accede a módulos desactivados.
-
-### Admin de negocio
-
-- Entra a su panel.
-- No entra al panel de otro negocio.
-- No modifica datos de otro negocio manipulando IDs.
-- Puede preparar contenido inactivo de su negocio.
-
-### Superadmin
-
-- Entra a `/superadmin`.
-- Crea negocios.
-- Edita negocios.
-- Accede al admin de cualquier negocio.
-- Publica y despublica negocios.
-
-### Supabase API
-
-- Usuario anónimo no lee negocio inactivo.
-- Usuario anónimo no lee contenido no publicable.
-- Usuario autenticado sin rol no escribe nada.
-- Admin de un negocio no escribe en otro negocio.
-
-## Resultado esperado
-
-Confianza razonable en el aislamiento multi-tenant antes de subir contenido real.
-
-Estado: Pendiente
-
----
-
-# Fase 10 — Documentación operativa
-
-## Objetivo
-
-Actualizar la documentación para que el proyecto no dependa solo de memoria o conversaciones.
-
-## Documentos recomendados
-
-```txt
-docs/technical-overview.md
-docs/supabase-setup.md
-docs/storage.md
-docs/rls-policies.md
-docs/admin-manual.md
-docs/superadmin-manual.md
-docs/real-business-checklist.md
-```
+Dejar lista una versión deployable y operable en producción.
 
 ## Tareas
 
-1. Sincronizar nombres de tablas, rutas y archivos con el código real.
-2. Eliminar referencias a nombres antiguos.
-3. Documentar flujos reales de admin y superadmin.
-4. Documentar proceso manual temporal para crear admins de negocio.
-5. Documentar configuración de Supabase Storage y RLS.
+1. Revisar variables de entorno.
+2. Preparar Supabase remoto.
+3. Aplicar migraciones.
+4. Preparar Storage remoto.
+5. Ejecutar build final.
+6. Documentar despliegue.
+7. Revisar seguridad.
+8. Crear checklist de producción.
 
 ## Resultado esperado
 
-Codex, el equipo futuro y el propio desarrollador pueden entender el sistema sin romper patrones.
-
-Estado: Pendiente
-
----
-
-# Fase 11 — Preparación de despliegue
-
-## Objetivo
-
-Dejar lista una versión deployable para cargar un primer negocio real.
-
-## Tareas
-
-1. Revisar `.env.example`.
-2. Confirmar variables necesarias:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-3. Evitar usar `service_role` en runtime normal salvo tareas controladas.
-4. Revisar configuración de `next/image`.
-5. Ejecutar:
-
-```bash
-npm run lint
-npm run build
-```
-
-6. Desplegar en el entorno elegido.
-7. Crear un negocio real inactivo.
-8. Cargar contenido.
-9. Revisar como visitante.
-10. Publicar.
-
-## Resultado esperado
-
-Primera versión funcional lista para uso real con un negocio cargado manualmente.
+Primera versión funcional lista para producción con un negocio real cargado y probado.
 
 Estado: Pendiente
 
@@ -486,15 +436,15 @@ Estado: Pendiente
 1. Baseline técnico
 2. 404 público para negocios inactivos
 3. Services públicos seguros
-4. RLS de lectura pública
-5. Mutations multi-tenant e integridad
-6. Superadmin: negocio inactivo por defecto + flujo de carga
-7. Supabase Storage
-8. UX admin y checklist de publicación
-9. Branding
-10. QA multi-tenant
-11. Documentación
-12. Deploy y carga del primer negocio real
+4. RLS de lectura pública e integridad padre-hijo
+5. Superadmin: creación y edición real de negocios
+6. Configuración inicial del sitio público
+7. Catálogo real del negocio
+8. Contenido público complementario
+9. Supabase Storage e imágenes reales
+10. Pulido de UX admin y sitio público
+11. Carga completa de negocio real piloto
+12. Preparación para despliegue/producción
 ```
 
 ---
