@@ -14,12 +14,11 @@ import type { AdminActionState } from '@/lib/admin'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function extractRaw(formData: FormData, categoryId: string) {
+function extractRaw(formData: FormData) {
   return {
     name:          String(formData.get('name')          ?? ''),
     description:   String(formData.get('description')   ?? '') || undefined,
     imageUrl:      String(formData.get('imageUrl')      ?? '') || undefined,
-    categoryId,
     moneyAmount:   String(formData.get('moneyAmount')   ?? '0'),
     moneyCurrency: String(formData.get('moneyCurrency') ?? 'CUP'),
     isAvailable:   formData.get('isAvailable') === 'on',
@@ -41,7 +40,7 @@ export async function createProductAction(
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
-  const raw = extractRaw(formData, categoryId)
+  const raw = extractRaw(formData)
 
   const parsed = productCreateSchema.safeParse(raw)
   if (!parsed.success) {
@@ -54,7 +53,7 @@ export async function createProductAction(
     }
   }
 
-  const result = await createProduct(ctxResult.ctx, parsed.data)
+  const result = await createProduct(ctxResult.ctx, categoryId, parsed.data)
   if (!result.ok) return { ok: false, error: result.error, field: result.field }
 
   revalidatePath(`/negocios/${slug}`, 'layout')
@@ -74,7 +73,7 @@ export async function updateProductAction(
   const ctxResult = await getAdminContext(slug)
   if (!ctxResult.ok) return { ok: false, error: ctxResult.error }
 
-  const raw = extractRaw(formData, categoryId)
+  const raw = extractRaw(formData)
 
   const parsed = productUpdateSchema.safeParse(raw)
   if (!parsed.success) {

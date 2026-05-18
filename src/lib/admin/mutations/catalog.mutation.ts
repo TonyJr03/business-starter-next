@@ -35,7 +35,6 @@ export const productCreateSchema = z.object({
   name:          z.string().min(1, 'El nombre es obligatorio').max(200),
   description:   z.string().max(1000).optional(),
   imageUrl:      z.string().max(1000).optional(),
-  categoryId:    z.string().uuid('Selecciona una categoría válida'),
   moneyAmount:   z.coerce.number().min(0, 'El precio no puede ser negativo'),
   moneyCurrency: z.string().length(3).default('CUP'),
   isAvailable:   z.boolean().default(true),
@@ -84,6 +83,17 @@ export async function createCategory(
   catalogId: string,
   input: CategoryCreateInput,
 ): Promise<MutationResult<Category>> {
+  const { data: catalog } = await ctx.supabase
+    .from('catalog_pages')
+    .select('id')
+    .eq('id', catalogId)
+    .eq('business_id', ctx.businessId)
+    .single()
+
+  if (!catalog) {
+    return { ok: false, error: 'El catálogo seleccionado no existe o no pertenece a este negocio.', field: 'catalogId' }
+  }
+
   const { data, error } = await ctx.supabase
     .from('catalog_categories')
     .insert({
@@ -110,12 +120,13 @@ export async function createCategory(
 
 export async function createProduct(
   ctx: AdminContext,
+  categoryId: string,
   input: ProductCreateInput,
 ): Promise<MutationResult<Product>> {
   const { data: category } = await ctx.supabase
     .from('catalog_categories')
     .select('id')
-    .eq('id', input.categoryId)
+    .eq('id', categoryId)
     .eq('business_id', ctx.businessId)
     .single()
 
@@ -127,7 +138,7 @@ export async function createProduct(
     .from('catalog_products')
     .insert({
       business_id:    ctx.businessId,
-      category_id:    input.categoryId,
+      category_id:    categoryId,
       slug:           toSlug(input.name),
       name:           input.name,
       description:    input.description ?? null,
@@ -213,23 +224,9 @@ export async function updateProduct(
   id: string,
   input: ProductUpdateInput,
 ): Promise<MutationResult<Product>> {
-  if (input.categoryId !== undefined) {
-    const { data: category } = await ctx.supabase
-      .from('catalog_categories')
-      .select('id')
-      .eq('id', input.categoryId)
-      .eq('business_id', ctx.businessId)
-      .single()
-
-    if (!category) {
-      return { ok: false, error: 'La categoría seleccionada no existe.', field: 'categoryId' }
-    }
-  }
-
   const patch: Record<string, unknown> = {}
   if (input.name          !== undefined) patch.name        = input.name
   if (input.description   !== undefined) patch.description = input.description
-  if (input.categoryId    !== undefined) patch.category_id = input.categoryId
   if (input.moneyAmount   !== undefined || input.moneyCurrency !== undefined) {
     patch.money = {
       amount:   input.moneyAmount   ?? undefined,

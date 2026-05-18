@@ -65,6 +65,17 @@ export async function createPhoto(
   albumId: string,
   input: PhotoCreateInput,
 ): Promise<MutationResult<GalleryPhoto>> {
+  const { data: album } = await ctx.supabase
+    .from('gallery_albums')
+    .select('id')
+    .eq('id', albumId)
+    .eq('business_id', ctx.businessId)
+    .single()
+
+  if (!album) {
+    return { ok: false, error: 'El álbum seleccionado no existe o no pertenece a este negocio.', field: 'albumId' }
+  }
+
   const { data, error } = await ctx.supabase
     .from('gallery_photos')
     .insert({
